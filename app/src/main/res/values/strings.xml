@@ -1,3 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Playlist Maker</string>
+    <string name="app_name" translatable="false">Playlist maker</string>
+    <string name="prefs_file_name" translatable="false">>Main preferences</string>
+    <string name="dark_mode_enabled" translatable="false">isDarkModeOn</string>
+    <string name="search_history" translatable="false">searchHistory</string>
+    <string name="image_view_stub">иконка</string>
+    <string name="search">Поиск</string>
+    <string name="search_hint">Поиск</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="network_failure">Проблемы со связью\n\nЗагрузка не удалась\nПроверьте подключение к интернету</string>
+    <string name="search_history_title">Вы искали</string>
+    <string name="search_history_btn_clear">Очистить историю</string>
+    <string name="player_duration">Длительность</string>
+    <string name="default_duration">00:00</string>
+    <string name="player_album">Альбом</string>
+    <string name="player_year">Год</string>
+    <string name="player_genre">Жанр</string>
+    <string name="player_country">Страна</string>
+    <string name="update">Обновить</string>
+    <string name="media_library">Медиатека</string>
+    <string name="favorite_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="no_playlists">Вы не создали\n ни одного плейлиста</string>
+    <string name="empty_medialibrary">Ваша медиатека пуста</string>
+    <string name="media_library_search_hint">Введите название песни</string>
+    <string name="settings">Настройки</string>
+    <string name="dark_mode">Тёмная тема</string>
+    <string name="share_app">Поделиться приложением</string>
+    <string name="share_app_content">https://practicum.yandex.ru/android-developer/?from=catalog</string>
+    <string name="contact_support">Написать в поддержку</string>
+    <string name="contact_support_email" translatable="false">ey-blyat@yandex.ru</string>
+    <string name="contact_support_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="contact_support_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="user_agreement">Пользовательское соглашение</string>
+    <string name="user_agreement_content" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
 </resources>
