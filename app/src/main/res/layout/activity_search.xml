@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/LayoutFullScreen"
+    android:background="@color/colorSecondary"
+    tools:ignore="MissingConstraints">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        style="@style/Theme.PlaylistMaker.AppBarOverlay"
+        android:paddingBottom="@dimen/padding_small_8x">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Theme.PlaylistMaker.PopupOverlay"
+            app:title="@string/search" />
+
+        <include
+            android:id="@+id/search_layout"
+            layout="@layout/layout_search" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorSecondary"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/search_history"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorSecondary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/search_history_title"
+                android:textSize="@dimen/text_big_size"
+                android:textColor="@color/inactive_button"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/search_history_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <Button
+                android:id="@+id/btn_clear_history"
+                style="@style/DarkButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/search_history_btn_clear" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/nothing_found"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorSecondary"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/nothing_found"
+            app:drawableTopCompat="@drawable/nothing_found" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/network_failure"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorSecondary"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar"
+        tools:background="@null">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/network_failure"
+            app:drawableTopCompat="@drawable/network_failure" />
+
+        <Button
+            android:id="@+id/button_refresh"
+            style="@style/DarkButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_small_4x"
+            android:text="@string/update" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorSecondary"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar"
+        tools:background="@null">
+
+        <ProgressBar
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/active_button"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/content_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="recycler,search_history,nothing_found,network_failure,progressBar" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/utility"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="search_history,nothing_found,network_failure,progressBar" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/alerts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="nothing_found,network_failure,progressBar" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="network_failure,progressBar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

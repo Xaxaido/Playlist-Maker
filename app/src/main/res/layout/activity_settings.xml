@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/LayoutFullScreen"
+    tools:ignore="MissingConstraints">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        style="@style/Theme.PlaylistMaker.AppBarOverlay">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Theme.PlaylistMaker.PopupOverlay"
+            app:title="@string/settings" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <TextView
+        android:id="@+id/dark_mode_text"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/panel_height"
+        android:layout_marginStart="@dimen/padding_small_8x"
+        android:gravity="center_vertical"
+        android:fontFamily="@font/ys_400"
+        android:text="@string/dark_mode"
+        android:textColor="@color/white_bg_text"
+        android:textSize="@dimen/text_normal_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_dark_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/panel_height"
+        android:layout_marginEnd="@dimen/padding_small_6x"
+        app:layout_constraintBottom_toBottomOf="@+id/dark_mode_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dark_mode_text" />
+
+    <TextView
+        android:id="@+id/btn_settings_share"
+        style="@style/TextButton"
+        android:text="@string/share_app"
+        app:layout_constraintTop_toBottomOf="@+id/dark_mode_text"
+        app:drawableRightCompat="@drawable/ic_share_app" />
+
+    <TextView
+        android:id="@+id/btn_contact_support"
+        style="@style/TextButton"
+        android:text="@string/contact_support"
+        app:layout_constraintTop_toBottomOf="@+id/btn_settings_share"
+        app:drawableRightCompat="@drawable/ic_contact_support" />
+
+    <TextView
+        android:id="@+id/btn_settings_user_agreement"
+        style="@style/TextButton"
+        android:text="@string/user_agreement"
+        app:layout_constraintTop_toBottomOf="@+id/btn_contact_support"
+        app:drawableRightCompat="@drawable/ic_user_agreement" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

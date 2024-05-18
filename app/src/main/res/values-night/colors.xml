@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1A1B22</color>
+    <color name="colorSecondary">#1A1B22</color>
+    <color name="settings_screen_bg">#1A1B22</color>
+    <color name="colorText">#FFFFFF</color>
+    <color name="white_bg_icon">#FFFFFF</color>
+    <color name="white_bg_text">#FFFFFF</color>
+    <color name="white_bg_button">#FFFFFF</color>
+    <color name="ripple">#33AEAFB4</color>
+    <color name="editTextColor">#FFFFFF</color>
+    <color name="inactive_button">#FFFFFF</color>
+    <color name="inactive_button_white_bg">#1A1B22</color>
+</resources>
