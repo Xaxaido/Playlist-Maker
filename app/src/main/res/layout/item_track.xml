@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/android:colorBackground"
+    android:foreground="?selectableItemBackground"
+    tools:ignore="MissingConstraints, ContentDescription">
+
+    <ImageView
+        android:id="@+id/cover"
+        android:layout_width="@dimen/album_cover_size"
+        android:layout_height="@dimen/album_cover_size"
+        android:layout_marginVertical="@dimen/padding_small_4x"
+        android:layout_marginStart="@dimen/padding_small_6x"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/album_cover_stub" />
+
+    <ImageView
+        android:id="@+id/favorite"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="-8dp"
+        android:layout_marginBottom="-8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/cover"
+        app:layout_constraintEnd_toEndOf="@id/cover"
+        app:srcCompat="@drawable/favorite"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/track_title"
+        style="@style/DescriptionText"
+        android:layout_width="0dp"
+        android:layout_marginHorizontal="@dimen/padding_small_4x"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/text_medium"
+        app:layout_constraintEnd_toStartOf="@id/btnTrack"
+        app:layout_constraintStart_toEndOf="@id/cover"
+        app:layout_constraintTop_toTopOf="@id/cover"
+        app:layout_constraintBottom_toTopOf="@id/artist_name"
+        tools:text="Track Title" />
+
+    <TextView
+        android:id="@+id/artist_name"
+        style="@style/DescriptionText"
+        android:layout_width="0dp"
+        android:layout_marginStart="@dimen/padding_small_4x"
+        app:layout_constraintEnd_toStartOf="@id/duration"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/cover"
+        app:layout_constraintTop_toBottomOf="@id/track_title"
+        app:layout_constraintBottom_toBottomOf="@id/cover"
+        app:layout_constraintWidth_default="wrap"
+        tools:text="Artist Name" />
+
+    <ImageView
+        android:id="@+id/separator"
+        android:layout_width="3dp"
+        android:layout_height="3dp"
+        android:layout_marginStart="5dp"
+        app:layout_constraintBottom_toBottomOf="@id/artist_name"
+        app:layout_constraintStart_toEndOf="@id/artist_name"
+        app:layout_constraintTop_toTopOf="@id/artist_name"
+        app:srcCompat="@drawable/separator" />
+
+    <TextView
+        android:id="@+id/duration"
+        style="@style/DescriptionText"
+        android:layout_width="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="@dimen/padding_small_4x"
+        app:layout_constraintBottom_toBottomOf="@id/separator"
+        app:layout_constraintEnd_toStartOf="@id/btnTrack"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/separator"
+        app:layout_constraintTop_toTopOf="@id/separator"
+        app:layout_constraintWidth_default="wrap"
+        tools:text="@string/default_duration" />
+
+    <ImageView
+        android:id="@+id/btnTrack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="@dimen/padding_small_6x"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_right"
+        app:tint="?attr/colorSecondary" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
