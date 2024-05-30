@@ -7,7 +7,11 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.data.entity.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.domain.source.TrackAdapter
 
 const val SEARCH_REQUEST = "SEARCH_REQUEST"
 
@@ -39,6 +43,14 @@ class SearchActivity : AppCompatActivity() {
             searchRequest = text.toString()
             toggleVisibilityBtnClear(searchRequest)
         }
+
+        val jsonString: String = assets.open("Tracks.json").bufferedReader().use { it.readText() }
+        val trackList = Gson().fromJson<ArrayList<Track>>(jsonString, object : TypeToken<ArrayList<Track>>() {}.type)
+
+        val adapter = TrackAdapter()
+        binding.searchHistoryRecycler.adapter = adapter
+        adapter.submitList(trackList)
+
     }
 
     private fun toggleVisibilityBtnClear(text: String) {

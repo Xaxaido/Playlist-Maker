@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
-import com.practicum.playlistmaker.extension.utils.Utils
+import com.practicum.playlistmaker.extension.util.Util
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -23,7 +23,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.switchDarkMode.setOnClickListener { view ->
-            Utils.toggleDarkTheme((view as SwitchCompat).isChecked)
+            Util.toggleDarkTheme((view as SwitchCompat).isChecked)
         }
 
         binding.btnSettingsShare.setOnClickListener {

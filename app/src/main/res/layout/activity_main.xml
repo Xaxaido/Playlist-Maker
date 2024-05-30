@@ -7,15 +7,14 @@
 
     <com.google.android.material.appbar.AppBarLayout
         style="@style/Theme.PlaylistMaker.AppBarOverlay"
-        android:backgroundTint="@color/colorPrimary" >
+        android:backgroundTint="@color/activityMainBgColor">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             style="@style/Theme.PlaylistMaker.PopupOverlay"
-            android:backgroundTint="@color/colorPrimary"
             app:navigationIcon="@null"
             app:title="@string/app_name"
-            app:titleTextColor="@color/button" />
+            app:titleTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -24,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/header_margin"
-        android:background="@color/colorPrimary"
+        android:background="@color/activityMainBgColor"
         android:orientation="vertical"
         android:paddingStart="@dimen/padding_small_8x"
         android:paddingEnd="@dimen/padding_small_8x"

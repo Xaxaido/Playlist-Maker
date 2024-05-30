@@ -11,6 +11,9 @@
     <string name="network_failure">Проблемы со связью\n\nЗагрузка не удалась\nПроверьте подключение к интернету</string>
     <string name="search_history_title">Вы искали</string>
     <string name="search_history_btn_clear">Очистить историю</string>
+    <string name="history_delete_item">Удалить</string>
+    <string name="history_add_to_fav">Нравится</string>
+    <string name="history_remove_from_fav">Не нравится</string>
     <string name="player_duration">Длительность</string>
     <string name="default_duration">00:00</string>
     <string name="player_album">Альбом</string>
@@ -35,4 +38,5 @@
     <string name="contact_support_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="user_agreement_content" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="db_file_name" translatable="false">database</string>
 </resources>
