@@ -19,9 +19,7 @@
             android:id="@+id/tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorSecondary"
-            app:tabTextColor="@color/colorText"
-            app:tabIndicatorColor="@color/colorText"
+            android:background="?attr/android:colorBackground"
             app:tabMode="fixed"
             app:tabRippleColor="@null" />
 
@@ -31,7 +29,7 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/colorSecondary"
+        android:background="?attr/android:colorBackground"
         app:layout_constraintTop_toBottomOf="@+id/app_bar"
         app:layout_constraintBottom_toBottomOf="parent" />
 

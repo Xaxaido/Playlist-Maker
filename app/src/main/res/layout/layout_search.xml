@@ -3,16 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:id="@+id/search_box"
         android:layout_width="0dp"
         android:layout_height="36dp"
-        android:layout_marginStart="@dimen/padding_small_8x"
-        android:layout_marginTop="@dimen/padding_small_4x"
-        android:layout_marginEnd="@dimen/padding_small_8x"
-        android:layout_marginBottom="@dimen/padding_small_4x"
+        android:layout_marginHorizontal="@dimen/padding_small_8x"
+        android:layout_marginVertical="@dimen/padding_small_4x"
         android:background="@drawable/bg_search_box"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -26,11 +25,9 @@
             android:layout_height="16dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/padding_small_6x"
-            android:layout_marginTop="@dimen/padding_small_5x"
-            android:layout_marginBottom="@dimen/padding_small_5x"
+            android:layout_marginVertical="@dimen/padding_small_5x"
             android:src="@drawable/ic_menu_search"
-            app:tint="@color/inactive_button_white_bg"
-            tools:ignore="ContentDescription" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <EditText
             android:id="@+id/search_text"
@@ -42,25 +39,25 @@
             android:background="@null"
             android:hint="@string/search_hint"
             android:autofillHints="true"
-            android:textColorHint="@color/inactive_button_white_bg"
+            android:textColorHint="?attr/colorOnSurfaceVariant"
             android:inputType="text"
-            android:textColor="@color/button_text"
-            android:textSize="@dimen/text_normal_size"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_medium"
+            android:textCursorDrawable="@drawable/text_cursor"
             tools:ignore="LabelFor" />
 
         <ImageButton
             android:id="@+id/button_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/padding_small_4x"
             android:layout_gravity="center_vertical"
-            android:paddingHorizontal="@dimen/padding_small_6x"
-            android:paddingVertical="@dimen/padding_small_5x"
+            android:paddingHorizontal="@dimen/padding_small_2x"
+            android:paddingVertical="@dimen/padding_small_2x"
             android:background="@null"
-            android:foreground="?selectableItemBackground"
             android:src="@drawable/ic_close"
             android:visibility="gone"
-            app:tint="@color/inactive_button_white_bg"
-            tools:ignore="ContentDescription"
+            app:tint="?attr/colorOnSurfaceVariant"
             tools:visibility="visible" />
 
     </LinearLayout>

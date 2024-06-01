@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3772E7</color>
-    <color name="colorSecondary">#FFFFFF</color>
-    <color name="settings_screen_bg">#FFFFFF</color>
-    <color name="button">#FFFFFFFF</color>
-    <color name="icon">#1A1B22</color>
-    <color name="colorText">#1A1B22</color>
-    <color name="button_text">#1A1B22</color>
-    <color name="white_bg_text">#1A1B22</color>
-    <color name="white_bg_icon">#1A1B22</color>
-    <color name="ripple">#333772E7</color>
-    <color name="inactive_button">#AEAFB4</color>
-    <color name="inactive_button_white_bg">#AEAFB4</color>
-    <color name="inactive_field">#E6E8EB</color>
-    <color name="active_field">#7A9FBBF3</color>
-    <color name="active_button">#3772E7</color>
-    <color name="white_bg_button">#AEAFB4</color>
-    <color name="editTextColor">#E6E8EB</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#1A1B22</color>
+    <color name="blue">#3772E7</color>
+    <color name="greyDark">#AEAFB4</color>
+    <color name="greyLight">#E6E8EB</color>
+    <color name="red">#E65050</color>
+    <color name="orange">#F39718</color>
+    <color name="rippleColor">#7A9FBBF3</color>
+    <color name="activityMainBgColor">@color/blue</color>
+    <color name="textButton_TextColor">@color/black</color>
+    <color name="editText_BgColor">@color/greyLight</color>
 </resources>
