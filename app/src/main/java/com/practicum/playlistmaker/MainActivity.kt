@@ -1,10 +1,11 @@
-package com.practicum.playlistmaker.activity
+package com.practicum.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.practicum.playlistmaker.activity.MediaLibraryActivity
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
