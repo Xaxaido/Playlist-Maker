@@ -1,29 +1,33 @@
-package com.practicum.playlistmaker.domain.source
+package com.practicum.playlistmaker.source
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.data.entity.Track
+import com.practicum.playlistmaker.entity.Track
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
 import com.practicum.playlistmaker.extension.util.Util.dpToPx
 import com.practicum.playlistmaker.extension.util.Util.millisToSeconds
 
-class TrackAdapter : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
+class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallback) {
 
     private val mDiffer = AsyncListDiffer(this, diffCallback)
     private var onClick: (Track) -> Unit = {}
+
 
     fun setOnClickListener(onClickListener: (Track) -> Unit) {
         onClick = onClickListener
     }
 
-    fun submitTracksList(list: List<Track>) { mDiffer.submitList(list) }
+    fun submitTracksList(list: List<Track>, callback: (() -> Unit) = {}) {
+        mDiffer.submitList(list, callback)
+    }
 
     fun getItemAtPos(pos: Int) = mDiffer.currentList[pos]!!
 

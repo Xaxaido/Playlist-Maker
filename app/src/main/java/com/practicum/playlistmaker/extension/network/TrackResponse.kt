@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.extension.network
 
-import com.practicum.playlistmaker.data.entity.Track
+import com.practicum.playlistmaker.entity.Track
 
 data class TrackResponse(
     val text: String,

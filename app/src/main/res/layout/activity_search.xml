@@ -43,47 +43,16 @@
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <LinearLayout
-                android:id="@+id/search_history"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="top|center_vertical"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/search_history_title"
-                    android:textSize="@dimen/text_big"
-                    android:textColor="?attr/colorSecondary"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/search_history_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:nestedScrollingEnabled="false"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-                <Button
-                    android:id="@+id/btn_clear_history"
-                    style="@style/DarkButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/search_history_btn_clear" />
-
-            </LinearLayout>
-
             <FrameLayout
                 android:id="@+id/nothing_found"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="?attr/android:colorBackground"
                 android:clickable="true"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
 
                 <TextView
                     style="@style/AlertText"
@@ -100,9 +69,11 @@
                 android:clickable="true"
                 android:gravity="center"
                 android:orientation="vertical"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:background="@null">
+                tools:background="@null"
+                tools:visibility="visible">
 
                 <TextView
                     style="@style/AlertText"
@@ -136,14 +107,6 @@
                     android:indeterminateTint="@color/blue" />
 
             </FrameLayout>
-
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/alerts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:visibility="visible"
-                app:constraint_referenced_ids="nothing_found,network_failure" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -17,7 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.domain.source.TrackAdapter
+import com.practicum.playlistmaker.source.TrackAdapter
 import com.practicum.playlistmaker.extension.util.Util.dpToPx
 import com.practicum.playlistmaker.extension.util.Util.drawableToBitmap
 import java.util.LinkedList
