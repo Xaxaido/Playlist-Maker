@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.extension.util
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.view.View
 import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -18,10 +17,6 @@ import java.time.ZoneId
 import java.util.Locale
 
 object Util {
-
-    var View.isVisible: Boolean
-        get() = visibility == View.VISIBLE
-        set(value) { visibility = if (value) View.VISIBLE else View.INVISIBLE }
 
     fun String.toDate() = SimpleDateFormat("yyyy", Locale.getDefault())
         .parse(this)

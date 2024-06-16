@@ -1,34 +1,35 @@
-package com.practicum.playlistmaker.domain.source
+package com.practicum.playlistmaker.source
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.data.entity.Track
+import com.practicum.playlistmaker.entity.Track
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
 import com.practicum.playlistmaker.extension.util.Util.dpToPx
-import com.practicum.playlistmaker.extension.util.Util.isVisible
+import com.practicum.playlistmaker.extension.util.Util.millisToSeconds
 
-class TrackAdapter : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
+class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallback) {
 
-    private var favoritesList = listOf<Track>()
     private val mDiffer = AsyncListDiffer(this, diffCallback)
-    private lateinit var onClickListener: OnRecyclerClickListener
+    private var onClick: (Track) -> Unit = {}
 
-    fun setOnClickListener(onClickListener: OnRecyclerClickListener) {
-        this.onClickListener = onClickListener
+
+    fun setOnClickListener(onClickListener: (Track) -> Unit) {
+        onClick = onClickListener
     }
 
-    fun submitList(list: List<Track>) { mDiffer.submitList(list) }
+    fun submitTracksList(list: List<Track>, callback: (() -> Unit) = {}) {
+        mDiffer.submitList(list, callback)
+    }
 
-    fun submitFavorites(list: List<Track>) { favoritesList = list }
-
-    fun getItemAtPos(pos: Int): Track = mDiffer.currentList[pos]
+    fun getItemAtPos(pos: Int) = mDiffer.currentList[pos]!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -59,9 +60,9 @@ class TrackAdapter : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
             binding.trackTitle.text = track.trackName
             binding.artistName.text = track.artistName
-            binding.duration.text = track.trackTime
+            binding.duration.text = track.trackTimeMillis.toLong().millisToSeconds()
 
-            holder.itemView.setOnClickListener { onClickListener.onClick(track) }
+            holder.itemView.setOnClickListener { onClick(track) }
         }
     }
 
@@ -75,9 +76,5 @@ class TrackAdapter : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
             override fun areContentsTheSame(oldItem: Track, newItem: Track) =
                 oldItem.trackName == newItem.trackName && oldItem.artistName == newItem.artistName
         }
-    }
-
-    fun interface OnRecyclerClickListener {
-        fun onClick(track: Track)
     }
 }

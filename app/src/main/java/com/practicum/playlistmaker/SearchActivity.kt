@@ -1,24 +1,36 @@
-package com.practicum.playlistmaker.activity
+package com.practicum.playlistmaker
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker.data.entity.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.domain.source.TrackAdapter
-
-const val SEARCH_REQUEST = "SEARCH_REQUEST"
+import com.practicum.playlistmaker.extension.network.TrackResponse
+import com.practicum.playlistmaker.extension.state.VisibilityState
+import com.practicum.playlistmaker.extension.util.RetrofitService
+import com.practicum.playlistmaker.source.TrackAdapter
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
-    private var searchRequest = ""
     private lateinit var binding: ActivitySearchBinding
+    private lateinit var trackAdapter: TrackAdapter
+    private val viewVisibilityList: VisibilityState.Views by lazy {
+        VisibilityState.Views(
+            mapOf(
+                Pair(VisibilityState.ShowError, binding.networkFailure),
+                Pair(VisibilityState.ShowNothingFound, binding.nothingFound),
+                Pair(VisibilityState.ShowContent, binding.recycler),
+                Pair(VisibilityState.ShowProgress, binding.progressBar)
+            )
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,42 +38,68 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        savedInstanceState?.let { state ->
-            searchRequest = state.getString(SEARCH_REQUEST, "")
-            binding.searchLayout.searchText.setText(searchRequest)
-        }
+        trackAdapter = TrackAdapter()
+        binding.recycler.adapter = trackAdapter
+        setListeners()
+    }
 
+    private fun setListeners() {
         binding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
+        binding.buttonRefresh.setOnClickListener { doSearch() }
+
         binding.searchLayout.buttonClear.setOnClickListener {
-            binding.searchLayout.searchText.setText("")
             val keyboard = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             keyboard.hideSoftInputFromWindow(binding.searchLayout.searchText.windowToken, 0)
+
+            binding.searchLayout.searchText.setText("")
+            trackAdapter.submitTracksList(emptyList())
         }
+
         binding.searchLayout.searchText.doOnTextChanged { text, _, _, _ ->
-            searchRequest = text.toString()
-            toggleVisibilityBtnClear(searchRequest)
+            toggleVisibilityBtnClear(text.toString())
         }
 
-        val jsonString: String = assets.open("Tracks.json").bufferedReader().use { it.readText() }
-        val trackList = Gson().fromJson<ArrayList<Track>>(jsonString, object : TypeToken<ArrayList<Track>>() {}.type)
-
-        val adapter = TrackAdapter()
-        binding.searchHistoryRecycler.adapter = adapter
-        adapter.submitList(trackList)
-
+        binding.searchLayout.searchText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                doSearch()
+            }
+            false
+        }
     }
 
     private fun toggleVisibilityBtnClear(text: String) {
-        binding.searchLayout.buttonClear.visibility = if (text.isEmpty()) {
-            View.GONE
-        } else View.VISIBLE
+        binding.searchLayout.buttonClear.isVisible = text.isNotEmpty()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+    private fun doSearch() {
+        val query = binding.searchLayout.searchText.text.toString()
+        if (query.isNotEmpty()) searchTracks(query)
+    }
 
-        outState.putString(SEARCH_REQUEST, searchRequest)
+    private fun searchTracks(term: String) {
+        trackAdapter.submitTracksList(emptyList())
+        viewVisibilityList.updateVisibility(VisibilityState.ShowProgress)
+
+        RetrofitService.iTunes.search(term).enqueue(object : Callback<TrackResponse> {
+
+            override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+                val tracks = response.body()?.results
+                if (tracks.isNullOrEmpty()) {
+                    viewVisibilityList.updateVisibility(VisibilityState.ShowNothingFound)
+                } else {
+                    trackAdapter.submitTracksList(tracks) {
+                        viewVisibilityList.updateVisibility(VisibilityState.ShowContent)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                viewVisibilityList.updateVisibility(VisibilityState.ShowError)
+            }
+
+        })
     }
 }

@@ -36,6 +36,8 @@
             android:layout_marginStart="@dimen/padding_small_4x"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             android:background="@null"
             android:hint="@string/search_hint"
             android:autofillHints="true"
