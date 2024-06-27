@@ -18,11 +18,22 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            finish()
         }
 
+        val app = applicationContext as App
+
+        binding.switchDarkMode.isChecked = app.darkTheme
         binding.switchDarkMode.setOnClickListener { view ->
-            Util.toggleDarkTheme((view as SwitchCompat).isChecked)
+            val isChecked = (view as SwitchCompat).isChecked
+
+            app.prefs.apply {
+                this.edit()
+                .putBoolean(getString(R.string.dark_mode_enabled), isChecked)
+                .apply()
+            }
+
+            Util.toggleDarkTheme(isChecked)
         }
 
         binding.btnSettingsShare.setOnClickListener {

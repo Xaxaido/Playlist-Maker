@@ -29,8 +29,6 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
         mDiffer.submitList(list, callback)
     }
 
-    fun getItemAtPos(pos: Int) = mDiffer.currentList[pos]!!
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemTrackBinding.inflate(inflater, parent, false)
@@ -57,6 +55,10 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
                 .centerCrop()
                 .transform(RoundedCorners(2.dpToPx(itemView.context.applicationContext)))
                 .into(binding.cover)
+
+            itemView.setOnClickListener {
+                onClick(track)
+            }
 
             binding.trackTitle.text = track.trackName
             binding.artistName.text = track.artistName

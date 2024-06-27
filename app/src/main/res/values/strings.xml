@@ -38,5 +38,6 @@
     <string name="contact_support_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="user_agreement_content" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="itunes_base_url" translatable="false">https://itunes.apple.com</string>
     <string name="db_file_name" translatable="false">database</string>
 </resources>
