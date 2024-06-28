@@ -3,17 +3,15 @@ package com.practicum.playlistmaker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
-import com.practicum.playlistmaker.extension.util.Util
 
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         val binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -27,13 +25,8 @@ class SettingsActivity : AppCompatActivity() {
         binding.switchDarkMode.setOnClickListener { view ->
             val isChecked = (view as SwitchCompat).isChecked
 
-            app.prefs.apply {
-                this.edit()
-                .putBoolean(getString(R.string.dark_mode_enabled), isChecked)
-                .apply()
-            }
-
-            Util.toggleDarkTheme(isChecked)
+            app.putBoolean(getString(R.string.dark_mode_enabled), isChecked)
+            app.toggleDarkTheme(isChecked)
         }
 
         binding.btnSettingsShare.setOnClickListener {

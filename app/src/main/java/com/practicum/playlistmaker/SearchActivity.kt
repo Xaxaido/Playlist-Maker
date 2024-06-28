@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -26,9 +25,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var searchHistoryAdapter: TrackAdapter
     private val prefs: PrefsStorage by lazy {
-        PrefsStorage(
-            this@SearchActivity,
-            (applicationContext as App).prefs)
+        PrefsStorage(applicationContext)
     }
     private val viewVisibilityList: VisibilityState.Views by lazy {
         VisibilityState.Views(
@@ -44,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -57,7 +54,11 @@ class SearchActivity : AppCompatActivity() {
         binding.searchHistoryRecycler.adapter = searchHistoryAdapter
 
         setListeners()
-        showNoData()
+
+        prefs.getHistory().apply {
+            if (this.isNotEmpty()) showHistory(this)
+            else showNoData()
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -87,6 +88,8 @@ class SearchActivity : AppCompatActivity() {
         binding.btnClearHistory.setOnClickListener {
             prefs.clearHistory()
             binding.searchLayout.searchText.clearFocus()
+            searchHistoryAdapter.submitTracksList(emptyList())
+            showNoData()
         }
 
         binding.searchLayout.searchText.setOnFocusChangeListener { _, hasFocus ->

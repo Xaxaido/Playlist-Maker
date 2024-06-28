@@ -62,7 +62,7 @@
                     android:gravity="center"
                     android:text="@string/search_history_title"
                     android:textSize="@dimen/text_big"
-                    android:textColor="?attr/colorSecondary"/>
+                    android:textColor="?attr/colorOnBackground"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/search_history_recycler"
