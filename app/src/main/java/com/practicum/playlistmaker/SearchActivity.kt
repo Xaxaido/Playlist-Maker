@@ -54,11 +54,7 @@ class SearchActivity : AppCompatActivity() {
         binding.searchHistoryRecycler.adapter = searchHistoryAdapter
 
         setListeners()
-
-        prefs.getHistory().apply {
-            if (this.isNotEmpty()) showHistory(this)
-            else showNoData()
-        }
+        showHistory(prefs.getHistory())
     }
 
     @SuppressLint("SetTextI18n")
@@ -92,20 +88,10 @@ class SearchActivity : AppCompatActivity() {
             showNoData()
         }
 
-        binding.searchLayout.searchText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                prefs.getHistory().also {
-                    if (it.isNotEmpty()) showHistory(it)
-                }
-            } else {
-                showNoData()
-            }
-        }
-
         binding.searchLayout.searchText.doOnTextChanged { text, _, _, _ ->
             val query = text.toString()
 
-            if (query.isEmpty() && binding.searchLayout.searchText.hasFocus()) {
+            if (query.isEmpty()) {
                 showHistory(prefs.getHistory())
             } else showNoData()
 
@@ -142,8 +128,12 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun showHistory(list: List<Track>) {
-        updateData(searchHistoryAdapter, list) {
-            viewVisibilityList.updateVisibility(VisibilityState.ShowHistory)
+        list.apply {
+            if (this.isNotEmpty()) {
+                updateData(searchHistoryAdapter, list) {
+                    viewVisibilityList.updateVisibility(VisibilityState.ShowHistory)
+                }
+            } else showNoData()
         }
     }
 
