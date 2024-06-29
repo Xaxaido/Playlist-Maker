@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#FFFFFF</color>
+    <color name="white_30">#4DFFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
+    <color name="bottom_menu_color">#E6FFFFFF</color>
+    <color name="player_bottom_control">#F2E6E8EB</color>
     <color name="black">#1A1B22</color>
     <color name="blue">#3772E7</color>
-    <color name="greyDark">#AEAFB4</color>
+    <color name="veryGreyDark">#272727</color>
+    <color name="greyDark">#808080</color>
+    <color name="greyMedium">#AEAFB4</color>
     <color name="greyLight">#E6E8EB</color>
     <color name="red">#E65050</color>
     <color name="orange">#F39718</color>
     <color name="rippleColor">#7A9FBBF3</color>
+    <color name="search_hint_color">@color/greyMedium</color>
     <color name="activityMainBgColor">@color/blue</color>
     <color name="textButton_TextColor">@color/black</color>
     <color name="editText_BgColor">@color/greyLight</color>

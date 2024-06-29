@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Playlist maker</string>
-    <string name="prefs_file_name" translatable="false">>Main preferences</string>
+    <string name="prefs_file_name" translatable="false">Main preferences</string>
     <string name="dark_mode_enabled" translatable="false">isDarkModeOn</string>
     <string name="search_history" translatable="false">searchHistory</string>
     <string name="image_view_stub">иконка</string>
@@ -38,5 +38,6 @@
     <string name="contact_support_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="user_agreement_content" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="itunes_base_url" translatable="false">https://itunes.apple.com</string>
     <string name="db_file_name" translatable="false">database</string>
 </resources>

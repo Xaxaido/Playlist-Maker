@@ -3,37 +3,40 @@ package com.practicum.playlistmaker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
-import com.practicum.playlistmaker.extension.util.Util
 
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         val binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            finish()
         }
 
+        val prefs = applicationContext as App
+
+        binding.switchDarkMode.isChecked = prefs.darkTheme
         binding.switchDarkMode.setOnClickListener { view ->
-            Util.toggleDarkTheme((view as SwitchCompat).isChecked)
+            val isChecked = (view as SwitchCompat).isChecked
+
+            prefs.saveDarkThemeState(isChecked)
+            prefs.toggleDarkTheme(isChecked)
         }
 
         binding.btnSettingsShare.setOnClickListener {
-            val intent = Intent().apply {
+            Intent().apply {
                 action = Intent.ACTION_SEND
                 type = "text/plain"
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_content))
+                startActivity(this, null)
             }
-
-            startActivity(intent, null)
         }
 
         binding.btnContactSupport.setOnClickListener {

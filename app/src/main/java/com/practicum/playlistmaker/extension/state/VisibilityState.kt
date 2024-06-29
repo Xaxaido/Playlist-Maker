@@ -6,6 +6,8 @@ import androidx.core.view.isVisible
 sealed interface VisibilityState {
     object ShowError : VisibilityState
     object ShowNothingFound : VisibilityState
+    object ShowNoData : VisibilityState
+    object ShowHistory : VisibilityState
     object ShowContent : VisibilityState
     object ShowProgress : VisibilityState
     class Views(
