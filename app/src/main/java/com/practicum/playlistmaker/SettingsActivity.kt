@@ -19,25 +19,24 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        val app = applicationContext as App
+        val prefs = applicationContext as App
 
-        binding.switchDarkMode.isChecked = app.darkTheme
+        binding.switchDarkMode.isChecked = prefs.darkTheme
         binding.switchDarkMode.setOnClickListener { view ->
             val isChecked = (view as SwitchCompat).isChecked
 
-            app.putBoolean(getString(R.string.dark_mode_enabled), isChecked)
-            app.toggleDarkTheme(isChecked)
+            prefs.saveDarkThemeState(isChecked)
+            prefs.toggleDarkTheme(isChecked)
         }
 
         binding.btnSettingsShare.setOnClickListener {
-            val intent = Intent().apply {
+            Intent().apply {
                 action = Intent.ACTION_SEND
                 type = "text/plain"
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_content))
+                startActivity(this, null)
             }
-
-            startActivity(intent, null)
         }
 
         binding.btnContactSupport.setOnClickListener {

@@ -1,33 +1,29 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.data.Prefs
 
 class App: Application() {
 
     var darkTheme = false
-    private val prefs: SharedPreferences by lazy {
-        getSharedPreferences(getString(R.string.prefs_file_name), MODE_PRIVATE)
-    }
+    private val prefs = Prefs(this)
 
     override fun onCreate() {
         super.onCreate()
 
-        darkTheme = prefs.getBoolean(getString(R.string.dark_mode_enabled), darkTheme)
+        darkTheme = prefs.getBoolean(getString(R.string.dark_mode_enabled))
         toggleDarkTheme(darkTheme)
     }
 
-    fun putBoolean(key: String, value: Boolean) {
-        prefs.edit().putBoolean(key, value).apply()
+    fun getHistory() = prefs.getString(getString(R.string.search_history))
+
+    fun saveHistory(history: String) {
+        prefs.putString(getString(R.string.search_history), history)
     }
 
-    fun getString(key: String): String {
-        return prefs.getString(key, "") ?: ""
-    }
-
-    fun putString(key: String, value: String) {
-        prefs.edit().putString(key, value).apply()
+    fun saveDarkThemeState(isEnabled: Boolean) {
+        prefs.putBoolean(getString(R.string.dark_mode_enabled), isEnabled)
     }
 
     fun toggleDarkTheme(isEnabled: Boolean) {

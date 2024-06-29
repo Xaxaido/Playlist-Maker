@@ -126,7 +126,6 @@ class SearchActivity : AppCompatActivity() {
         viewVisibilityList.updateVisibility(VisibilityState.ShowNoData)
     }
 
-
     private fun showHistory(list: List<Track>) {
         list.apply {
             if (this.isNotEmpty()) {
@@ -153,9 +152,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchTracks(term: String) {
-        trackAdapter.submitTracksList(emptyList())
         showLoading()
-
         RetrofitService.iTunes?.search(term)?.enqueue(object : Callback<TrackResponse> {
 
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
@@ -170,7 +167,6 @@ class SearchActivity : AppCompatActivity() {
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
                 showError()
             }
-
         })
     }
 }

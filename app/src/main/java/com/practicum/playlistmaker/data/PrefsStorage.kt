@@ -4,22 +4,21 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.App
-import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.entity.Track
 
 private const val HISTORY_MAX_COUNT = 10
 
 class PrefsStorage(
-    private val context: Context,
+    context: Context,
 ) {
 
-    private val key = context.getString(R.string.search_history)
+    private val prefs = context as App
 
     fun getHistory(): List<Track> = run {
-        val prefsHistory = (context as App).getString(key)
+        val history = prefs.getHistory()
 
-        if (prefsHistory.isNotBlank()) {
-            Gson().fromJson(prefsHistory, object : TypeToken<List<Track>>() {}.type) ?: emptyList()
+        if (history.isNotBlank()) {
+            Gson().fromJson(history, object : TypeToken<List<Track>>() {}.type) ?: emptyList()
         } else emptyList()
     }
 
@@ -37,6 +36,6 @@ class PrefsStorage(
     fun clearHistory() { saveHistory(emptyList()) }
 
     private fun saveHistory(history: List<Track>) {
-        (context as App).putString(key, Gson().toJson(history))
+        prefs.saveHistory(Gson().toJson(history))
     }
 }
