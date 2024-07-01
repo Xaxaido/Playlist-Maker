@@ -1,20 +1,22 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import com.practicum.playlistmaker.data.PrefsStorage
+import com.practicum.playlistmaker.data.PrefsMediator
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.entity.Track
+import com.practicum.playlistmaker.data.model.entity.Track
 import com.practicum.playlistmaker.extension.network.TrackResponse
-import com.practicum.playlistmaker.extension.state.VisibilityState
+import com.practicum.playlistmaker.data.model.resources.VisibilityState
 import com.practicum.playlistmaker.extension.util.RetrofitService
-import com.practicum.playlistmaker.source.TrackAdapter
+import com.practicum.playlistmaker.extension.util.Util
+import com.practicum.playlistmaker.data.source.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,8 +26,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var searchHistoryAdapter: TrackAdapter
-    private val prefs: PrefsStorage by lazy {
-        PrefsStorage(applicationContext)
+    private val prefs: PrefsMediator by lazy {
+        PrefsMediator(applicationContext)
     }
     private val viewVisibilityList: VisibilityState.Views by lazy {
         VisibilityState.Views(
@@ -65,10 +67,12 @@ class SearchActivity : AppCompatActivity() {
 
         trackAdapter.setOnClickListener { track ->
             prefs.addTrack(track)
+            sendToPlayer(track)
         }
 
         searchHistoryAdapter.setOnClickListener { track ->
             prefs.addTrack(track)
+            sendToPlayer(track)
         }
 
         binding.buttonRefresh.setOnClickListener { doSearch() }
@@ -104,6 +108,14 @@ class SearchActivity : AppCompatActivity() {
             }
             false
         }
+    }
+
+    private fun sendToPlayer(track: Track) = Intent(
+        this,
+        PlayerActivity::class.java
+    ).apply {
+        putExtra(Util.KEY_TRACK, track)
+        startActivity(this)
     }
 
     private fun toggleVisibilityBtnClear(text: String) {
@@ -142,8 +154,8 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateData(adapter: TrackAdapter, list: List<Track>, onStart: () -> Unit) {
-        adapter.submitTracksList(list, onStart)
+    private fun updateData(adapter: TrackAdapter, list: List<Track>, onFinish: () -> Unit) {
+        adapter.submitTracksList(list, onFinish)
     }
 
     private fun doSearch() {

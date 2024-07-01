@@ -1,41 +1,27 @@
 package com.practicum.playlistmaker.data
 
+import android.app.Application.MODE_PRIVATE
 import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker.App
-import com.practicum.playlistmaker.entity.Track
-
-private const val HISTORY_MAX_COUNT = 10
+import android.content.SharedPreferences
+import com.practicum.playlistmaker.R
 
 class PrefsStorage(
     context: Context,
 ) {
 
-    private val prefs = context as App
-
-    fun getHistory(): List<Track> = run {
-        val history = prefs.getHistory()
-
-        if (history.isNotBlank()) {
-            Gson().fromJson(history, object : TypeToken<List<Track>>() {}.type) ?: emptyList()
-        } else emptyList()
+    private val prefs: SharedPreferences by lazy {
+        context.getSharedPreferences(context.getString(R.string.prefs_file_name), MODE_PRIVATE)
     }
 
-    fun addTrack(track: Track) {
-        with (getHistory().toMutableList()) {
-            indexOfFirst { it.trackId == track.trackId }.apply {
-                if (this != -1) removeAt(this)
-            }
-            add(0, track)
-            if (size > HISTORY_MAX_COUNT) removeLast()
-            saveHistory(this)
-        }
+    fun getBoolean(key: String) = prefs.getBoolean(key, false)
+
+    fun putBoolean(key: String, value: Boolean) {
+        prefs.edit().putBoolean(key, value).apply()
     }
 
-    fun clearHistory() { saveHistory(emptyList()) }
+    fun getString(key: String) = prefs.getString(key, "") ?: ""
 
-    private fun saveHistory(history: List<Track>) {
-        prefs.saveHistory(Gson().toJson(history))
+    fun putString(key: String, value: String) {
+        prefs.edit().putString(key, value).apply()
     }
 }

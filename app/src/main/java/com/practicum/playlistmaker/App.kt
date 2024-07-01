@@ -2,12 +2,12 @@ package com.practicum.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.practicum.playlistmaker.data.Prefs
+import com.practicum.playlistmaker.data.PrefsStorage
 
 class App: Application() {
 
     var darkTheme = false
-    private val prefs = Prefs(this)
+    private val prefs = PrefsStorage(this)
 
     override fun onCreate() {
         super.onCreate()

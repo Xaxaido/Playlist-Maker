@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent

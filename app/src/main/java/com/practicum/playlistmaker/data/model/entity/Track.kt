@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.entity
+package com.practicum.playlistmaker.data.model.entity
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -7,7 +7,7 @@ data class Track(
     val trackId: Long,
     val trackName: String,
     val artistName: String,
-    val trackTimeMillis: String,
+    val trackTimeMillis: Long,
     val artworkUrl100: String?,
     val collectionName: String?,
     val releaseDate: String?,
@@ -16,11 +16,13 @@ data class Track(
     val previewUrl: String?,
 ) : Parcelable {
 
+    fun getPlayerAlbumCover() = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg") ?: ""
+
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readString()!!,
+        parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -33,7 +35,7 @@ data class Track(
         parcel.writeLong(trackId)
         parcel.writeString(trackName)
         parcel.writeString(artistName)
-        parcel.writeString(trackTimeMillis)
+        parcel.writeLong(trackTimeMillis)
         parcel.writeString(artworkUrl100)
         parcel.writeString(collectionName)
         parcel.writeString(releaseDate)

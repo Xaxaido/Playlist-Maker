@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.source
+package com.practicum.playlistmaker.data.source
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.entity.Track
+import com.practicum.playlistmaker.data.model.entity.Track
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
 import com.practicum.playlistmaker.extension.util.Util.dpToPx
 import com.practicum.playlistmaker.extension.util.Util.millisToSeconds
@@ -20,13 +20,12 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
     private val mDiffer = AsyncListDiffer(this, diffCallback)
     private var onClick: (Track) -> Unit = {}
 
-
     fun setOnClickListener(onClickListener: (Track) -> Unit) {
         onClick = onClickListener
     }
 
-    fun submitTracksList(list: List<Track>, callback: (() -> Unit) = {}) {
-        mDiffer.submitList(list, callback)
+    fun submitTracksList(list: List<Track>, onFinish: (() -> Unit) = {}) {
+        mDiffer.submitList(list, onFinish)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -37,7 +36,7 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(holder, position)
+        holder.bind(position)
     }
 
     override fun getItemCount() = mDiffer.currentList.size
@@ -46,7 +45,7 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
         private val binding: ItemTrackBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(holder: TrackViewHolder, pos: Int) {
+        fun bind(pos: Int) {
             val track = mDiffer.currentList[pos]
 
             Glide.with(itemView)
@@ -62,9 +61,9 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
 
             binding.trackTitle.text = track.trackName
             binding.artistName.text = track.artistName
-            binding.duration.text = track.trackTimeMillis.toLong().millisToSeconds()
+            binding.duration.text = track.trackTimeMillis.millisToSeconds()
 
-            holder.itemView.setOnClickListener { onClick(track) }
+            itemView.setOnClickListener { onClick(track) }
         }
     }
 
@@ -73,7 +72,7 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
         private val diffCallback = object : DiffUtil.ItemCallback<Track>() {
 
             override fun areItemsTheSame(oldItem: Track, newItem: Track) =
-                oldItem.trackName == newItem.trackName
+                oldItem.trackId == newItem.trackId
 
             override fun areContentsTheSame(oldItem: Track, newItem: Track) =
                 oldItem.trackName == newItem.trackName && oldItem.artistName == newItem.artistName

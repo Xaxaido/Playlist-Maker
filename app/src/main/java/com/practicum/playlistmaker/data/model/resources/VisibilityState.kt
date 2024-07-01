@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.extension.state
+package com.practicum.playlistmaker.data.model.resources
 
 import android.view.View
 import androidx.core.view.isVisible
