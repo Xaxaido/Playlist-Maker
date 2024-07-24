@@ -20,7 +20,7 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
 
     private val mDiffer = AsyncListDiffer(this, diffCallback)
     private var onClick: (Track) -> Unit = {}
-    private lateinit var context: Context
+    private lateinit var mContext: Context
 
     fun setOnClickListener(onClickListener: (Track) -> Unit) {
         onClick = onClickListener
@@ -31,8 +31,8 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        context = parent.context
-        val inflater = LayoutInflater.from(context)
+        mContext = parent.context
+        val inflater = LayoutInflater.from(mContext)
         val binding = ItemTrackBinding.inflate(inflater, parent, false)
 
         return TrackViewHolder(binding)
@@ -53,7 +53,7 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
                 .load(track.artworkUrl100)
                 .placeholder(ContextCompat.getDrawable(itemView.context, R.drawable.album_cover_stub))
                 .centerCrop()
-                .transform(RoundedCorners(2.dpToPx(context)))
+                .transform(RoundedCorners(2.dpToPx(mContext)))
                 .into(binding.cover)
 
             binding.trackTitle.text = track.trackName
