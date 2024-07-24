@@ -5,12 +5,14 @@
     android:id="@+id/player_motion_content"
     style="@style/LayoutFullScreen"
     android:background="@android:color/transparent"
-    app:layout_collapseMode="parallax"
-    tools:ignore="MissingConstraints, ContentDescription">
+    tools:ignore="ContentDescription">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
-        style="@style/Theme.PlaylistMaker.AppBarOverlay">
+        style="@style/Theme.PlaylistMaker.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
