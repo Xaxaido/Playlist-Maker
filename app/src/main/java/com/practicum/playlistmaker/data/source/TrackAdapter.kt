@@ -60,8 +60,7 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
             }
 
             binding.trackTitle.text = track.trackName
-            binding.artistName.text = track.artistName
-            binding.duration.text = track.trackTimeMillis.millisToSeconds()
+            binding.artistName.setText(track.artistName, track.trackTimeMillis.millisToSeconds())
 
             itemView.setOnClickListener { onClick(track) }
         }

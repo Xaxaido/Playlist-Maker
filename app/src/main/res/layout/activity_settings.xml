@@ -12,6 +12,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             style="@style/Theme.PlaylistMaker.PopupOverlay"
+            android:orientation="vertical"
             app:title="@string/settings" />
 
     </com.google.android.material.appbar.AppBarLayout>

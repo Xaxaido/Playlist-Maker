@@ -1,8 +1,7 @@
-package com.practicum.playlistmaker.extension.util
+package com.practicum.playlistmaker.extension.network
 
 import android.content.Context
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.extension.network.ITunesService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

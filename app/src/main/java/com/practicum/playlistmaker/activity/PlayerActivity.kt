@@ -28,7 +28,7 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        IntentCompat.getParcelableExtra(intent, Util.KEY_TRACK, Track::class.java)?.let { track = it }
+        IntentCompat.getSerializableExtra(intent, Util.KEY_TRACK, Track::class.java)?.let { track = it }
 
         with (binding) {
             playerTrackTitle.text = track.trackName

@@ -47,40 +47,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/android:colorBackground"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/search_history_header" />
 
-            <LinearLayout
-                android:id="@+id/search_history"
+            <TextView
+                android:id="@+id/search_history_header"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="top|center_vertical"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/padding_small_8x"
+                android:gravity="center"
+                android:text="@string/search_history_title"
+                android:textSize="@dimen/text_big"
+                android:textColor="?attr/colorOnBackground"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="@dimen/padding_small_8x"
-                    android:gravity="center"
-                    android:text="@string/search_history_title"
-                    android:textSize="@dimen/text_big"
-                    android:textColor="?attr/colorOnBackground"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/search_history_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/android:colorBackground"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-                <Button
-                    android:id="@+id/btn_clear_history"
-                    style="@style/DarkButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_small_12x"
-                    android:text="@string/search_history_btn_clear" />
-
-            </LinearLayout>
+            <Button
+                android:id="@+id/btn_clear_history"
+                style="@style/DarkButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_small_12x"
+                android:text="@string/search_history_btn_clear"
+                app:layout_constraintTop_toBottomOf="@id/recycler"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <FrameLayout
                 android:id="@+id/nothing_found"

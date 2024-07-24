@@ -4,19 +4,23 @@ import android.view.View
 import androidx.core.view.isVisible
 
 sealed interface VisibilityState {
-    object ShowError : VisibilityState
-    object ShowNothingFound : VisibilityState
-    object ShowNoData : VisibilityState
-    object ShowHistory : VisibilityState
-    object ShowContent : VisibilityState
-    object ShowProgress : VisibilityState
-    class Views(
-        private var list: Map<VisibilityState, View>
+    data object Error : VisibilityState
+    data object NothingFound : VisibilityState
+    data object NoData : VisibilityState
+    data object History : VisibilityState
+    data object SearchResults : VisibilityState
+    data object Loading : VisibilityState
+    class VisibilityItem(
+        val view: View,
+        val type: List<VisibilityState>,
+    )
+    class ViewsList(
+        private var views: List<VisibilityItem>,
     ) {
-
-        fun updateVisibility(state: VisibilityState) {
-            for (view in list.entries) {
-                view.value.isVisible = state::class == view.key::class
+        
+        infix fun show(state: VisibilityState) {
+            views.forEach {
+                it.view.isVisible = it.type.contains(state)
             }
         }
     }

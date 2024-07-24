@@ -24,9 +24,7 @@ class PrefsMediator(
 
     fun addTrack(track: Track) {
         with (getHistory().toMutableList()) {
-            indexOfFirst { it.trackId == track.trackId }.apply {
-                if (this != -1) removeAt(this)
-            }
+            removeIf { it.trackId == track.trackId }
             add(0, track)
             if (size > HISTORY_MAX_COUNT) removeLast()
             saveHistory(this)
