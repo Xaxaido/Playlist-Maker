@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.data.source
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
 
     private val mDiffer = AsyncListDiffer(this, diffCallback)
     private var onClick: (Track) -> Unit = {}
+    private lateinit var context: Context
 
     fun setOnClickListener(onClickListener: (Track) -> Unit) {
         onClick = onClickListener
@@ -29,14 +31,15 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
+        context = parent.context
+        val inflater = LayoutInflater.from(context)
         val binding = ItemTrackBinding.inflate(inflater, parent, false)
 
         return TrackViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(position)
+        holder.bind(mDiffer.currentList[position])
     }
 
     override fun getItemCount() = mDiffer.currentList.size
@@ -45,19 +48,13 @@ class TrackAdapter : ListAdapter<Track, TrackAdapter.TrackViewHolder>(diffCallba
         private val binding: ItemTrackBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(pos: Int) {
-            val track = mDiffer.currentList[pos]
-
+        fun bind(track: Track) {
             Glide.with(itemView)
                 .load(track.artworkUrl100)
                 .placeholder(ContextCompat.getDrawable(itemView.context, R.drawable.album_cover_stub))
                 .centerCrop()
-                .transform(RoundedCorners(2.dpToPx(itemView.context.applicationContext)))
+                .transform(RoundedCorners(2.dpToPx(context)))
                 .into(binding.cover)
-
-            itemView.setOnClickListener {
-                onClick(track)
-            }
 
             binding.trackTitle.text = track.trackName
             binding.artistName.setText(track.artistName, track.trackTimeMillis.millisToSeconds())
