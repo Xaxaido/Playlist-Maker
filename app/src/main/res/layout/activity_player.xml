@@ -76,6 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/padding_small_4x"
             android:layout_marginTop="@dimen/padding_small_6x"
+            android:textSize="@dimen/text_regular"
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="?attr/colorOnBackground"
@@ -139,7 +140,6 @@
             style="@style/DescriptionText"
             android:layout_marginTop="@dimen/padding_small_15x"
             android:text="@string/player_duration"
-            android:textColor="?attr/android:textColorSecondary"
             app:layout_constraintBottom_toTopOf="@id/album_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/current_time" />
@@ -159,7 +159,6 @@
             style="@style/DescriptionText"
             android:layout_marginTop="@dimen/padding_small_8x"
             android:text="@string/player_album"
-            android:textColor="?attr/android:textColorSecondary"
             app:layout_constraintBottom_toTopOf="@id/year"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/player_duration" />
@@ -180,7 +179,6 @@
             style="@style/DescriptionText"
             android:layout_marginTop="@dimen/padding_small_8x"
             android:text="@string/player_year"
-            android:textColor="?attr/android:textColorSecondary"
             app:layout_constraintBottom_toTopOf="@id/genre"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/album_title" />
@@ -200,7 +198,6 @@
             style="@style/DescriptionText"
             android:layout_marginTop="@dimen/padding_small_8x"
             android:text="@string/player_genre"
-            android:textColor="?attr/android:textColorSecondary"
             app:layout_constraintBottom_toTopOf="@id/country"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/year" />
@@ -221,7 +218,6 @@
             android:layout_marginTop="@dimen/padding_small_8x"
             android:layout_marginBottom="@dimen/padding_small_14x"
             android:text="@string/player_country"
-            android:textColor="?attr/android:textColorSecondary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/genre" />

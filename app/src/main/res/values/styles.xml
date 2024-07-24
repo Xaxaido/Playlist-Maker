@@ -56,8 +56,8 @@
         <item name="android:lines">1</item>
         <item name="android:ellipsize">end</item>
         <item name="android:fontFamily">@font/ys_400</item>
-        <item name="android:textSize">@dimen/text_small</item>
-        <item name="android:textColor">?attr/android:textColorSecondary</item>
+        <item name="android:textSize">@dimen/text_description_size</item>
+        <item name="android:textColor">@color/greyMedium</item>
     </style>
 
     <style name="Ellipsized" parent="DescriptionText">
