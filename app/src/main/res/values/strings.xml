@@ -15,7 +15,8 @@
     <string name="history_add_to_fav">Нравится</string>
     <string name="history_remove_from_fav">Не нравится</string>
     <string name="player_duration">Длительность</string>
-    <string name="default_duration">00:00</string>
+    <string name="default_duration_start">00:00</string>
+    <string name="default_duration_end">00:30</string>
     <string name="player_album">Альбом</string>
     <string name="player_year">Год</string>
     <string name="player_genre">Жанр</string>

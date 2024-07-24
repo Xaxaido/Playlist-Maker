@@ -130,7 +130,7 @@
             android:layout_marginTop="@dimen/padding_small_2x"
             android:textColor="?attr/colorOnBackground"
             android:textSize="@dimen/text_regular"
-            android:text="@string/default_duration"
+            android:text="@string/default_duration_end"
             app:layout_constraintEnd_toEndOf="@id/btn_play"
             app:layout_constraintStart_toStartOf="@id/btn_play"
             app:layout_constraintTop_toBottomOf="@id/btn_play" />
