@@ -7,6 +7,8 @@ import java.util.Locale
 
 object Util {
 
+    const val KEY_TRACK = "key_track"
+
     fun String.toDate() = SimpleDateFormat("yyyy", Locale.getDefault())
         .parse(this)
         ?.toInstant()
@@ -16,7 +18,7 @@ object Util {
         ?: ""
 
     fun Long.millisToSeconds() = SimpleDateFormat(
-        "mm:ss",
+        "mm : ss",
         Locale.getDefault()
     ).format(this) ?: ""
 

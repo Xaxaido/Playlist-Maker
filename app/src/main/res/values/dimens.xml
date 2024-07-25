@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_small">11sp</dimen>
+    <dimen name="text_description_size">13sp</dimen>
     <dimen name="text_regular">14sp</dimen>
     <dimen name="text_medium">16sp</dimen>
     <dimen name="text_big">19sp</dimen>
@@ -17,8 +18,13 @@
     <dimen name="padding_small_9x">18dp</dimen>
     <dimen name="padding_small_10x">20dp</dimen>
     <dimen name="padding_small_12x">24dp</dimen>
+    <dimen name="padding_small_13x">26dp</dimen>
+    <dimen name="padding_small_14x">28dp</dimen>
     <dimen name="padding_small_15x">30dp</dimen>
+    <dimen name="padding_small_16x">32dp</dimen>
     <dimen name="btn_action_size">32dp</dimen>
+    <dimen name="btn_small_min">24dp</dimen>
+    <dimen name="btn_big_min">40dp</dimen>
     <dimen name="header_margin">24dp</dimen>
     <dimen name="bottom_layout_margin">28dp</dimen>
     <dimen name="album_cover_size">45dp</dimen>
