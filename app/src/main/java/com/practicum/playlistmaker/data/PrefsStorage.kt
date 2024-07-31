@@ -13,13 +13,7 @@ class PrefsStorage(
         context.getSharedPreferences(context.getString(R.string.prefs_file_name), MODE_PRIVATE)
     }
 
-    fun getBoolean(key: String) = prefs.getBoolean(key, false)
-
-    fun putBoolean(key: String, value: Boolean) {
-        prefs.edit().putBoolean(key, value).apply()
-    }
-
-    fun getString(key: String) = prefs.getString(key, "") ?: ""
+    fun getString(key: String, defaultValue: String = "") = prefs.getString(key, defaultValue) ?: ""
 
     fun putString(key: String, value: String) {
         prefs.edit().putString(key, value).apply()

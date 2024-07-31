@@ -2,8 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_layout"
     style="@style/LayoutFullScreen"
     tools:ignore="MissingConstraints">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -17,42 +24,120 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/dark_mode_text"
-        style="@style/TextButton"
-        android:layout_width="wrap_content"
-        android:text="@string/dark_mode"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_bar" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/light_dark_theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/app_bar">
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch_dark_mode"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/panel_height"
-        android:layout_marginEnd="@dimen/padding_small_6x"
-        app:layout_constraintBottom_toBottomOf="@+id/dark_mode_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/dark_mode_text" />
+        <TextView
+            android:id="@+id/theme_header"
+            style="@style/TextButton"
+            android:layout_width="wrap_content"
+            android:text="@string/theme"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/padding_small_8x"
+            android:background="@drawable/bg_search_box"
+            android:backgroundTint="@color/panelColor"
+            app:layout_constraintBottom_toBottomOf="@id/theme_auto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/theme_header" />
+
+        <RadioGroup
+            android:id="@+id/theme_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/padding_small_8x"
+            app:layout_constraintTop_toBottomOf="@id/theme_header">
+
+            <RadioButton
+                android:id="@+id/btn_radio_light"
+                style="@style/RadioButton"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_light_mode"
+                android:gravity="center"
+                android:text="@string/theme_light" />
+
+            <RadioButton
+                android:id="@+id/btn_radio_dark"
+                style="@style/RadioButton"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_dark_mode"
+                android:gravity="center"
+                android:text="@string/theme_dark" />
+
+        </RadioGroup>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="@dimen/padding_small_8x"
+            android:background="@color/dividerColor"
+            app:layout_constraintBottom_toTopOf="@id/theme_auto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/theme_auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/theme_radio_group">
+
+            <TextView
+                android:id="@+id/theme_auto_text"
+                style="@style/TextButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/theme_auto"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_theme_auto"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/panel_height"
+                android:layout_marginEnd="@dimen/padding_small_14x"
+                android:background="@null"
+                android:checked="true" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/theme_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:constraint_referenced_ids="theme_header,background,theme_radio_group,divider"
+            tools:visibility="visible"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/btn_settings_share"
         style="@style/TextButton"
         android:text="@string/share_app"
-        app:layout_constraintTop_toBottomOf="@+id/dark_mode_text"
-        app:drawableEndCompat="@drawable/ic_share_app" />
+        app:drawableEndCompat="@drawable/ic_share_app"
+        app:layout_constraintTop_toBottomOf="@+id/light_dark_theme" />
 
     <TextView
         android:id="@+id/btn_contact_support"
         style="@style/TextButton"
         android:text="@string/contact_support"
-        app:layout_constraintTop_toBottomOf="@+id/btn_settings_share"
-        app:drawableEndCompat="@drawable/ic_contact_support" />
+        app:drawableEndCompat="@drawable/ic_contact_support"
+        app:layout_constraintTop_toBottomOf="@+id/btn_settings_share" />
 
     <TextView
         android:id="@+id/btn_settings_user_agreement"
         style="@style/TextButton"
         android:text="@string/user_agreement"
-        app:layout_constraintTop_toBottomOf="@+id/btn_contact_support"
-        app:drawableEndCompat="@drawable/ic_user_agreement" />
+        app:drawableEndCompat="@drawable/ic_user_agreement"
+        app:layout_constraintTop_toBottomOf="@+id/btn_contact_support" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

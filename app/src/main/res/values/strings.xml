@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name" translatable="false">Playlist maker</string>
     <string name="prefs_file_name" translatable="false">Main preferences</string>
-    <string name="dark_mode_enabled" translatable="false">isDarkModeOn</string>
+    <string name="app_theme" translatable="false">appTheme</string>
     <string name="search_history" translatable="false">searchHistory</string>
     <string name="image_view_stub">иконка</string>
     <string name="search">Поиск</string>
@@ -15,12 +15,13 @@
     <string name="history_add_to_fav">Нравится</string>
     <string name="history_remove_from_fav">Не нравится</string>
     <string name="player_duration">Длительность</string>
-    <string name="default_duration_start">00:00</string>
-    <string name="default_duration_end">00:30</string>
+    <string name="default_duration_start">00 : 00</string>
+    <string name="default_duration_end">00 : 30</string>
     <string name="player_album">Альбом</string>
     <string name="player_year">Год</string>
     <string name="player_genre">Жанр</string>
     <string name="player_country">Страна</string>
+    <string name="player_unknown">Неизвестно</string>
     <string name="update">Обновить</string>
     <string name="media_library">Медиатека</string>
     <string name="favorite_tracks">Избранные треки</string>
@@ -30,7 +31,10 @@
     <string name="empty_medialibrary">Ваша медиатека пуста</string>
     <string name="media_library_search_hint">Введите название песни</string>
     <string name="settings">Настройки</string>
-    <string name="dark_mode">Тёмная тема</string>
+    <string name="theme">Тема приложения</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_auto">Системная тема</string>
     <string name="share_app">Поделиться приложением</string>
     <string name="share_app_content">https://practicum.yandex.ru/android-developer/?from=catalog</string>
     <string name="contact_support">Написать в поддержку</string>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shimmer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/expanded_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/player_duration"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginEnd="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toTopOf="@id/album_title"
+            app:layout_constraintEnd_toStartOf="@+id/player_duration_text"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/player_duration_text"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toBottomOf="@id/player_duration"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/player_duration"
+            app:layout_constraintTop_toTopOf="@id/player_duration" />
+
+        <View
+            android:id="@+id/album_title"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="@dimen/padding_small_8x"
+            android:layout_marginEnd="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toTopOf="@id/year"
+            app:layout_constraintEnd_toStartOf="@+id/album_title_text"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/player_duration" />
+
+        <View
+            android:id="@+id/album_title_text"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toBottomOf="@id/album_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/album_title"
+            app:layout_constraintTop_toTopOf="@id/album_title" />
+
+        <View
+            android:id="@+id/year"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="@dimen/padding_small_8x"
+            android:layout_marginEnd="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toTopOf="@id/genre"
+            app:layout_constraintEnd_toStartOf="@+id/year_text"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/album_title" />
+
+        <View
+            android:id="@+id/year_text"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toBottomOf="@id/year"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/year"
+            app:layout_constraintTop_toTopOf="@id/year" />
+
+        <View
+            android:id="@+id/genre"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="@dimen/padding_small_8x"
+            android:layout_marginEnd="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toTopOf="@id/country"
+            app:layout_constraintEnd_toStartOf="@+id/genre_text"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/year" />
+
+        <View
+            android:id="@+id/genre_text"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toBottomOf="@id/genre"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:layout_constraintTop_toTopOf="@id/genre" />
+
+        <View
+            android:id="@+id/country"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="@dimen/padding_small_8x"
+            android:layout_marginEnd="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/country_text"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/genre" />
+
+        <View
+            android:id="@+id/country_text"
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="@dimen/padding_small_4x"
+            android:background="@drawable/shimmer_placeholder_background"
+            app:layout_constraintBottom_toBottomOf="@id/country"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/country"
+            app:layout_constraintTop_toTopOf="@id/country" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.facebook.shimmer.ShimmerFrameLayout>

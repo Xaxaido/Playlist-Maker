@@ -79,10 +79,10 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/padding_small_4x"
             android:layout_marginTop="@dimen/padding_small_6x"
-            android:textSize="@dimen/text_regular"
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="?attr/colorOnBackground"
+            android:textSize="@dimen/text_regular"
             app:layout_constraintBottom_toTopOf="@id/btn_play"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -131,9 +131,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/padding_small_2x"
+            android:text="@string/default_duration_end"
             android:textColor="?attr/colorOnBackground"
             android:textSize="@dimen/text_regular"
-            android:text="@string/default_duration_end"
             app:layout_constraintEnd_toEndOf="@id/btn_play"
             app:layout_constraintStart_toStartOf="@id/btn_play"
             app:layout_constraintTop_toBottomOf="@id/btn_play" />
@@ -143,15 +143,16 @@
             style="@style/DescriptionText"
             android:layout_marginTop="@dimen/padding_small_15x"
             android:text="@string/player_duration"
-            app:layout_constraintTag="playerDuration"
             app:layout_constraintBottom_toTopOf="@id/album_title"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTag="playerDuration"
             app:layout_constraintTop_toBottomOf="@id/current_time" />
 
         <TextView
             android:id="@+id/player_duration_text"
             style="@style/Ellipsized"
             android:textColor="?attr/colorOnBackground"
+            app:layout_constraintTag="playerDurationText"
             app:layout_constraintBottom_toBottomOf="@id/player_duration"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier"
@@ -163,9 +164,9 @@
             style="@style/DescriptionText"
             android:layout_marginTop="@dimen/padding_small_8x"
             android:text="@string/player_album"
-            app:layout_constraintTag="albumTitle"
             app:layout_constraintBottom_toTopOf="@id/year"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTag="albumTitle"
             app:layout_constraintTop_toBottomOf="@id/player_duration" />
 
         <TextView
@@ -173,6 +174,7 @@
             style="@style/Ellipsized"
             android:layout_width="0dp"
             android:textColor="?attr/colorOnBackground"
+            app:layout_constraintTag="albumTitleText"
             app:layout_constraintBottom_toBottomOf="@id/album_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier"
@@ -184,15 +186,16 @@
             style="@style/DescriptionText"
             android:layout_marginTop="@dimen/padding_small_8x"
             android:text="@string/player_year"
-            app:layout_constraintTag="year"
             app:layout_constraintBottom_toTopOf="@id/genre"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTag="year"
             app:layout_constraintTop_toBottomOf="@id/album_title" />
 
         <TextView
             android:id="@+id/year_text"
             style="@style/Ellipsized"
             android:textColor="?attr/colorOnBackground"
+            app:layout_constraintTag="yearText"
             app:layout_constraintBottom_toBottomOf="@id/year"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier"
@@ -204,15 +207,16 @@
             style="@style/DescriptionText"
             android:layout_marginTop="@dimen/padding_small_8x"
             android:text="@string/player_genre"
-            app:layout_constraintTag="genre"
             app:layout_constraintBottom_toTopOf="@id/country"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTag="genre"
             app:layout_constraintTop_toBottomOf="@id/year" />
 
         <TextView
             android:id="@+id/genre_text"
             style="@style/Ellipsized"
             android:textColor="?attr/colorOnBackground"
+            app:layout_constraintTag="genreText"
             app:layout_constraintBottom_toBottomOf="@id/genre"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier"
@@ -225,9 +229,9 @@
             android:layout_marginTop="@dimen/padding_small_8x"
             android:layout_marginBottom="@dimen/padding_small_14x"
             android:text="@string/player_country"
-            app:layout_constraintTag="country"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTag="country"
             app:layout_constraintTop_toBottomOf="@id/genre" />
 
         <TextView
@@ -235,11 +239,26 @@
             style="@style/Ellipsized"
             android:elevation="10dp"
             android:textColor="?attr/colorOnBackground"
+            app:layout_constraintTag="countryText"
             app:layout_constraintBottom_toBottomOf="@id/country"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="@id/country"
             tools:text="Country" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/country"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/player_duration">
+
+            <include
+                android:id="@+id/shimmer_placeholder"
+                layout="@layout/shimmer_player_placeholder" />
+
+        </FrameLayout>
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
@@ -248,6 +267,15 @@
             app:barrierDirection="right"
             app:barrierMargin="@dimen/padding_small_8x"
             app:constraint_referenced_tags="playerDuration, albumTitle, year, genre, country" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/track_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:constraint_referenced_tags="playerDuration, playerDurationText, albumTitle,
+                albumTitleText, year, yearText, genre, genreText, country, countryText"
+            tools:visibility="visible"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
