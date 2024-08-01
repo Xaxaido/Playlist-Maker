@@ -78,7 +78,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun setListeners() {
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.btnPlay.setOnClickListener {
-            mediaPlayer.apply { if (playWhenReady) pause() else play() }
+            mediaPlayer.apply { if (isPlaying) pause() else play() }
         }
     }
 

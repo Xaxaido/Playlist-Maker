@@ -29,7 +29,7 @@ class SearchActivity : AppCompatActivity() {
     private var searchRequest = ""
     private var isHistoryShowed = true
     private var isClickEnabled = true
-    private val timer = Debounce(delay = 2000L) { searchTracks() }
+    private val timer = Debounce(delay = Util.USER_INPUT_DELAY) { searchTracks() }
     private val prefs: PrefsMediator by lazy {
         PrefsMediator(applicationContext)
     }
@@ -70,7 +70,7 @@ class SearchActivity : AppCompatActivity() {
             prefs.addTrack(track)
             sendToPlayer(track)
             isClickEnabled = false
-            Debounce(delay = 1000L) { isClickEnabled = true }.start()
+            Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
         }
 
         binding.buttonRefresh.setOnClickListener { searchTracks() }
