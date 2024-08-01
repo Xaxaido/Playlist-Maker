@@ -44,6 +44,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.session)
+    implementation(libs.androidx.media3.exoplayer)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -57,4 +60,6 @@ dependencies {
     implementation (libs.koinAndroid)
     implementation (libs.kotlinxCoroutinesCore)
     implementation (libs.viewpager2)
+    implementation (libs.facebook.shimmer)
+    implementation (libs.jsoup)
 }

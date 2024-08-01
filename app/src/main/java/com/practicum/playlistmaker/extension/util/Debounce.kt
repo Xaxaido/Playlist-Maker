@@ -16,6 +16,7 @@ class Debounce(
 
     private val scope: CoroutineScope = CoroutineScope(dispatcher)
     private var job: Job? = null
+    var isRunning = false
 
     fun start(isLoop: Boolean = false) {
         stop()
@@ -23,6 +24,7 @@ class Debounce(
             do {
                 delay(delay)
                 if (isActive) {
+                    isRunning = true
                     action()
                 }
             } while (isLoop)
@@ -30,6 +32,7 @@ class Debounce(
     }
 
     fun stop() {
+        isRunning = false
         job?.cancel()
         job = null
     }

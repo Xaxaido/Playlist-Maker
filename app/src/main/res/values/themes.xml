@@ -13,7 +13,7 @@
         <item name="android:colorBackground">@color/white</item>
         <item name="colorOnBackground">@color/black</item>
         <item name="android:textColorSecondary">@color/greyDark</item>
-
+        <item name="android:windowAnimationStyle">@style/WindowAnimationFadeInOut</item>
         <item name="android:fontFamily">@font/ys_500</item>
         <item name="colorControlHighlight">@color/rippleColor</item>
         <item name="actionBarStyle">@style/Theme.PlaylistMaker.AppBarOverlay</item>

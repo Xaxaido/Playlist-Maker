@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -18,6 +17,7 @@ import com.practicum.playlistmaker.extension.network.RetrofitService
 import com.practicum.playlistmaker.extension.util.Util
 import com.practicum.playlistmaker.data.source.TrackAdapter
 import com.practicum.playlistmaker.extension.util.Debounce
+import com.practicum.playlistmaker.player.ui.PlayerActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,7 +28,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackAdapter: TrackAdapter
     private var searchRequest = ""
     private var isHistoryShowed = true
-    private val timer = Debounce { searchTracks() }
+    private var isClickEnabled = true
+    private val timer = Debounce(delay = Util.USER_INPUT_DELAY) { searchTracks() }
     private val prefs: PrefsMediator by lazy {
         PrefsMediator(applicationContext)
     }
@@ -65,8 +66,11 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter.setOnClickListener { track ->
+            if (!isClickEnabled) return@setOnClickListener
             prefs.addTrack(track)
             sendToPlayer(track)
+            isClickEnabled = false
+            Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
         }
 
         binding.buttonRefresh.setOnClickListener { searchTracks() }
@@ -95,13 +99,6 @@ class SearchActivity : AppCompatActivity() {
             } else if (isHistoryShowed) showNoData()
 
             timer.start()
-        }
-
-        binding.searchLayout.searchText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTracks()
-            }
-            false
         }
     }
 

@@ -28,7 +28,7 @@ class EllipsizeTextView @JvmOverloads constructor(
 
     private lateinit var sourceText: String
     private lateinit var extraText: String
-    private var drawableSize = DRAWABLE_SIZE.dpToPx()
+    private val drawableSize = DRAWABLE_SIZE.dpToPx()
     private val sideMargin = SIDE_MARGIN.dpToPx()
     private val availableWidth: Float by lazy {
         measuredWidth - (ELLIPSIZE_SYMBOL.width() + drawableSize + sideMargin * 2) - extraText.width()

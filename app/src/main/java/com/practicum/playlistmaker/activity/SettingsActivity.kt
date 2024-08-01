@@ -1,35 +1,32 @@
 package com.practicum.playlistmaker.activity
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
 import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.data.model.resources.AppTheme
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySettingsBinding
+    private val prefs: App by lazy { applicationContext as App }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = ActivitySettingsBinding.inflate(layoutInflater)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setListeners()
+        binding.themeSwitch.isChecked = prefs.appTheme == AppTheme.SYSTEM.value
+    }
 
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
-        }
-
-        val prefs = applicationContext as App
-
-        binding.switchDarkMode.isChecked = prefs.darkTheme
-        binding.switchDarkMode.setOnClickListener { view ->
-            val isChecked = (view as SwitchCompat).isChecked
-
-            prefs.saveDarkThemeState(isChecked)
-            prefs.toggleDarkTheme(isChecked)
-        }
+    private fun setListeners() {
+        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.themeSwitch.setOnClickListener { setTheme() }
 
         binding.btnSettingsShare.setOnClickListener {
             Intent().apply {
@@ -67,5 +64,27 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+
+    private fun setTheme() {
+        updateTheme(
+            if (binding.themeSwitch.isChecked) {
+                AppTheme.SYSTEM.value
+            } else {
+                when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                    Configuration.UI_MODE_NIGHT_NO -> {
+                        AppTheme.DARK.value
+                    }
+                    else -> {
+                        AppTheme.LIGHT.value
+                    }
+                }
+            }
+        )
+    }
+
+    private fun updateTheme(theme: String) {
+        prefs.saveTheme(theme)
+        prefs.applyTheme(theme)
     }
 }

@@ -18,27 +18,27 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
-        android:id="@+id/dark_mode_text"
+        android:id="@+id/theme_text"
         style="@style/TextButton"
         android:layout_width="wrap_content"
-        android:text="@string/dark_mode"
+        android:text="@string/theme_auto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/app_bar" />
 
     <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch_dark_mode"
+        android:id="@+id/theme_switch"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/panel_height"
         android:layout_marginEnd="@dimen/padding_small_6x"
-        app:layout_constraintBottom_toBottomOf="@+id/dark_mode_text"
+        app:layout_constraintBottom_toBottomOf="@+id/theme_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/dark_mode_text" />
+        app:layout_constraintTop_toTopOf="@+id/theme_text" />
 
     <TextView
         android:id="@+id/btn_settings_share"
         style="@style/TextButton"
         android:text="@string/share_app"
-        app:layout_constraintTop_toBottomOf="@+id/dark_mode_text"
+        app:layout_constraintTop_toBottomOf="@+id/theme_text"
         app:drawableEndCompat="@drawable/ic_share_app" />
 
     <TextView

@@ -11,6 +11,8 @@ interface ITunesService {
         @Query("term") text: String,
         @Query("entity") entity: String = "song",
         @Query("limit") limit: Int = 100,
-        @Query("offset") offset: Int = 0
+        @Query("offset") offset: Int = 0,
+        @Query("country") country: String = "us",
+        @Query("lang") lang: String = "ru_ru",
     ): Call<TrackResponse>
 }

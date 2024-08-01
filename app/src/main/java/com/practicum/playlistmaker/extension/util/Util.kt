@@ -7,7 +7,9 @@ import java.util.Locale
 
 object Util {
 
-    const val KEY_TRACK = "key_track"
+    const val KEY_TRACK = "KEY_TRACK"
+    const val USER_INPUT_DELAY = 2000L
+    const val BUTTON_ENABLED_DELAY = 1000L
 
     fun String.toDate() = SimpleDateFormat("yyyy", Locale.getDefault())
         .parse(this)
