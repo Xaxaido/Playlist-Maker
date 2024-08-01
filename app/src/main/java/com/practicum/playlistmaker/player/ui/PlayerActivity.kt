@@ -40,7 +40,6 @@ class PlayerActivity : AppCompatActivity() {
         Debounce { updateProgress(true) }
     }
     private val isPlaying get() = mediaPlayer.isPlaying
-    private val duration get() = mediaPlayer.duration
     private val currentPosition get() = mediaPlayer.currentPosition
     private val playerListener = object : Player.Listener {
 
@@ -48,6 +47,7 @@ class PlayerActivity : AppCompatActivity() {
             super.onPlaybackStateChanged(playbackState)
 
             when (playbackState) {
+                Player.STATE_READY -> binding.btnPlay.isEnabled = true
                 Player.STATE_ENDED -> updateProgress(false)
                 else -> {}
             }
@@ -83,6 +83,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        binding.btnPlay.isEnabled = false
         CoroutineScope(Dispatchers.Main).launch {
             val result = withContext(Dispatchers.IO) {
                 Jsoup.connect(track.artistViewUrl).get()
@@ -144,7 +145,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun updateProgress(isPlaying: Boolean) {
-        binding.currentTime.text = if (isPlaying) (duration - currentPosition).millisToSeconds() else getString(R.string.default_duration_end)
+        binding.currentTime.text = if (isPlaying) currentPosition.millisToSeconds() else getString(R.string.default_duration_start)
     }
 
     private fun updatePlayBtn(isPlaying: Boolean) {

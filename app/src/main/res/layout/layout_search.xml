@@ -46,7 +46,6 @@
             android:textCursorDrawable="@drawable/text_cursor"
             android:textSize="@dimen/text_medium"
             android:singleLine="true"
-            android:imeOptions="actionDone"
             tools:ignore="LabelFor,TouchTargetSizeCheck" />
 
         <ImageButton

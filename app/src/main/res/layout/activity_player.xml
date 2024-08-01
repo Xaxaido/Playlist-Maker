@@ -131,7 +131,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/padding_small_2x"
-            android:text="@string/default_duration_end"
+            android:text="@string/default_duration_start"
             android:textColor="?attr/colorOnBackground"
             android:textSize="@dimen/text_regular"
             app:layout_constraintEnd_toEndOf="@id/btn_play"

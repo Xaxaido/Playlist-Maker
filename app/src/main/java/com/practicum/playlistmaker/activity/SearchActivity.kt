@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -29,7 +28,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackAdapter: TrackAdapter
     private var searchRequest = ""
     private var isHistoryShowed = true
-    private val timer = Debounce { searchTracks() }
+    private var isClickEnabled = true
+    private val timer = Debounce(delay = 2000L) { searchTracks() }
     private val prefs: PrefsMediator by lazy {
         PrefsMediator(applicationContext)
     }
@@ -66,8 +66,11 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter.setOnClickListener { track ->
+            if (!isClickEnabled) return@setOnClickListener
             prefs.addTrack(track)
             sendToPlayer(track)
+            isClickEnabled = false
+            Debounce(delay = 1000L) { isClickEnabled = true }.start()
         }
 
         binding.buttonRefresh.setOnClickListener { searchTracks() }
@@ -96,13 +99,6 @@ class SearchActivity : AppCompatActivity() {
             } else if (isHistoryShowed) showNoData()
 
             timer.start()
-        }
-
-        binding.searchLayout.searchText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTracks()
-            }
-            false
         }
     }
 
