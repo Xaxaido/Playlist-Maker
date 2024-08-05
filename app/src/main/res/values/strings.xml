@@ -4,6 +4,8 @@
     <string name="prefs_file_name" translatable="false">Main preferences</string>
     <string name="app_theme" translatable="false">appTheme</string>
     <string name="search_history" translatable="false">searchHistory</string>
+    <string name="player_layout" translatable="false">playerLayout</string>
+    <string name="undefined" translatable="false">undefined</string>
     <string name="image_view_stub">иконка</string>
     <string name="search">Поиск</string>
     <string name="search_hint">Поиск</string>

@@ -1,46 +1,39 @@
 package com.practicum.playlistmaker.player.ui
 
-import android.content.ComponentName
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
+import androidx.core.widget.NestedScrollView
+import androidx.media3.common.Player
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.common.util.concurrent.ListenableFuture
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
-import com.practicum.playlistmaker.data.model.entity.Track
+import com.practicum.playlistmaker.data.domain.model.Track
 import com.practicum.playlistmaker.extension.util.Util
 import com.practicum.playlistmaker.extension.util.Util.dpToPx
 import com.practicum.playlistmaker.extension.util.Util.millisToSeconds
 import com.practicum.playlistmaker.extension.util.Util.toDate
-import com.practicum.playlistmaker.player.PlaybackService
-import androidx.media3.common.Player
-import com.google.common.util.concurrent.MoreExecutors
-import com.practicum.playlistmaker.extension.util.Debounce
+import com.practicum.playlistmaker.player.PlayerUI
+import com.practicum.playlistmaker.player.PlayerPresenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), PlayerUI {
 
     private lateinit var binding: ActivityPlayerBinding
+    private lateinit var viewModel: PlayerPresenter
     private lateinit var track: Track
-    private lateinit var controller: ListenableFuture<MediaController>
-    private lateinit var mediaPlayer: MediaController
-    private val timer: Debounce by lazy {
-        Debounce { updateProgress(true) }
-    }
-    private val isPlaying get() = mediaPlayer.isPlaying
-    private val currentPosition get() = mediaPlayer.currentPosition
     private val playerListener = object : Player.Listener {
 
         override fun onPlaybackStateChanged(playbackState: Int) {
@@ -48,14 +41,14 @@ class PlayerActivity : AppCompatActivity() {
 
             when (playbackState) {
                 Player.STATE_READY -> binding.btnPlay.isEnabled = true
-                Player.STATE_ENDED -> updateProgress(false)
+                Player.STATE_ENDED -> viewModel.updateProgress()
                 else -> {}
             }
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             updatePlayBtn(isPlaying)
-            updateTimer(isPlaying)
+            viewModel.updateTimer(isPlaying)
         }
     }
 
@@ -70,19 +63,26 @@ class PlayerActivity : AppCompatActivity() {
             Util.KEY_TRACK,
             Track::class.java,
         )?.let { track = it }
+        viewModel = PlayerPresenter(this)
         setListeners()
         setupUI()
-        initPlayer()
+        viewModel.init(playerListener, track)
     }
 
     private fun setListeners() {
         binding.toolbar.setNavigationOnClickListener { finish() }
-        binding.btnPlay.setOnClickListener {
-            mediaPlayer.apply { if (isPlaying) pause() else play() }
-        }
+        binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
     }
 
     private fun setupUI() {
+        binding.albumCover.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+
+            override fun onGlobalLayout() {
+                binding.albumCover.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                //adjustLayout(binding.albumCover.width)
+            }
+        })
+
         binding.btnPlay.isEnabled = false
         CoroutineScope(Dispatchers.Main).launch {
             val result = withContext(Dispatchers.IO) {
@@ -113,57 +113,53 @@ class PlayerActivity : AppCompatActivity() {
             .into(findViewById(R.id.album_cover))
     }
 
-    private fun initPlayer() {
-        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
+    private fun adjustLayout(coverWidth: Int) {
+        val screenWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            windowManager.currentWindowMetrics.bounds.width()
+        } else {
+            @Suppress("DEPRECATION")
+            DisplayMetrics().let { displayMetrics ->
+                windowManager.defaultDisplay.getMetrics(displayMetrics)
+                displayMetrics.widthPixels
+            }
+        }
 
-        controller = MediaController.Builder(this, sessionToken).buildAsync()
-        controller.apply {
-            addListener({
-                if (isDone) {
-                    mediaPlayer = get()
-                    mediaPlayer.addListener(playerListener)
-                    prepareMedia()
-                }
-            }, MoreExecutors.directExecutor())
+        if (coverWidth < screenWidth * Util.PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER) {
+            val scrollView = NestedScrollView(this).apply {
+                id = View.generateViewId()
+                overScrollMode = View.OVER_SCROLL_NEVER
+                layoutParams = binding.expandedContainer.layoutParams
+            }
+
+            binding.expandedContainer.apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            }
+
+            binding.contentLayout.removeView(binding.expandedContainer)
+            scrollView.addView(binding.expandedContainer)
+            binding.contentLayout.addView(scrollView)
+
+            ConstraintSet().apply {
+                clone(binding.expandedContainer)
+                clear(binding.albumCover.id, ConstraintSet.BOTTOM)
+                clear(binding.albumTitle.id, ConstraintSet.BOTTOM)
+                clear(binding.playerArtistName.id, ConstraintSet.BOTTOM)
+                applyTo(binding.expandedContainer)
+            }
         }
     }
 
-    private fun prepareMedia() {
-        val mediaItem = MediaItem.Builder()
-            .setUri(track.previewUrl)
-            .setMediaMetadata(
-                MediaMetadata.Builder()
-                    .setArtist(track.artistName)
-                    .setTitle(track.trackName)
-                    .setArtworkUri(Uri.parse(track.getPlayerAlbumCover()))
-                    .build()
-            )
-            .build()
-
-        mediaPlayer.setMediaItem(mediaItem)
-        mediaPlayer.prepare()
-    }
-
-    private fun updateProgress(isPlaying: Boolean) {
-        binding.currentTime.text = if (isPlaying) currentPosition.millisToSeconds() else getString(R.string.default_duration_start)
-    }
-
-    private fun updatePlayBtn(isPlaying: Boolean) {
+    override fun updatePlayBtn(isPlaying: Boolean) {
         binding.btnPlay.setImageResource(if (isPlaying) R.drawable.pause_button else R.drawable.play_button)
     }
 
-    private fun updateTimer(isPlaying: Boolean) {
-        if (!isPlaying && timer.isRunning) {
-            timer.stop()
-        } else if (isPlaying) {
-            timer.start(true)
-        }
-    }
+    override fun setProgress(progress: String) { binding.currentTime.text = progress }
 
     override fun onDestroy() {
-        updateTimer(isPlaying)
-        mediaPlayer.pause()
-        MediaController.releaseFuture(controller)
+        viewModel.release()
         super.onDestroy()
     }
 }

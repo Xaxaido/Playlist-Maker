@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.data.model.entity.Track
+import com.practicum.playlistmaker.data.domain.model.Track
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
 import com.practicum.playlistmaker.extension.util.Util.dpToPx
 import com.practicum.playlistmaker.extension.util.Util.millisToSeconds

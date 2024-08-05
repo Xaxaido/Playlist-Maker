@@ -1,40 +1,25 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
-import com.practicum.playlistmaker.data.PrefsStorage
-import com.practicum.playlistmaker.data.model.resources.AppTheme
+import android.content.SharedPreferences
+import com.practicum.playlistmaker.data.domain.mediator.SettingsMediatorImpl
+import com.practicum.playlistmaker.data.domain.repository.SettingsRepositoryImpl
+import com.practicum.playlistmaker.extension.util.Util
 
 class App: Application() {
 
-    lateinit var appTheme: String
-    private val prefs = PrefsStorage(this)
+    val prefs: SharedPreferences by lazy {
+        getSharedPreferences(getString(R.string.prefs_file_name), MODE_PRIVATE)
+    }
 
     override fun onCreate() {
         super.onCreate()
 
-        appTheme = prefs.getString(getString(R.string.app_theme), AppTheme.SYSTEM.value)
-        applyTheme(appTheme)
-    }
-
-    fun getHistory() = prefs.getString(getString(R.string.search_history))
-
-    fun saveHistory(history: String) {
-        prefs.putString(getString(R.string.search_history), history)
-    }
-
-    fun saveTheme(theme: String) {
-        prefs.putString(getString(R.string.app_theme), theme)
-    }
-
-    fun applyTheme(theme: String) {
-        appTheme = theme
-        AppCompatDelegate.setDefaultNightMode(
-            when (theme) {
-                AppTheme.LIGHT.value -> AppCompatDelegate.MODE_NIGHT_NO
-                AppTheme.DARK.value -> AppCompatDelegate.MODE_NIGHT_YES
-                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-            }
+        val settingsMediator =  SettingsMediatorImpl(
+            SettingsRepositoryImpl(applicationContext, prefs)
         )
+
+        val appTheme = settingsMediator.getThemeSettings().appTheme
+        Util.applyTheme(appTheme)
     }
 }

@@ -8,11 +8,11 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import com.practicum.playlistmaker.data.PrefsMediator
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.data.model.entity.Track
+import com.practicum.playlistmaker.data.domain.model.Track
+import com.practicum.playlistmaker.data.domain.repository.PrefsStorageRepositoryImpl
 import com.practicum.playlistmaker.extension.network.TrackResponse
-import com.practicum.playlistmaker.data.model.resources.VisibilityState.*
+import com.practicum.playlistmaker.data.resources.VisibilityState.*
 import com.practicum.playlistmaker.extension.network.RetrofitService
 import com.practicum.playlistmaker.extension.util.Util
 import com.practicum.playlistmaker.data.source.TrackAdapter
@@ -30,8 +30,8 @@ class SearchActivity : AppCompatActivity() {
     private var isHistoryShowed = true
     private var isClickEnabled = true
     private val timer = Debounce(delay = Util.USER_INPUT_DELAY) { searchTracks() }
-    private val prefs: PrefsMediator by lazy {
-        PrefsMediator(applicationContext)
+    private val prefs: PrefsStorageRepositoryImpl by lazy {
+        PrefsStorageRepositoryImpl(applicationContext)
     }
     private val alisa: ViewsList by lazy {
         ViewsList(
