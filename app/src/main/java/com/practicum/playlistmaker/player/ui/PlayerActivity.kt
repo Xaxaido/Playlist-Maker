@@ -79,7 +79,7 @@ class PlayerActivity : AppCompatActivity(), PlayerUI {
 
             override fun onGlobalLayout() {
                 binding.albumCover.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                //adjustLayout(binding.albumCover.width)
+                adjustLayout(binding.albumCover.width)
             }
         })
 
@@ -110,7 +110,7 @@ class PlayerActivity : AppCompatActivity(), PlayerUI {
             .load(track.getPlayerAlbumCover())
             .placeholder(R.drawable.player_album_cover_stub)
             .transform(RoundedCorners(8.dpToPx(this)))
-            .into(findViewById(R.id.album_cover))
+            .into(binding.albumCover)
     }
 
     private fun adjustLayout(coverWidth: Int) {

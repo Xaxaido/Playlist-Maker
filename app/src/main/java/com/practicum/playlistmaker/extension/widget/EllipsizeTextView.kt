@@ -26,8 +26,8 @@ class EllipsizeTextView @JvmOverloads constructor(
     private fun String.width() = paint.measureText(this)
     private fun Int.dpToPx() = (this * context.resources.displayMetrics.density).toInt()
 
-    private lateinit var sourceText: String
-    private lateinit var extraText: String
+    private var sourceText = ""
+    private var extraText = ""
     private val drawableSize = DRAWABLE_SIZE.dpToPx()
     private val sideMargin = SIDE_MARGIN.dpToPx()
     private val availableWidth: Float by lazy {

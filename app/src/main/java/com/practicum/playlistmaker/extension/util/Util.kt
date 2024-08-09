@@ -13,7 +13,7 @@ object Util {
     const val KEY_TRACK = "KEY_TRACK"
     const val USER_INPUT_DELAY = 2000L
     const val BUTTON_ENABLED_DELAY = 1000L
-    const val PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER = 0.5
+    const val PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER = 1
 
     fun String.toDate() = SimpleDateFormat("yyyy", Locale.getDefault())
         .parse(this)

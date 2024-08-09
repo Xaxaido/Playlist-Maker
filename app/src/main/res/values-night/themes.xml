@@ -23,7 +23,6 @@
     <style name="Theme.PlaylistMaker.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/header_margin</item>
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:animateLayoutChanges">true</item>
         <item name="titleTextStyle">@style/ToolbarTextTitle</item>
