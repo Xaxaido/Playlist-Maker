@@ -13,7 +13,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.PrefsStorageRepositoryImpl
+import com.practicum.playlistmaker.data.SearchHistoryRepositoryImpl
 import com.practicum.playlistmaker.data.resources.TracksSearchState
 import com.practicum.playlistmaker.data.resources.VisibilityState.Error
 import com.practicum.playlistmaker.data.resources.VisibilityState.History
@@ -40,8 +40,8 @@ class SearchActivity : AppCompatActivity() {
     private var isClickEnabled = true
     private var isKeyboardVisible = false
     private val timer = Debounce(delay = Util.USER_INPUT_DELAY) { searchTracks() }
-    private val prefs: PrefsStorageRepositoryImpl by lazy {
-        PrefsStorageRepositoryImpl(applicationContext)
+    private val prefs: SearchHistoryRepositoryImpl by lazy {
+        Creator.getSearchHistoryRepositoryImpl(this)
     }
     private val alisa: ViewsList by lazy {
         ViewsList(
@@ -97,6 +97,7 @@ class SearchActivity : AppCompatActivity() {
 
         trackAdapter.setOnTrackClickListener { track ->
             if (!isClickEnabled) return@setOnTrackClickListener
+
             prefs.addTrack(track)
             sendToPlayer(track)
             isClickEnabled = false

@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker.data
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.api.PrefsStorageRepository
 import com.practicum.playlistmaker.domain.models.Track
@@ -12,9 +12,9 @@ private const val HISTORY_MAX_COUNT = 10
 
 class PrefsStorageRepositoryImpl(
     context: Context,
+    private val prefs: SharedPreferences,
 ) : PrefsStorageRepository {
 
-    private val prefs = (context as App).prefs
     private val key = context.getString(R.string.search_history)
 
     override fun getHistory(): List<Track> = run {
