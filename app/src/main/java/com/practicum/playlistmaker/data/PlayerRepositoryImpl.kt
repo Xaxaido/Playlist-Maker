@@ -12,7 +12,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.practicum.playlistmaker.domain.api.MediaRepository
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.player.PlaybackService
+import com.practicum.playlistmaker.domain.api.PlaybackService
 
 class PlayerRepositoryImpl (
     private val context: Context,

@@ -1,9 +1,10 @@
-package com.practicum.playlistmaker.presentation.settings
+package com.practicum.playlistmaker.domain.impl
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.api.ExternalNavigator
 
 class ExternalNavigatorImpl(
     private val context: Context,

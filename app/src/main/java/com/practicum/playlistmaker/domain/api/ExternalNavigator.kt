@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.presentation.settings
+package com.practicum.playlistmaker.domain.api
 
 interface ExternalNavigator {
     fun shareApp()

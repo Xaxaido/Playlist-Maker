@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.domain.impl
 
 import com.practicum.playlistmaker.domain.api.SharingMediator
-import com.practicum.playlistmaker.presentation.settings.ExternalNavigator
+import com.practicum.playlistmaker.domain.api.ExternalNavigator
 
 class SharingMediatorImpl (
     private val externalNavigator: ExternalNavigator

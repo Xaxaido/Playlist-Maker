@@ -1,8 +1,7 @@
-package com.practicum.playlistmaker.presentation.settings
+package com.practicum.playlistmaker.data.resources
 
 import android.content.Context
 import android.content.res.Configuration
-import com.practicum.playlistmaker.data.resources.AppTheme
 
 class ThemeSettings(
     private val context: Context,

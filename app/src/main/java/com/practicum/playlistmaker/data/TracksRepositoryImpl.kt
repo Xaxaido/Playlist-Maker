@@ -21,7 +21,7 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                     TracksSearchState.Success(result.map { it.toTrack() })
                 }
             }
-            else -> TracksSearchState.Error(emptyList(), response.resultCode)
+            else -> TracksSearchState.Error(error = response.resultCode)
         }
     }
 }
