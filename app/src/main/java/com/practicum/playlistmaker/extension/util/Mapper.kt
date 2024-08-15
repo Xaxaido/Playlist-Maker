@@ -7,18 +7,17 @@ import com.practicum.playlistmaker.extension.util.Util.millisToSeconds
 
 object Mapper {
 
-    fun TrackDto.toTrack() =
-        Track(
-            trackId,
-            trackName,
-            artistName,
-            trackTimeMillis.millisToSeconds(),
-            artworkUrl100,
-            collectionName,
-            releaseDate?.toDate(),
-            primaryGenreName,
-            country,
-            previewUrl,
-            artistViewUrl,
-        )
+    fun TrackDto.toTrack() = Track(
+        trackId,
+        trackName,
+        artistName,
+        trackTimeMillis.millisToSeconds(),
+        artworkUrl100,
+        collectionName,
+        releaseDate?.toDate(),
+        primaryGenreName,
+        country,
+        previewUrl,
+        artistViewUrl,
+    )
 }

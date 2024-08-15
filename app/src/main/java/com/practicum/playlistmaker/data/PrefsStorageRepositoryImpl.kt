@@ -37,7 +37,7 @@ class PrefsStorageRepositoryImpl(
 
     override fun clearHistory() { saveHistory(emptyList()) }
 
-    override fun saveHistory(history: List<Track>) {
+    private fun saveHistory(history: List<Track>) {
         prefs.edit().putString(key, Gson().toJson(history)).apply()
     }
 }

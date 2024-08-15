@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.domain.impl
+package com.practicum.playlistmaker.data
 
 import android.content.Context
 import android.content.SharedPreferences

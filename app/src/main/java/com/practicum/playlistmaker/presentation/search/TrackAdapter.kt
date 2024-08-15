@@ -26,14 +26,18 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
         onClearHistoryClick = onClickListener
     }
 
-    fun submitTracksList(isDecorationNeeded: Boolean = false, list: List<Track>, onFinish: (() -> Unit) = {}) {
+    fun submitTracksList(
+        isDecorationNeeded: Boolean = false,
+        list: List<Track>,
+        doOnEnd: (() -> Unit) = {},
+    ) {
         val items = mutableListOf<TrackListItem>()
 
         if (isDecorationNeeded) items.add(TrackListItem.Header)
         items.addAll(list.map { TrackListItem.TrackItem(it) })
         if (isDecorationNeeded) items.add(TrackListItem.Footer())
 
-        submitList(items, onFinish)
+        submitList(items, doOnEnd)
     }
 
     fun setFooterVisibility(position: Int, isVisible: Boolean) {
@@ -43,24 +47,24 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is TrackListItem.TrackItem -> VIEW_TYPE_ITEM
-            is TrackListItem.Header -> VIEW_TYPE_HEADER
-            is TrackListItem.Footer -> VIEW_TYPE_FOOTER
+            is TrackListItem.TrackItem -> ViewType.TRACK.type
+            is TrackListItem.Header -> ViewType.HEADER.type
+            is TrackListItem.Footer -> ViewType.FOOTER.type
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            VIEW_TYPE_ITEM -> {
+            ViewType.TRACK.type -> {
                 val binding = ItemTrackBinding.inflate(inflater, parent, false)
                 TrackViewHolder(binding, onTrackClick)
             }
-            VIEW_TYPE_HEADER -> {
+            ViewType.HEADER.type -> {
                 val binding = ItemHeaderBinding.inflate(inflater, parent, false)
                 HeaderViewHolder(binding)
             }
-            VIEW_TYPE_FOOTER -> {
+            ViewType.FOOTER.type -> {
                 val binding = ItemFooterBinding.inflate(inflater, parent, false)
                 FooterViewHolder(binding, onClearHistoryClick)
             }
@@ -76,16 +80,24 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
         }
     }
 
+    private enum class ViewType(
+        val type: Int,
+    ) {
+
+        HEADER(0),
+        TRACK(1),
+        FOOTER(2),
+    }
+
     companion object {
-        private const val VIEW_TYPE_HEADER = 0
-        private const val VIEW_TYPE_ITEM = 1
-        private const val VIEW_TYPE_FOOTER = 2
 
         private val diffCallback = object : DiffUtil.ItemCallback<TrackListItem>() {
 
             override fun areItemsTheSame(oldItem: TrackListItem, newItem: TrackListItem): Boolean {
                 return when {
-                    oldItem is TrackListItem.TrackItem && newItem is TrackListItem.TrackItem -> oldItem.track.trackId == newItem.track.trackId
+                    oldItem is TrackListItem.TrackItem &&newItem is TrackListItem.TrackItem -> {
+                        oldItem.track.trackId == newItem.track.trackId
+                    }
                     oldItem is TrackListItem.Header && newItem is TrackListItem.Header -> true
                     oldItem is TrackListItem.Footer && newItem is TrackListItem.Footer -> true
                     else -> false
@@ -94,9 +106,13 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
 
             override fun areContentsTheSame(oldItem: TrackListItem, newItem: TrackListItem): Boolean {
                 return when {
-                    oldItem is TrackListItem.TrackItem && newItem is TrackListItem.TrackItem -> oldItem.track == newItem.track
+                    oldItem is TrackListItem.TrackItem && newItem is TrackListItem.TrackItem -> {
+                        oldItem.track == newItem.track
+                    }
                     oldItem is TrackListItem.Header && newItem is TrackListItem.Header -> true
-                    oldItem is TrackListItem.Footer && newItem is TrackListItem.Footer -> oldItem.isVisible == newItem.isVisible
+                    oldItem is TrackListItem.Footer && newItem is TrackListItem.Footer -> {
+                        oldItem.isVisible == newItem.isVisible
+                    }
                     else -> false
                 }
             }

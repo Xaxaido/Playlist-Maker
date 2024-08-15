@@ -8,6 +8,6 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Util.applyTheme(Creator.provideSettingsPresenter(this).getTheme())
+        Util.applyTheme(Creator.getSettingsPresenter(this).getTheme())
     }
 }

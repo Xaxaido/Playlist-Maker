@@ -6,7 +6,9 @@ import com.practicum.playlistmaker.data.resources.TracksSearchState
 import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.extension.util.Mapper.toTrack
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(
+    private val networkClient: NetworkClient,
+) : TracksRepository {
 
     override fun searchTracks(term: String): TracksSearchState {
         val response = networkClient.doRequest(TracksSearchRequest(term))

@@ -9,7 +9,7 @@ import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private val viewModel: SettingsPresenter by lazy { Creator.provideSettingsPresenter(this) }
+    private val viewModel: SettingsPresenter by lazy { Creator.getSettingsPresenter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

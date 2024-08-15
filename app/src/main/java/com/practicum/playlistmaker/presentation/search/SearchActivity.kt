@@ -13,7 +13,6 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.SearchHistoryRepositoryImpl
 import com.practicum.playlistmaker.data.resources.TracksSearchState
 import com.practicum.playlistmaker.data.resources.VisibilityState.Error
 import com.practicum.playlistmaker.data.resources.VisibilityState.History
@@ -25,6 +24,7 @@ import com.practicum.playlistmaker.data.resources.VisibilityState.ViewsList
 import com.practicum.playlistmaker.data.resources.VisibilityState.VisibilityItem
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.domain.api.TracksMediator
+import com.practicum.playlistmaker.domain.impl.SearchHistoryMediatorImpl
 import com.practicum.playlistmaker.extension.util.Debounce
 import com.practicum.playlistmaker.extension.util.Util
 import com.practicum.playlistmaker.extension.widget.recyclerView.StickyFooterDecoration
@@ -40,8 +40,8 @@ class SearchActivity : AppCompatActivity() {
     private var isClickEnabled = true
     private var isKeyboardVisible = false
     private val timer = Debounce(delay = Util.USER_INPUT_DELAY) { searchTracks() }
-    private val prefs: SearchHistoryRepositoryImpl by lazy {
-        Creator.getSearchHistoryRepositoryImpl(this)
+    private val searchHistory: SearchHistoryMediatorImpl by lazy {
+        Creator.getSearchHistoryMediator(this)
     }
     private val alisa: ViewsList by lazy {
         ViewsList(
@@ -70,7 +70,7 @@ class SearchActivity : AppCompatActivity() {
         showNoData()
     }
 
-    private fun updateKeyboardVisibility() {
+    private fun isKeyboardVisible() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             binding.contentLayout.windowInsetsController?.addOnControllableInsetsChangedListener { _, insets ->
                 isKeyboardVisible = (insets and WindowInsetsCompat.Type.ime()) != 0
@@ -84,8 +84,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
-        updateKeyboardVisibility()
+        isKeyboardVisible()
         binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.buttonRefresh.setOnClickListener { searchTracks() }
 
         binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
@@ -98,19 +99,17 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.setOnTrackClickListener { track ->
             if (!isClickEnabled) return@setOnTrackClickListener
 
-            prefs.addTrack(track)
+            searchHistory.addTrack(track)
             sendToPlayer(track)
             isClickEnabled = false
             Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
         }
 
         trackAdapter.setOnClearHistoryClick {
-            prefs.clearHistory()
+            searchHistory.clearHistory()
             binding.searchLayout.searchText.clearFocus()
             showNoData()
         }
-
-        binding.buttonRefresh.setOnClickListener { searchTracks() }
 
         binding.searchLayout.buttonClear.setOnClickListener {
             hideKeyboard()
@@ -120,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchLayout.searchText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && searchRequest.isEmpty()) showHistory(prefs.getHistory())
+            if (hasFocus && searchRequest.isEmpty()) showHistory(searchHistory.getHistory())
             else showNoData()
         }
 
@@ -129,7 +128,7 @@ class SearchActivity : AppCompatActivity() {
             binding.searchLayout.buttonClear.isVisible = searchRequest.isNotEmpty()
 
             if (searchRequest.isEmpty() && binding.searchLayout.searchText.hasFocus()) {
-                showHistory(prefs.getHistory())
+                showHistory(searchHistory.getHistory())
             } else if (isHistoryShowed) showNoData()
 
             timer.start()
@@ -174,18 +173,18 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateData(isDecorationNeeded: Boolean, list: List<Track>, onFinish: () -> Unit) {
+    private fun updateData(isDecorationNeeded: Boolean, list: List<Track>, doOnEnd: () -> Unit) {
         if (!isDecorationNeeded) stickyFooterDecoration.detach()
         else stickyFooterDecoration.attachRecyclerView(binding.recycler, trackAdapter)
 
-        trackAdapter.submitTracksList(isDecorationNeeded, list, onFinish)
+        trackAdapter.submitTracksList(isDecorationNeeded, list, doOnEnd)
     }
 
     private fun searchTracks() {
         if (searchRequest.isEmpty()) return
 
         alisa show Loading
-        Creator.provideTracksMediator(this).searchTracks(searchRequest, object : TracksMediator.TracksConsumer {
+        Creator.getTracksMediator(this).searchTracks(searchRequest, object : TracksMediator.TracksConsumer {
 
             override fun consume(result: TracksSearchState) {
                 when(result.tracks.isEmpty()) {
