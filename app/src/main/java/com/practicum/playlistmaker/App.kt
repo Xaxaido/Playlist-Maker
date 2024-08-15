@@ -2,8 +2,8 @@ package com.practicum.playlistmaker
 
 import android.app.Application
 import android.content.SharedPreferences
-import com.practicum.playlistmaker.data.domain.mediator.SettingsMediatorImpl
-import com.practicum.playlistmaker.data.domain.repository.SettingsRepositoryImpl
+import com.practicum.playlistmaker.domain.impl.SettingsMediatorImpl
+import com.practicum.playlistmaker.data.SettingsRepositoryImpl
 import com.practicum.playlistmaker.extension.util.Util
 
 class App: Application() {

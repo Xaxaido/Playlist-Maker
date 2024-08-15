@@ -9,6 +9,7 @@
     <dimen name="title_text_size">24sp</dimen>
     <dimen name="padding_small">2dp</dimen>
     <dimen name="padding_small_2x">4dp</dimen>
+    <dimen name="padding_small_3x">6dp</dimen>
     <dimen name="padding_small_4x">8dp</dimen>
     <dimen name="padding_small_5x">10dp</dimen>
     <dimen name="padding_small_6x">12dp</dimen>
@@ -23,6 +24,9 @@
     <dimen name="padding_small_15x">30dp</dimen>
     <dimen name="padding_small_16x">32dp</dimen>
     <dimen name="btn_action_size">32dp</dimen>
+    <dimen name="dark_button_size">48dp</dimen>
+    <dimen name="search_history_header_height">52dp</dimen>
+    <dimen name="clear_search_history_btn_container_height">72dp</dimen>
     <dimen name="btn_small_min">24dp</dimen>
     <dimen name="btn_big_min">40dp</dimen>
     <dimen name="header_margin">24dp</dimen>

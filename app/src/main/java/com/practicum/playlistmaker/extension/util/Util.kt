@@ -5,7 +5,6 @@ import android.util.TypedValue
 import androidx.appcompat.app.AppCompatDelegate
 import com.practicum.playlistmaker.data.resources.AppTheme
 import java.text.SimpleDateFormat
-import java.time.ZoneId
 import java.util.Locale
 
 object Util {
@@ -14,14 +13,6 @@ object Util {
     const val USER_INPUT_DELAY = 2000L
     const val BUTTON_ENABLED_DELAY = 1000L
     const val PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER = 1
-
-    fun String.toDate() = SimpleDateFormat("yyyy", Locale.getDefault())
-        .parse(this)
-        ?.toInstant()
-        ?.atZone(ZoneId.systemDefault())
-        ?.year
-        ?.toString()
-        ?: ""
 
     fun Long.millisToSeconds() = SimpleDateFormat(
         "mm : ss",

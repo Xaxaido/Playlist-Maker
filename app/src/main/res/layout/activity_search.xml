@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     style="@style/LayoutFullScreen"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="VisualLintOverlap,MissingConstraints">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -35,46 +36,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:overScrollMode="never"
-                android:background="@null"
-                app:layout_constrainedHeight="true"
+                android:background="?attr/android:colorBackground"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/search_history_header"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-            <TextView
-                android:id="@+id/search_history_header"
+            <com.practicum.playlistmaker.extension.widget.BlurredImageView
+                android:id="@+id/blur_image_view_footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_small_9x"
-                android:paddingBottom="@dimen/padding_small_10x"
-                android:gravity="center"
-                android:text="@string/search_history_title"
-                android:textSize="@dimen/text_big"
-                android:textColor="?attr/colorOnBackground"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/recycler"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:scaleType="centerCrop"
+                app:parentView="@id/sticky_container"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <FrameLayout
-                android:id="@+id/clear_history"
+                android:id="@+id/sticky_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_small_12x"
-                android:background="@null"
-                android:alpha="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:ignore="MissingConstraints">
-
-                <Button
-                    android:id="@+id/btn_clear_history"
-                    style="@style/DarkButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/search_history_btn_clear" />
-
-            </FrameLayout>
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <FrameLayout
                 android:id="@+id/nothing_found"
