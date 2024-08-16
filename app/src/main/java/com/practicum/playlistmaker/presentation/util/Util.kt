@@ -14,6 +14,8 @@ object Util {
     const val USER_INPUT_DELAY = 2000L
     const val BUTTON_ENABLED_DELAY = 1000L
     const val PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER = 1
+    const val HTTP_NOT_FOUND = 404
+    const val HTTP_BAD_REQUEST = 400
 
     fun Long.millisToSeconds() = SimpleDateFormat(
         "mm : ss",

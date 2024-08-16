@@ -13,7 +13,7 @@ class TrackDescriptionRepositoryImpl(
 
     override fun searchTrackDescription(term: String): TrackDescription {
         val response = networkClient.doRequest(SearchRequest(term))
-        val result = (response as TrackDescriptionSearchResponse).html
+        val result = if (response is TrackDescriptionSearchResponse) response.html else null
 
         return jsoup.parse(result)
     }

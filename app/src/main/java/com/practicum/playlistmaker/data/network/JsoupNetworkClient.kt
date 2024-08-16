@@ -4,21 +4,26 @@ import com.practicum.playlistmaker.data.NetworkClient
 import com.practicum.playlistmaker.data.dto.Response
 import com.practicum.playlistmaker.data.dto.SearchRequest
 import com.practicum.playlistmaker.data.dto.TrackDescriptionSearchResponse
+import com.practicum.playlistmaker.presentation.util.Util
 import org.jsoup.Jsoup
 
 class JsoupNetworkClient : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
-        if (dto is SearchRequest) {
-            
-            val result = Jsoup.connect(dto.term).execute()
-            val body = result.body()?.let {
-                TrackDescriptionSearchResponse(it)
-            } ?: Response()
-            
-            return body.apply { resultCode = result.statusCode() }
+       return if (dto is SearchRequest) {
+
+            try {
+                val result = Jsoup.connect(dto.term).execute()
+                val body = result.body()?.let {
+                    TrackDescriptionSearchResponse(it)
+                } ?: Response()
+
+                body
+            } catch (e: Exception) {
+                Response().apply { resultCode = Util.HTTP_NOT_FOUND }
+            }
         } else {
-            return Response().apply { resultCode = 400 }
+            Response().apply { resultCode = Util.HTTP_BAD_REQUEST }
         }
     }
 }

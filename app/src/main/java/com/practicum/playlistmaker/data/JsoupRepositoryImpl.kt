@@ -14,11 +14,12 @@ class JsoupRepositoryImpl(
 
     private val nothingFound = context.getString(R.string.player_unknown)
 
-    override fun parse(html: String): TrackDescription {
-        val document = Jsoup.parse(html)
-        val element = document.select(COUNTRY_CSS_SELECTOR).firstOrNull()
-        val country = element?.text()?.substringAfter(",") ?: nothingFound
-
-        return TrackDescription(country)
+    override fun parse(html: String?): TrackDescription {
+        return html?.let {
+            val document = Jsoup.parse(html)
+            val element = document.select(COUNTRY_CSS_SELECTOR).firstOrNull()
+            val country = element?.text()?.substringAfter(",") ?: nothingFound
+            TrackDescription(country)
+        } ?: TrackDescription(nothingFound)
     }
 }
