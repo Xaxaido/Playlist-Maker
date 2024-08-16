@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.domain.api.SearchHistoryRepository
 import com.practicum.playlistmaker.domain.api.SearchHistoryMediator
 
 class SearchHistoryMediatorImpl(
-    private val searchHistoryRepository: SearchHistoryRepository
+    private val searchHistoryRepository: SearchHistoryRepository,
 ) : SearchHistoryMediator {
 
     override fun getHistory() = searchHistoryRepository.getHistory()

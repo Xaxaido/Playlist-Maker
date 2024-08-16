@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.data.Creator
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.data.resources.TracksSearchState
 import com.practicum.playlistmaker.data.resources.VisibilityState.Error

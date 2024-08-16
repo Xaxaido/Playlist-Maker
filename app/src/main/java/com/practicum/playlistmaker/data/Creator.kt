@@ -1,12 +1,9 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.data
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
-import com.practicum.playlistmaker.data.PrefsStorageRepositoryImpl
-import com.practicum.playlistmaker.data.SearchHistoryRepositoryImpl
-import com.practicum.playlistmaker.data.SettingsRepositoryImpl
-import com.practicum.playlistmaker.data.TracksRepositoryImpl
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.domain.impl.TracksMediatorImpl
 import com.practicum.playlistmaker.domain.impl.ExternalNavigatorImpl
@@ -29,6 +26,10 @@ object Creator {
     )
 
     private fun getPrefsStorageRepository(context: Context) = PrefsStorageRepositoryImpl(context, getPrefs(context))
-    private fun getSearchHistoryRepository(context: Context) = SearchHistoryRepositoryImpl(getPrefsStorageRepository(context))
-    fun getSearchHistoryMediator(context: Context) = SearchHistoryMediatorImpl(getSearchHistoryRepository(context))
+    private fun getSearchHistoryRepository(context: Context) = SearchHistoryRepositoryImpl(
+        getPrefsStorageRepository(context)
+    )
+    fun getSearchHistoryMediator(context: Context) = SearchHistoryMediatorImpl(
+        getSearchHistoryRepository(context)
+    )
 }

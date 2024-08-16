@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.presentation.settings
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.data.Creator
 import com.practicum.playlistmaker.data.resources.AppTheme
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 

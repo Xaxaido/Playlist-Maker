@@ -25,7 +25,6 @@ class PrefsStorageRepositoryImpl(
         } else emptyList()
     }
 
-
     override fun addTrack(track: Track) {
         with (getHistory().toMutableList()) {
             removeIf { it.trackId == track.trackId }

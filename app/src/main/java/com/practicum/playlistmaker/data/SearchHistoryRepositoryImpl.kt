@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.domain.api.SearchHistoryRepository
 import com.practicum.playlistmaker.domain.models.Track
 
 class SearchHistoryRepositoryImpl(
-    private val prefsStorage: PrefsStorageRepository
+    private val prefsStorage: PrefsStorageRepository,
 ) : SearchHistoryRepository {
 
     override fun getHistory() = prefsStorage.getHistory()
