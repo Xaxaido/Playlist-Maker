@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data.resources
+package com.practicum.playlistmaker.presentation.resources
 
 import android.view.View
 import androidx.core.view.isVisible

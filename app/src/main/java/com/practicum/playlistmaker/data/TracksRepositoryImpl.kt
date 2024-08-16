@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.data
 
 import com.practicum.playlistmaker.data.dto.TracksSearchRequest
 import com.practicum.playlistmaker.data.dto.TracksSearchResponse
-import com.practicum.playlistmaker.data.resources.TracksSearchState
+import com.practicum.playlistmaker.domain.TracksSearchState
 import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.extension.util.Mapper.toTrack
 

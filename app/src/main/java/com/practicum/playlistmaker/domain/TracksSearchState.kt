@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data.resources
+package com.practicum.playlistmaker.domain
 
 import com.practicum.playlistmaker.domain.models.Track
 

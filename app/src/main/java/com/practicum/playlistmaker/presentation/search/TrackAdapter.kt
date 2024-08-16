@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.resources.TrackListItem
+import com.practicum.playlistmaker.presentation.resources.TrackListItem
 import com.practicum.playlistmaker.databinding.ItemFooterBinding
 import com.practicum.playlistmaker.databinding.ItemHeaderBinding
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
