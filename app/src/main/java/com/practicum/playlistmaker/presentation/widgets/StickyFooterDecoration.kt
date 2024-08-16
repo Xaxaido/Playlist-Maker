@@ -50,7 +50,7 @@ class StickyFooterDecoration : RecyclerView.ItemDecoration() {
             val view = adapter.createViewHolder(stickyContainer, adapter.getItemViewType(position)).itemView
 
             updateFooterVisibility(false) {
-                view.findViewById<Button>(R.id.btn_clear_history).setOnClickListener { adapter.getOnClearHistoryClickListener() }
+                view.findViewById<Button>(R.id.btn_clear_history)?.setOnClickListener { adapter.getOnClearHistoryClickListener() }
                 stickyContainer.addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             }
         }

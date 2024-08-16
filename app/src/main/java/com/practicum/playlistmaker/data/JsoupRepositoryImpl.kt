@@ -9,13 +9,15 @@ import org.jsoup.Jsoup
 private const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
 
 class JsoupRepositoryImpl(
-    private val context: Context,
+    context: Context,
 ) : JsoupRepository {
+
+    private val nothingFound = context.getString(R.string.player_unknown)
 
     override fun parse(html: String): TrackDescription {
         val document = Jsoup.parse(html)
         val element = document.select(COUNTRY_CSS_SELECTOR).firstOrNull()
-        val country = element?.text()?.substringAfter(",") ?: context.getString(R.string.player_unknown)
+        val country = element?.text()?.substringAfter(",") ?: nothingFound
 
         return TrackDescription(country)
     }

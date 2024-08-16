@@ -17,10 +17,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
-import com.practicum.playlistmaker.domain.TrackDescriptionSearchState
 import com.practicum.playlistmaker.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.models.TrackDescription
 import com.practicum.playlistmaker.presentation.util.Debounce
 import com.practicum.playlistmaker.presentation.util.Util
 import com.practicum.playlistmaker.presentation.util.Util.dpToPx
@@ -137,17 +137,15 @@ class PlayerActivity : AppCompatActivity(), PlayerUI {
     private fun searchTrackDescription(url: String) {
         Creator.getTrackDescriptionMediator(this).searchTrackDescription(url, object : TrackDescriptionInteractor.TracksDescriptionConsumer {
 
-            override fun consume(result: TrackDescriptionSearchState) {
-                result.description?.let {
-                    Debounce(delay = 0L) {
-                        binding.apply {
-                            countryText.text = it.country
-                            shimmerPlaceholder.shimmer.stopShimmer()
-                            shimmerPlaceholder.shimmer.isVisible = false
-                            trackDescription.isVisible = true
-                        }
-                    }.start()
-                }
+            override fun consume(result: TrackDescription) {
+                Debounce(delay = 0L) {
+                    binding.apply {
+                        countryText.text = result.country
+                        shimmerPlaceholder.shimmer.stopShimmer()
+                        shimmerPlaceholder.shimmer.isVisible = false
+                        trackDescription.isVisible = true
+                    }
+                }.start()
             }
         })
     }
