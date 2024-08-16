@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.data.Creator
+import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.TracksSearchState
 import com.practicum.playlistmaker.presentation.resources.VisibilityState.Error
@@ -23,8 +23,8 @@ import com.practicum.playlistmaker.presentation.resources.VisibilityState.Search
 import com.practicum.playlistmaker.presentation.resources.VisibilityState.ViewsList
 import com.practicum.playlistmaker.presentation.resources.VisibilityState.VisibilityItem
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.domain.api.TracksMediator
-import com.practicum.playlistmaker.domain.impl.SearchHistoryMediatorImpl
+import com.practicum.playlistmaker.domain.api.SearchHistoryInteractor
+import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.presentation.player.PlayerActivity
 import com.practicum.playlistmaker.presentation.util.Debounce
 import com.practicum.playlistmaker.presentation.util.Util
@@ -40,7 +40,7 @@ class SearchActivity : AppCompatActivity() {
     private var isClickEnabled = true
     private var isKeyboardVisible = false
     private val timer = Debounce(delay = Util.USER_INPUT_DELAY) { searchTracks() }
-    private val searchHistory: SearchHistoryMediatorImpl by lazy {
+    private val searchHistory: SearchHistoryInteractor by lazy {
         Creator.getSearchHistoryMediator(this)
     }
     private val alisa: ViewsList by lazy {
@@ -184,7 +184,7 @@ class SearchActivity : AppCompatActivity() {
         if (searchRequest.isEmpty()) return
 
         alisa show Loading
-        Creator.getTracksMediator(this).searchTracks(searchRequest, object : TracksMediator.TracksConsumer {
+        Creator.getTracksMediator(this).searchTracks(searchRequest, object : TracksInteractor.TracksConsumer {
 
             override fun consume(result: TracksSearchState) {
                 when(result.tracks.isEmpty()) {

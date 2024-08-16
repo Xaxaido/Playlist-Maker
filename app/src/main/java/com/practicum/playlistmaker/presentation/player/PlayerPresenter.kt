@@ -1,10 +1,10 @@
 package com.practicum.playlistmaker.presentation.player
 
 import android.content.Context
-import androidx.media3.common.Player
+import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.PlayerRepositoryImpl
+import com.practicum.playlistmaker.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.presentation.util.Debounce
 import com.practicum.playlistmaker.presentation.util.Util.millisToSeconds
 
@@ -13,7 +13,7 @@ class PlayerPresenter(
 ) {
 
     private val playerUI = context as PlayerUI
-    private val playerRepository = PlayerRepositoryImpl(context)
+    private val playerRepository = Creator.getPlayerRepository(context)
     private val timer: Debounce by lazy {
         Debounce { updateProgress() }
     }
@@ -26,7 +26,7 @@ class PlayerPresenter(
         }
     }
 
-    fun init(stateListener: Player.Listener, track: Track) {
+    fun init(stateListener: MediaPlayerListener, track: Track) {
         playerRepository.init(stateListener, track)
     }
 

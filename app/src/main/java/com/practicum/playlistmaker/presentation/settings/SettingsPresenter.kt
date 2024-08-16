@@ -1,26 +1,25 @@
 package com.practicum.playlistmaker.presentation.settings
 
 import com.practicum.playlistmaker.domain.api.ExternalNavigator
-import com.practicum.playlistmaker.domain.impl.SettingsMediatorImpl
-import com.practicum.playlistmaker.domain.impl.SharingMediatorImpl
+import com.practicum.playlistmaker.domain.impl.SharingInteractorImpl
 import com.practicum.playlistmaker.domain.api.SettingsRepository
 import com.practicum.playlistmaker.presentation.util.Util
 
 class SettingsPresenter(
     externalNavigator: ExternalNavigator,
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
 ) {
 
-    private val sharingMediator = SharingMediatorImpl(externalNavigator)
-    private val settingsMediator = SettingsMediatorImpl(settingsRepository)
+    private val sharingMediator = SharingInteractorImpl(externalNavigator)
 
-    fun getTheme() = settingsMediator.getThemeSettings().appTheme
+    fun getTheme() = settingsRepository.getThemeSettings().themeName
+    fun getThemeSwitchState() = settingsRepository.getThemeSwitchState()
     fun shareApp() { sharingMediator.shareApp() }
     fun contactSupport() { sharingMediator.contactSupport() }
     fun userAgreement() { sharingMediator.userAgreement() }
 
     fun toggleSystemTheme(isChecked: Boolean) {
-        settingsMediator.updateThemeSetting(isChecked)
-        Util.applyTheme(settingsMediator.getThemeSettings().appTheme)
+        settingsRepository.updateThemeSetting(isChecked)
+        Util.applyTheme(settingsRepository.getThemeSettings().themeName)
     }
 }

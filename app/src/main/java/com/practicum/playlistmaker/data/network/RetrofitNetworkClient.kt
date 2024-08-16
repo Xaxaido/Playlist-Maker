@@ -4,7 +4,7 @@ import android.content.Context
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.NetworkClient
 import com.practicum.playlistmaker.data.dto.Response
-import com.practicum.playlistmaker.data.dto.TracksSearchRequest
+import com.practicum.playlistmaker.data.dto.SearchRequest
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -20,7 +20,8 @@ class RetrofitNetworkClient(
         .create(ITunesService::class.java)
 
     override fun doRequest(dto: Any): Response {
-        if (dto is TracksSearchRequest) {
+
+        if (dto is SearchRequest) {
             val result = iTunesService.searchTracks(dto.term).execute()
             val body = result.body() ?: Response()
 

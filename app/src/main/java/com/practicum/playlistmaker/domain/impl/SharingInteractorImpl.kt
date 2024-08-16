@@ -1,11 +1,11 @@
 package com.practicum.playlistmaker.domain.impl
 
-import com.practicum.playlistmaker.domain.api.SharingMediator
+import com.practicum.playlistmaker.domain.api.SharingInteractor
 import com.practicum.playlistmaker.domain.api.ExternalNavigator
 
-class SharingMediatorImpl (
+class SharingInteractorImpl (
     private val externalNavigator: ExternalNavigator
-) : SharingMediator {
+) : SharingInteractor {
 
     override fun shareApp() { externalNavigator.shareApp() }
     override fun contactSupport() { externalNavigator.contactSupport() }

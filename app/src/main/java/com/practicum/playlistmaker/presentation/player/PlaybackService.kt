@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.presentation.player
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -7,7 +7,6 @@ import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.practicum.playlistmaker.presentation.player.PlayerActivity
 
 class PlaybackService : MediaSessionService() {
 

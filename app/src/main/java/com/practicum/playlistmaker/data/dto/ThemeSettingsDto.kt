@@ -1,9 +1,10 @@
-package com.practicum.playlistmaker.data.resources
+package com.practicum.playlistmaker.data.dto
 
 import android.content.Context
 import android.content.res.Configuration
+import com.practicum.playlistmaker.data.resources.AppTheme
 
-class ThemeSettings(
+class ThemeSettingsDto(
     private val context: Context,
     isSystemThemeEnabled: Boolean,
 ) {

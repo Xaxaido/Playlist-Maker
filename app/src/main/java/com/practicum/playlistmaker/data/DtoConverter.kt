@@ -1,11 +1,13 @@
 package com.practicum.playlistmaker.data
 
+import com.practicum.playlistmaker.data.dto.ThemeSettingsDto
 import com.practicum.playlistmaker.data.dto.TrackDto
+import com.practicum.playlistmaker.domain.models.ThemeSettings
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.domain.models.Track.Companion.toDate
 import com.practicum.playlistmaker.presentation.util.Util.millisToSeconds
+import com.practicum.playlistmaker.presentation.util.Util.toDate
 
-object Mapper {
+object DtoConverter {
 
     fun TrackDto.toTrack() = Track(
         trackId,
@@ -20,4 +22,6 @@ object Mapper {
         previewUrl,
         artistViewUrl,
     )
+
+    fun ThemeSettingsDto.toThemeSettings() = ThemeSettings(appTheme)
 }

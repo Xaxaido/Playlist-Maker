@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.domain.api
 
-interface SharingMediator {
+interface SharingInteractor {
     fun shareApp()
     fun contactSupport()
     fun userAgreement()

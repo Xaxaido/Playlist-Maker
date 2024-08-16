@@ -2,11 +2,11 @@ package com.practicum.playlistmaker.domain.impl
 
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.api.SearchHistoryRepository
-import com.practicum.playlistmaker.domain.api.SearchHistoryMediator
+import com.practicum.playlistmaker.domain.api.SearchHistoryInteractor
 
-class SearchHistoryMediatorImpl(
+class SearchHistoryInteractorImpl(
     private val searchHistoryRepository: SearchHistoryRepository,
-) : SearchHistoryMediator {
+) : SearchHistoryInteractor {
 
     override fun getHistory() = searchHistoryRepository.getHistory()
 

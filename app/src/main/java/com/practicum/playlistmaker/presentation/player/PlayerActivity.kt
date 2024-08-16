@@ -14,37 +14,35 @@ import androidx.core.widget.NestedScrollView
 import androidx.media3.common.Player
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
+import com.practicum.playlistmaker.domain.TrackDescriptionSearchState
+import com.practicum.playlistmaker.domain.api.MediaPlayerListener
+import com.practicum.playlistmaker.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.util.Debounce
 import com.practicum.playlistmaker.presentation.util.Util
 import com.practicum.playlistmaker.presentation.util.Util.dpToPx
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.jsoup.Jsoup
 
 class PlayerActivity : AppCompatActivity(), PlayerUI {
 
     private lateinit var binding: ActivityPlayerBinding
-    private lateinit var viewModel: PlayerPresenter
+    private lateinit var presenter: PlayerPresenter
     private lateinit var track: Track
-    private val playerListener = object : Player.Listener {
+    private val playerListener = object : MediaPlayerListener {
 
         override fun onPlaybackStateChanged(playbackState: Int) {
-            super.onPlaybackStateChanged(playbackState)
-
             when (playbackState) {
                 Player.STATE_READY -> binding.btnPlay.isEnabled = true
-                Player.STATE_ENDED -> viewModel.updateProgress()
+                Player.STATE_ENDED -> presenter.updateProgress()
                 else -> {}
             }
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             updatePlayBtn(isPlaying)
-            viewModel.updateTimer(isPlaying)
+            presenter.updateTimer(isPlaying)
         }
     }
 
@@ -59,15 +57,14 @@ class PlayerActivity : AppCompatActivity(), PlayerUI {
             Util.KEY_TRACK,
             Track::class.java,
         )?.let { track = it }
-        viewModel = PlayerPresenter(this)
+        presenter = PlayerPresenter(this)
         setListeners()
         setupUI()
-        viewModel.init(playerListener, track)
     }
 
     private fun setListeners() {
         binding.toolbar.setNavigationOnClickListener { finish() }
-        binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
+        binding.btnPlay.setOnClickListener { presenter.controlPlayback() }
     }
 
     private fun setupUI() {
@@ -80,18 +77,7 @@ class PlayerActivity : AppCompatActivity(), PlayerUI {
         })
 
         binding.btnPlay.isEnabled = false
-        CoroutineScope(Dispatchers.Main).launch {
-            val result = withContext(Dispatchers.IO) {
-                Jsoup.connect(track.artistViewUrl).get()
-                    .select("dd[data-testid=grouptext-section-content]").firstOrNull()
-            }
-            binding.apply {
-                countryText.text = result?.text()?.substringAfter(",") ?: getString(R.string.player_unknown)
-                shimmerPlaceholder.shimmer.stopShimmer()
-                shimmerPlaceholder.shimmer.isVisible = false
-                trackDescription.isVisible = true
-            }
-        }
+        searchTrackDescription(track.artistViewUrl)
 
         with (binding) {
             playerTrackTitle.text = track.trackName
@@ -148,14 +134,43 @@ class PlayerActivity : AppCompatActivity(), PlayerUI {
         }
     }
 
+    private fun searchTrackDescription(url: String) {
+        Creator.getTrackDescriptionMediator(this).searchTrackDescription(url, object : TrackDescriptionInteractor.TracksDescriptionConsumer {
+
+            override fun consume(result: TrackDescriptionSearchState) {
+                result.description?.let {
+                    Debounce(delay = 0L) {
+                        binding.apply {
+                            countryText.text = it.country
+                            shimmerPlaceholder.shimmer.stopShimmer()
+                            shimmerPlaceholder.shimmer.isVisible = false
+                            trackDescription.isVisible = true
+                        }
+                    }.start()
+                }
+            }
+        })
+    }
+
+
     override fun updatePlayBtn(isPlaying: Boolean) {
         binding.btnPlay.setImageResource(if (isPlaying) R.drawable.pause_button else R.drawable.play_button)
     }
 
     override fun setProgress(progress: String) { binding.currentTime.text = progress }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.init(playerListener, track)
+    }
+
+    override fun onPause() {
+        presenter.release()
+        super.onPause()
+    }
+
     override fun onDestroy() {
-        viewModel.release()
+        presenter.release()
         super.onDestroy()
     }
 }

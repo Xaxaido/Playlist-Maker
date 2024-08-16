@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.domain.impl
+package com.practicum.playlistmaker.presentation.settings
 
 import android.content.Context
 import android.content.Intent

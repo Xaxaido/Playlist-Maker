@@ -2,21 +2,20 @@ package com.practicum.playlistmaker.presentation.settings
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.practicum.playlistmaker.data.Creator
-import com.practicum.playlistmaker.data.resources.AppTheme
+import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private val viewModel: SettingsPresenter by lazy { Creator.getSettingsPresenter(this) }
+    private val presenter: SettingsPresenter by lazy { Creator.getSettingsPresenter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.themeSwitch.isChecked = viewModel.getTheme() == AppTheme.SYSTEM.value
+        binding.themeSwitch.isChecked = presenter.getThemeSwitchState()
         setListeners()
     }
 
@@ -24,11 +23,11 @@ class SettingsActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.themeSwitch.setOnClickListener {
-            viewModel.toggleSystemTheme(binding.themeSwitch.isChecked)
+            presenter.toggleSystemTheme(binding.themeSwitch.isChecked)
         }
 
-        binding.btnSettingsShare.setOnClickListener { viewModel.shareApp() }
-        binding.btnContactSupport.setOnClickListener { viewModel.contactSupport() }
-        binding.btnSettingsUserAgreement.setOnClickListener { viewModel.userAgreement() }
+        binding.btnSettingsShare.setOnClickListener { presenter.shareApp() }
+        binding.btnContactSupport.setOnClickListener { presenter.contactSupport() }
+        binding.btnSettingsUserAgreement.setOnClickListener { presenter.userAgreement() }
     }
 }
