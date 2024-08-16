@@ -17,8 +17,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.extension.util.Util
-import com.practicum.playlistmaker.extension.util.Util.dpToPx
+import com.practicum.playlistmaker.presentation.util.Util
+import com.practicum.playlistmaker.presentation.util.Util.dpToPx
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

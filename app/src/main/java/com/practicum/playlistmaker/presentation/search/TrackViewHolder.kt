@@ -7,7 +7,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
-import com.practicum.playlistmaker.extension.util.Util.dpToPx
+import com.practicum.playlistmaker.presentation.util.Util.dpToPx
 
 class TrackViewHolder(
     private val binding: ItemTrackBinding,

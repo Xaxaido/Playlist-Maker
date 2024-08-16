@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.extension.widget
+package com.practicum.playlistmaker.presentation.widgets
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -11,7 +11,7 @@ import android.view.ViewTreeObserver
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.extension.util.Blur
+import com.practicum.playlistmaker.presentation.util.Blur
 
 class BlurredImageView @JvmOverloads constructor(
     context: Context,
@@ -27,22 +27,24 @@ class BlurredImageView @JvmOverloads constructor(
         }
     }
     @IdRes
-    private var parentViewId: Int = View.NO_ID
+    private var parentViewId: Int = NO_ID
     private lateinit var targetView: View
     private lateinit var contentView: View
     private var targetHeight = 0
 
     init {
-        val a: TypedArray = context.theme.obtainStyledAttributes(attrs, R.styleable.BlurredImageView, 0, 0)
+        val a: TypedArray = context.theme.obtainStyledAttributes(attrs,
+            R.styleable.BlurredImageView, 0, 0)
         try {
-            parentViewId = a.getResourceId(R.styleable.BlurredImageView_parentView, View.NO_ID)
+            parentViewId = a.getResourceId(R.styleable.BlurredImageView_parentView, NO_ID)
         } finally {
             a.recycle()
         }
     }
 
     private fun setSize() {
-        targetView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        targetView.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
 
             override fun onGlobalLayout() {
                 targetHeight = targetView.height

@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.data
 
 import android.app.Application
-import com.practicum.playlistmaker.extension.util.Util
+import com.practicum.playlistmaker.presentation.util.Util
 
 class App: Application() {
 

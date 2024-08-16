@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.extension.widget
+package com.practicum.playlistmaker.presentation.widgets
 
 import android.content.Context
 import android.graphics.Canvas

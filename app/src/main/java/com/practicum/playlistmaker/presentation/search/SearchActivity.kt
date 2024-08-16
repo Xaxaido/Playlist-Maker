@@ -25,10 +25,10 @@ import com.practicum.playlistmaker.presentation.resources.VisibilityState.Visibi
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.domain.api.TracksMediator
 import com.practicum.playlistmaker.domain.impl.SearchHistoryMediatorImpl
-import com.practicum.playlistmaker.extension.util.Debounce
-import com.practicum.playlistmaker.extension.util.Util
-import com.practicum.playlistmaker.extension.widget.recyclerView.StickyFooterDecoration
 import com.practicum.playlistmaker.presentation.player.PlayerActivity
+import com.practicum.playlistmaker.presentation.util.Debounce
+import com.practicum.playlistmaker.presentation.util.Util
+import com.practicum.playlistmaker.presentation.widgets.StickyFooterDecoration
 
 class SearchActivity : AppCompatActivity() {
 

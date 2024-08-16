@@ -32,7 +32,7 @@
         app:layout_constraintBottom_toTopOf="@id/artist_name"
         tools:text="Track Title" />
 
-    <com.practicum.playlistmaker.extension.widget.EllipsizeTextView
+    <com.practicum.playlistmaker.presentation.widgets.EllipsizeTextView
         android:id="@+id/artist_name"
         style="@style/DescriptionText"
         android:layout_width="0dp"

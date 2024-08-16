@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.extension.widget.recyclerView
+package com.practicum.playlistmaker.presentation.widgets
 
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.extension.widget.BlurredImageView
 import com.practicum.playlistmaker.presentation.search.TrackAdapter
 
 class StickyFooterDecoration : RecyclerView.ItemDecoration() {
