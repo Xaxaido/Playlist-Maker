@@ -5,6 +5,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.NetworkClient
 import com.practicum.playlistmaker.data.dto.Response
 import com.practicum.playlistmaker.data.dto.SearchRequest
+import com.practicum.playlistmaker.presentation.util.Util
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -21,13 +22,13 @@ class RetrofitNetworkClient(
 
     override fun doRequest(dto: Any): Response {
 
-        if (dto is SearchRequest) {
+        return if (dto is SearchRequest) {
             val result = iTunesService.searchTracks(dto.term).execute()
             val body = result.body() ?: Response()
 
-            return body.apply { resultCode = result.code() }
+            body.apply { resultCode = result.code() }
         } else {
-            return Response().apply { resultCode = 400 }
+            Response().apply { resultCode = Util.HTTP_BAD_REQUEST }
         }
     }
 }

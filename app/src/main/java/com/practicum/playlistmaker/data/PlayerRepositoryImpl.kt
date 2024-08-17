@@ -12,7 +12,6 @@ import com.google.common.util.concurrent.MoreExecutors
 import com.practicum.playlistmaker.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.domain.api.PlayerRepository
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.player.PlaybackService
 
 class PlayerRepositoryImpl (
     private val context: Context,
