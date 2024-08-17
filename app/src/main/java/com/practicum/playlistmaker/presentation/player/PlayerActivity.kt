@@ -16,14 +16,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.common.Util
+import com.practicum.playlistmaker.common.Util.dpToPx
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
 import com.practicum.playlistmaker.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.models.TrackDescription
 import com.practicum.playlistmaker.presentation.util.Debounce
-import com.practicum.playlistmaker.presentation.util.Util
-import com.practicum.playlistmaker.presentation.util.Util.dpToPx
 
 class PlayerActivity : AppCompatActivity(), PlayerUI {
 

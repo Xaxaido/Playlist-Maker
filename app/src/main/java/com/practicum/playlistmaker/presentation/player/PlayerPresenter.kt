@@ -6,7 +6,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.presentation.util.Debounce
-import com.practicum.playlistmaker.presentation.util.Util.millisToSeconds
+import com.practicum.playlistmaker.data.util.Extensions.millisToSeconds
 
 class PlayerPresenter(
     private val context: Context,

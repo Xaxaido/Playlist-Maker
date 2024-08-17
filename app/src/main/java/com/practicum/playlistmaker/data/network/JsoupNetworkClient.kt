@@ -1,10 +1,9 @@
 package com.practicum.playlistmaker.data.network
 
-import com.practicum.playlistmaker.data.NetworkClient
 import com.practicum.playlistmaker.data.dto.Response
 import com.practicum.playlistmaker.data.dto.SearchRequest
 import com.practicum.playlistmaker.data.dto.TrackDescriptionSearchResponse
-import com.practicum.playlistmaker.presentation.util.Util
+import com.practicum.playlistmaker.data.util.Extensions
 import org.jsoup.Jsoup
 
 class JsoupNetworkClient : NetworkClient {
@@ -20,10 +19,10 @@ class JsoupNetworkClient : NetworkClient {
 
                 body
             } catch (e: Exception) {
-                Response().apply { resultCode = Util.HTTP_NOT_FOUND }
+                Response().apply { resultCode = Extensions.HTTP_NOT_FOUND }
             }
         } else {
-            Response().apply { resultCode = Util.HTTP_BAD_REQUEST }
+            Response().apply { resultCode = Extensions.HTTP_BAD_REQUEST }
         }
     }
 }

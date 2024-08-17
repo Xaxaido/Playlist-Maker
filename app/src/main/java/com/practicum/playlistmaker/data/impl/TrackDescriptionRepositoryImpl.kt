@@ -1,5 +1,6 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.data.impl
 
+import com.practicum.playlistmaker.data.network.NetworkClient
 import com.practicum.playlistmaker.data.dto.SearchRequest
 import com.practicum.playlistmaker.data.dto.TrackDescriptionSearchResponse
 import com.practicum.playlistmaker.domain.api.JsoupRepository

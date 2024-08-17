@@ -1,10 +1,11 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.data.impl
 
+import com.practicum.playlistmaker.data.util.DtoConverter.toTrack
+import com.practicum.playlistmaker.data.network.NetworkClient
 import com.practicum.playlistmaker.data.dto.SearchRequest
 import com.practicum.playlistmaker.data.dto.TracksSearchResponse
 import com.practicum.playlistmaker.domain.TracksSearchState
 import com.practicum.playlistmaker.domain.api.TracksRepository
-import com.practicum.playlistmaker.data.DtoConverter.toTrack
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,

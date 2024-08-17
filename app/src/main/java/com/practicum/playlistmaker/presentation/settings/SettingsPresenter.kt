@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker.presentation.settings
 
+import com.practicum.playlistmaker.common.Util
 import com.practicum.playlistmaker.domain.api.ExternalNavigator
 import com.practicum.playlistmaker.domain.impl.SharingInteractorImpl
 import com.practicum.playlistmaker.domain.api.SettingsRepository
-import com.practicum.playlistmaker.presentation.util.Util
 
 class SettingsPresenter(
     externalNavigator: ExternalNavigator,

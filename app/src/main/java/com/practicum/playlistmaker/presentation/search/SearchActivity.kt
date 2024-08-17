@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.common.Util
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.TracksSearchState
 import com.practicum.playlistmaker.presentation.resources.VisibilityState.Error
@@ -27,7 +28,6 @@ import com.practicum.playlistmaker.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.presentation.player.PlayerActivity
 import com.practicum.playlistmaker.presentation.util.Debounce
-import com.practicum.playlistmaker.presentation.util.Util
 import com.practicum.playlistmaker.presentation.widgets.StickyFooterDecoration
 
 class SearchActivity : AppCompatActivity() {

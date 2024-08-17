@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.data.service
 
 import android.app.PendingIntent
 import android.content.Intent

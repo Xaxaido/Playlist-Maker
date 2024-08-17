@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.data.impl
 
 import android.content.ComponentName
 import android.content.Context
@@ -9,6 +9,8 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import com.practicum.playlistmaker.data.MediaPlayerListenerAdapter
+import com.practicum.playlistmaker.data.service.PlaybackService
 import com.practicum.playlistmaker.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.domain.api.PlayerRepository
 import com.practicum.playlistmaker.domain.models.Track
