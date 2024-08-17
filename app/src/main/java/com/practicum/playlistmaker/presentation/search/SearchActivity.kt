@@ -13,6 +13,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.common.Util
+import com.practicum.playlistmaker.common.DtoConverter.toTrackParcelable
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.TracksSearchState
 import com.practicum.playlistmaker.presentation.resources.VisibilityState.Error
@@ -145,7 +146,7 @@ class SearchActivity : AppCompatActivity() {
         this,
         PlayerActivity::class.java,
     ).apply {
-        putExtra(Util.KEY_TRACK, track)
+        putExtra(Util.KEY_TRACK, track.toTrackParcelable())
         startActivity(this)
     }
 

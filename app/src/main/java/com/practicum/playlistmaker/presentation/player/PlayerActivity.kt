@@ -18,6 +18,8 @@ import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.Util
 import com.practicum.playlistmaker.common.Util.dpToPx
+import com.practicum.playlistmaker.presentation.models.TrackParcelable
+import com.practicum.playlistmaker.common.DtoConverter.toTrack
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
 import com.practicum.playlistmaker.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.domain.api.TrackDescriptionInteractor
@@ -52,11 +54,13 @@ class PlayerActivity : AppCompatActivity(), PlayerUI {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.shimmerPlaceholder.shimmer.startShimmer()
-        IntentCompat.getSerializableExtra(
+
+        IntentCompat.getParcelableExtra(
             intent,
             Util.KEY_TRACK,
-            Track::class.java,
-        )?.let { track = it }
+            TrackParcelable::class.java,
+        )?.let { track = it.toTrack() }
+
         presenter = PlayerPresenter(this)
         setListeners()
         setupUI()
