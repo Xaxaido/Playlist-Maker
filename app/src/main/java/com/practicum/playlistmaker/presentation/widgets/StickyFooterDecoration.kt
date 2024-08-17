@@ -57,6 +57,8 @@ class StickyFooterDecoration : RecyclerView.ItemDecoration() {
     }
 
     private fun hideFooter() {
+        blurredView.isVisible = false
+
         if (stickyContainer.childCount > 0) {
             updateFooterVisibility(true) {
                 stickyContainer.removeAllViews()
