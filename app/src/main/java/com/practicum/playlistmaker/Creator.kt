@@ -12,7 +12,6 @@ import com.practicum.playlistmaker.data.impl.TrackDescriptionRepositoryImpl
 import com.practicum.playlistmaker.data.impl.TracksRepositoryImpl
 import com.practicum.playlistmaker.data.network.JsoupNetworkClient
 import com.practicum.playlistmaker.data.network.RetrofitNetworkClient
-import com.practicum.playlistmaker.data.service.PlaybackServiceInteractor
 import com.practicum.playlistmaker.domain.api.ExternalNavigator
 import com.practicum.playlistmaker.domain.api.JsoupRepository
 import com.practicum.playlistmaker.domain.api.PlayerRepository
@@ -28,7 +27,6 @@ import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
 import com.practicum.playlistmaker.presentation.settings.ExternalNavigatorImpl
 import com.practicum.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.practicum.playlistmaker.domain.impl.TrackDescriptionInteractorImpl
-import com.practicum.playlistmaker.presentation.player.PlaybackServiceInteractorImpl
 import com.practicum.playlistmaker.presentation.settings.SettingsPresenter
 
 object Creator {
@@ -68,7 +66,4 @@ object Creator {
         SearchHistoryInteractorImpl(getSearchHistoryRepository(context))
 
     fun getPlayerRepository(context: Context): PlayerRepository = PlayerRepositoryImpl(context)
-    
-    fun getPlaybackServiceInteractor(context: Context): PlaybackServiceInteractor =
-        PlaybackServiceInteractorImpl(context)
 }

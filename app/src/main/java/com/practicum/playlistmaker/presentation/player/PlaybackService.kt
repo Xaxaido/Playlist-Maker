@@ -1,12 +1,12 @@
-package com.practicum.playlistmaker.data.service
+package com.practicum.playlistmaker.presentation.player
 
+import android.app.PendingIntent
 import android.content.Intent
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.practicum.playlistmaker.Creator
 
 class PlaybackService : MediaSessionService() {
 
@@ -14,8 +14,12 @@ class PlaybackService : MediaSessionService() {
     private var _mediaSession: MediaSession? = null
     private val mediaSession get() = _mediaSession
 
-    private fun getSingleTopActivity() = Creator.getPlaybackServiceInteractor(this)
-        .getPlaybackPendingIntent()
+    private fun getSingleTopActivity(): PendingIntent = PendingIntent.getActivity(
+        this,
+        0,
+        Intent(this, PlayerActivity::class.java),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
 
     @UnstableApi
     override fun onCreate() {
