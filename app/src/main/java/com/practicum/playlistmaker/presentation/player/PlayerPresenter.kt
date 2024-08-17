@@ -13,7 +13,7 @@ class PlayerPresenter(
 ) {
 
     private val playerUI = context as PlayerUI
-    private val playerRepository = Creator.getPlayerRepository(context)
+    private val playerInteractor = Creator.getPlayerInteractor(context)
     private val timer: Debounce by lazy {
         Debounce { updateProgress() }
     }
@@ -27,25 +27,25 @@ class PlayerPresenter(
     }
 
     fun init(stateListener: MediaPlayerListener, track: Track) {
-        playerRepository.init(stateListener, track)
+        playerInteractor.init(stateListener, track)
     }
 
     fun updateProgress() {
         playerUI.setProgress(
-            if (playerRepository.isPlaying) playerRepository.currentPosition.millisToSeconds()
+            if (playerInteractor.isPlaying) playerInteractor.currentPosition.millisToSeconds()
             else context.getString(R.string.default_duration_start)
         )
     }
 
     fun controlPlayback() {
-        playerRepository.apply {
+        playerInteractor.apply {
             if (isPlaying) pause() else play()
             playerUI.updatePlayBtn(isPlaying)
         }
     }
 
     fun release() {
-        updateTimer(playerRepository.isPlaying)
-        playerRepository.release()
+        updateTimer(playerInteractor.isPlaying)
+        playerInteractor.release()
     }
 }

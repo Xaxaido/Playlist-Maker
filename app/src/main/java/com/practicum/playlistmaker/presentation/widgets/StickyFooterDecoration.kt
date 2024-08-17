@@ -37,7 +37,6 @@ class StickyFooterDecoration : RecyclerView.ItemDecoration() {
 
     private fun updateFooterVisibility(isVisible: Boolean, doOnEnd: () -> Unit = {}) {
         recycler.post {
-            blurredView.isVisible = !isVisible
             adapter.setFooterVisibility(adapter.itemCount - 1, isVisible)
             doOnEnd()
         }
@@ -45,6 +44,7 @@ class StickyFooterDecoration : RecyclerView.ItemDecoration() {
 
     private fun showFooter() {
         val position = adapter.itemCount - 1
+        blurredView.isVisible = true
 
         if (stickyContainer.childCount == 0) {
             val view = adapter.createViewHolder(stickyContainer, adapter.getItemViewType(position)).itemView

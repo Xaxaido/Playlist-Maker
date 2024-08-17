@@ -1,14 +1,14 @@
-package com.practicum.playlistmaker.presentation.settings
+package com.practicum.playlistmaker.data.impl
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.domain.api.ExternalNavigator
+import com.practicum.playlistmaker.domain.api.SharingRepository
 
-class ExternalNavigatorImpl(
+class SharingRepositoryImpl(
     private val context: Context,
-) : ExternalNavigator {
+) : SharingRepository {
 
     override fun shareApp() {
         Intent().apply {
