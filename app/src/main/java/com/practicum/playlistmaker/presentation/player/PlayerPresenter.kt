@@ -3,10 +3,10 @@ package com.practicum.playlistmaker.presentation.player
 import android.content.Context
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.common.Util.millisToSeconds
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.api.MediaPlayerListener
-import com.practicum.playlistmaker.presentation.util.Debounce
-import com.practicum.playlistmaker.data.util.Extensions.millisToSeconds
+import com.practicum.playlistmaker.presentation.utils.Debounce
 
 class PlayerPresenter(
     private val context: Context,

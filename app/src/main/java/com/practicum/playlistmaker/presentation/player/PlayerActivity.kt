@@ -23,7 +23,7 @@ import com.practicum.playlistmaker.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.models.TrackDescription
-import com.practicum.playlistmaker.presentation.util.Debounce
+import com.practicum.playlistmaker.presentation.utils.Debounce
 
 class PlayerActivity : AppCompatActivity(), PlayerUI {
 
@@ -135,7 +135,7 @@ class PlayerActivity : AppCompatActivity(), PlayerUI {
     }
 
     private fun searchTrackDescription(url: String) {
-        Creator.getTrackDescriptionMediator(this).searchTrackDescription(url, object : TrackDescriptionInteractor.TracksDescriptionConsumer {
+        Creator.getTrackDescriptionInteractor(this).searchTrackDescription(url, object : TrackDescriptionInteractor.TracksDescriptionConsumer {
 
             override fun consume(result: TrackDescription) {
                 Debounce(delay = 0L) {

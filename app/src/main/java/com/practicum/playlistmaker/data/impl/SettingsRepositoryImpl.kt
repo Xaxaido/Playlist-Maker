@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.data.impl
 import android.content.Context
 import android.content.SharedPreferences
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.data.util.DtoConverter.toThemeSettings
+import com.practicum.playlistmaker.data.utils.DtoConverter.toThemeSettings
 import com.practicum.playlistmaker.data.dto.ThemeSettingsDto
 import com.practicum.playlistmaker.data.resources.AppTheme
 import com.practicum.playlistmaker.domain.api.SettingsRepository

@@ -4,7 +4,7 @@ import android.content.Context
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.dto.Response
 import com.practicum.playlistmaker.data.dto.SearchRequest
-import com.practicum.playlistmaker.data.util.Extensions
+import com.practicum.playlistmaker.data.utils.Extensions
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.data.impl
 
 import android.content.Context
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.data.util.Extensions
+import com.practicum.playlistmaker.data.utils.Extensions
 import com.practicum.playlistmaker.domain.api.JsoupRepository
 import com.practicum.playlistmaker.domain.models.TrackDescription
 import org.jsoup.Jsoup

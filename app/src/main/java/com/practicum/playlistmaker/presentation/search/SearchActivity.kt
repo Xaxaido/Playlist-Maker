@@ -27,7 +27,7 @@ import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.presentation.player.PlayerActivity
-import com.practicum.playlistmaker.presentation.util.Debounce
+import com.practicum.playlistmaker.presentation.utils.Debounce
 import com.practicum.playlistmaker.presentation.widgets.StickyFooterDecoration
 
 class SearchActivity : AppCompatActivity() {
@@ -41,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
     private var isKeyboardVisible = false
     private val timer = Debounce(delay = Util.USER_INPUT_DELAY) { searchTracks() }
     private val searchHistory: SearchHistoryInteractor by lazy {
-        Creator.getSearchHistoryMediator(this)
+        Creator.getSearchHistoryInteractor(this)
     }
     private val alisa: ViewsList by lazy {
         ViewsList(
@@ -184,7 +184,7 @@ class SearchActivity : AppCompatActivity() {
         if (searchRequest.isEmpty()) return
 
         alisa show Loading
-        Creator.getTracksMediator(this).searchTracks(searchRequest, object : TracksInteractor.TracksConsumer {
+        Creator.getTracksInteractor(this).searchTracks(searchRequest, object : TracksInteractor.TracksConsumer {
 
             override fun consume(result: TracksSearchState) {
                 when(result.tracks.isEmpty()) {

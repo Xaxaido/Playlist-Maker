@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.TypedValue
 import androidx.appcompat.app.AppCompatDelegate
 import com.practicum.playlistmaker.data.resources.AppTheme
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 object Util {
 
@@ -17,6 +19,12 @@ object Util {
         this.toFloat(),
         context.resources.displayMetrics
     ).toInt()
+
+
+    fun Long.millisToSeconds() = SimpleDateFormat(
+        "mm : ss",
+        Locale.getDefault()
+    ).format(this) ?: ""
 
     fun applyTheme(theme: String) {
         AppCompatDelegate.setDefaultNightMode(

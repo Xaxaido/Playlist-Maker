@@ -7,7 +7,7 @@ import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.api.PrefsStorageRepository
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.util.Extensions
+import com.practicum.playlistmaker.data.utils.Extensions
 
 class PrefsStorageRepositoryImpl(
     context: Context,

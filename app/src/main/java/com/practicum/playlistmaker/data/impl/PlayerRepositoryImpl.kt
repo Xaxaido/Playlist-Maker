@@ -25,8 +25,7 @@ class PlayerRepositoryImpl (
     override val currentPosition get() = mediaPlayer.currentPosition
 
     override fun init(stateListener: MediaPlayerListener, track: Track) {
-        val sessionToken =
-            SessionToken(context, ComponentName(context, PlaybackService::class.java))
+        val sessionToken = SessionToken(context, ComponentName(context, PlaybackService::class.java))
 
         controller = MediaController.Builder(context, sessionToken).buildAsync()
         controller.apply {

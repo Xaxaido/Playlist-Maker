@@ -11,7 +11,7 @@ import android.view.ViewTreeObserver
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.presentation.util.Blur
+import com.practicum.playlistmaker.presentation.utils.Blur
 
 class BlurredImageView @JvmOverloads constructor(
     context: Context,

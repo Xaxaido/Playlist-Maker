@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.presentation.util
+package com.practicum.playlistmaker.presentation.utils
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

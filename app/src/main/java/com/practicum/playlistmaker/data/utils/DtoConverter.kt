@@ -1,11 +1,11 @@
-package com.practicum.playlistmaker.data.util
+package com.practicum.playlistmaker.data.utils
 
+import com.practicum.playlistmaker.common.Util.millisToSeconds
 import com.practicum.playlistmaker.data.dto.ThemeSettingsDto
 import com.practicum.playlistmaker.data.dto.TrackDto
 import com.practicum.playlistmaker.domain.models.ThemeSettings
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.util.Extensions.millisToSeconds
-import com.practicum.playlistmaker.data.util.Extensions.toDate
+import com.practicum.playlistmaker.data.utils.Extensions.toDate
 
 object DtoConverter {
 

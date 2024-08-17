@@ -1,5 +1,5 @@
 @file:Suppress("DEPRECATION")
-package com.practicum.playlistmaker.presentation.util
+package com.practicum.playlistmaker.presentation.utils
 
 import android.content.Context
 import android.graphics.Bitmap

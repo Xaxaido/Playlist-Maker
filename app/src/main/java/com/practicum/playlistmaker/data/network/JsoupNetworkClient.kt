@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.data.network
 import com.practicum.playlistmaker.data.dto.Response
 import com.practicum.playlistmaker.data.dto.SearchRequest
 import com.practicum.playlistmaker.data.dto.TrackDescriptionSearchResponse
-import com.practicum.playlistmaker.data.util.Extensions
+import com.practicum.playlistmaker.data.utils.Extensions
 import org.jsoup.Jsoup
 
 class JsoupNetworkClient : NetworkClient {

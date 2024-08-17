@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data.util
+package com.practicum.playlistmaker.data.utils
 
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -10,11 +10,6 @@ object Extensions {
     const val HTTP_BAD_REQUEST = 400
     const val HISTORY_MAX_COUNT = 10
     const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
-
-    fun Long.millisToSeconds() = SimpleDateFormat(
-        "mm : ss",
-        Locale.getDefault()
-    ).format(this) ?: ""
 
     fun String.toDate() = SimpleDateFormat("yyyy", Locale.getDefault())
         .parse(this)
