@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/android:colorBackground"
+    android:background="@null"
     android:foreground="?selectableItemBackground"
     tools:ignore="MissingConstraints, ContentDescription">
 
@@ -16,6 +16,7 @@
         android:layout_marginStart="@dimen/padding_small_6x"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/album_cover_stub" />
 
     <TextView
@@ -31,7 +32,7 @@
         app:layout_constraintBottom_toTopOf="@id/artist_name"
         tools:text="Track Title" />
 
-    <com.practicum.playlistmaker.extension.widget.EllipsizeTextView
+    <com.practicum.playlistmaker.presentation.widgets.EllipsizeTextView
         android:id="@+id/artist_name"
         style="@style/DescriptionText"
         android:layout_width="0dp"

@@ -1,7 +1,8 @@
 [versions]
 agp = "8.3.2"
-jsoup = "1.13.1"
-kotlin = "1.9.22"
+androidxPaletteKtx = "1.0.0"
+facebookShimmer = "0.5.0"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -10,22 +11,32 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.1"
 constraintlayout = "2.1.4"
+media = "1.7.0"
+navigationUiKtx = "2.7.7"
 retrofit2 = "2.11.0"
-glide = "4.16.0"
-paging = "3.3.1"
+glide = "4.15.1"
+paging = "3.3.2"
 fragmentKtx = "1.8.2"
 activityKtx = "1.9.1"
 koinAndroid = "3.5.0"
 kotlinxCoroutinesCore = "1.7.1"
 viewpager2 = "1.1.0"
-media3Common = "1.4.0"
+roomRuntime = "2.6.1"
 media3Session = "1.4.0"
 media3Exoplayer = "1.4.0"
-facebookShimmer = "0.5.0"
+material3Android = "1.2.1"
+jsoup = "1.13.1"
 
 [libraries]
-facebook-shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "facebookShimmer" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+androidx-media = { module = "androidx.media:media", version.ref = "media" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
+androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "androidxPaletteKtx" }
+facebook-shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "facebookShimmer" }
+navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationUiKtx" }
+roomCompiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+roomKtx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+roomRuntime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 koinAndroid= { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
@@ -44,9 +55,9 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3Common" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3Session" }
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3Exoplayer" }
+androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

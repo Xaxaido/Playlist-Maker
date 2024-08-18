@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     style="@style/LayoutFullScreen"
-    tools:ignore="MissingConstraints">
+    android:orientation="vertical"
+    tools:ignore="VisualLintOverlap,MissingConstraints">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
         style="@style/Theme.PlaylistMaker.AppBarOverlay"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="match_parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             style="@style/Theme.PlaylistMaker.PopupOverlay"
-            app:title="@string/search"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:title="@string/search" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -25,61 +23,44 @@
         android:id="@+id/search_layout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        layout="@layout/layout_search"
-        app:layout_constraintTop_toBottomOf="@+id/app_bar" />
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/content_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/padding_small_8x"
-        android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@+id/search_layout"
-        app:layout_constraintBottom_toBottomOf="parent">
+        layout="@layout/layout_search" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/content_wrapper"
+            android:id="@+id/content_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/padding_small_8x">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:overScrollMode="never"
                 android:background="?attr/android:colorBackground"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/search_history_header" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-            <TextView
-                android:id="@+id/search_history_header"
+            <com.practicum.playlistmaker.presentation.widgets.BlurredImageView
+                android:id="@+id/blur_image_view_footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/padding_small_8x"
-                android:gravity="center"
-                android:text="@string/search_history_title"
-                android:textSize="@dimen/text_big"
-                android:textColor="?attr/colorOnBackground"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:scaleType="centerCrop"
+                app:parentView="@id/sticky_container"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-            <Button
-                android:id="@+id/btn_clear_history"
-                style="@style/DarkButton"
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:id="@+id/sticky_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_small_12x"
-                android:text="@string/search_history_btn_clear"
-                app:layout_constraintTop_toBottomOf="@id/recycler"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <FrameLayout
                 android:id="@+id/nothing_found"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="?attr/android:colorBackground"
-                android:clickable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -95,7 +76,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="?attr/android:colorBackground"
-                android:clickable="true"
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -135,6 +115,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.core.widget.NestedScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

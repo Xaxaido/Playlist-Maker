@@ -79,7 +79,7 @@
 
     <style name="DarkButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">@dimen/dark_button_size</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:fontFamily">@font/ys_500</item>

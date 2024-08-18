@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -13,6 +14,8 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        renderscriptTargetApi = 31
+        renderscriptSupportModeEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,22 +47,29 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.media3.common)
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.retrofit2)
     implementation(libs.converter.gson)
     implementation(libs.glide)
-    annotationProcessor(libs.compiler)
+    ksp(libs.compiler)
     implementation(libs.paging)
     implementation(libs.fragmentKtx)
     implementation(libs.activityKtx)
     implementation (libs.koinAndroid)
     implementation (libs.kotlinxCoroutinesCore)
     implementation (libs.viewpager2)
+    implementation (libs.roomRuntime)
+    ksp(libs.roomCompiler)
+    implementation (libs.roomKtx)
+    implementation (libs.androidx.palette.ktx)
+    implementation (libs.androidx.media)
     implementation (libs.facebook.shimmer)
+    implementation (libs.navigation.fragment.ktx)
+    implementation (libs.androidx.navigation.ui.ktx)
     implementation (libs.jsoup)
 }
