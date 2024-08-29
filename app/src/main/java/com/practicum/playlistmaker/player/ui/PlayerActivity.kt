@@ -12,7 +12,6 @@ import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.Player
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
@@ -22,7 +21,6 @@ import com.practicum.playlistmaker.common.utils.Util.dpToPx
 import com.practicum.playlistmaker.player.domain.model.TrackParcelable
 import com.practicum.playlistmaker.common.utils.DtoConverter.toTrack
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
-import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.model.Track
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -32,16 +30,6 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private lateinit var viewModel: PlayerViewModel
     private lateinit var track: Track
-    private val playerListener = object : MediaPlayerListener {
-
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            when (playbackState) {
-                Player.STATE_READY -> binding.btnPlay.isEnabled = true
-                Player.STATE_ENDED -> viewModel.updateProgress()
-                else -> {}
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,6 +140,10 @@ class PlayerActivity : AppCompatActivity() {
         binding.currentTime.text = currentPosition
     }
 
+    private fun ready() {
+        binding.btnPlay.isEnabled = true
+    }
+
     private fun play() {
         binding.btnPlay.setImageResource(R.drawable.pause_button)
     }
@@ -168,6 +160,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun setState(state: PlayerState) {
         when (state) {
             is PlayerState.CurrentTime -> updateCurrentTime(state.time)
+            is PlayerState.Ready -> ready()
             is PlayerState.Playing -> play()
             is PlayerState.Paused -> pause()
             is PlayerState.Stop -> stop()
@@ -177,7 +170,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.init(playerListener, track)
+        viewModel.init(track)
     }
 
     override fun onPause() {

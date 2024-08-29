@@ -8,12 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.media3.common.Player
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Util.millisToSeconds
 import com.practicum.playlistmaker.player.domain.model.Track
-import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.common.utils.Debounce
+import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.search.domain.api.TrackDescriptionInteractor
 
@@ -21,6 +22,16 @@ class PlayerViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
+    private val playerListener = object : MediaPlayerListener {
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                Player.STATE_READY -> setState(PlayerState.Ready)
+                Player.STATE_ENDED -> setState(PlayerState.Stop)
+                else -> {}
+            }
+        }
+    }
     private val consumer = object : TrackDescriptionInteractor.TracksDescriptionConsumer {
 
         override fun consume(result: TrackDescription) {
@@ -43,8 +54,8 @@ class PlayerViewModel(
         }
     }
 
-    fun init(stateListener: MediaPlayerListener, track: Track) {
-        playerInteractor.init(stateListener, track)
+    fun init(track: Track) {
+        playerInteractor.init(playerListener, track)
     }
 
     fun updateProgress() {
