@@ -23,14 +23,18 @@ class RetrofitNetworkClient(
 
     override fun doRequest(dto: Any): Response {
         if (!isConnected()) {
-            return Response().apply { resultCode = -1 }
+            return Response().apply { resultCode = Extensions.NO_CONNECTION }
         }
 
         return if (dto is SearchRequest) {
-            val result = iTunesService.searchTracks(dto.term).execute()
-            val body = result.body() ?: Response()
+            try {
+                val result = iTunesService.searchTracks(dto.term).execute()
+                val body = result.body() ?: Response()
 
-            body.apply { resultCode = result.code() }
+                body.apply { resultCode = result.code() }
+            } catch (e: Exception) {
+                return Response().apply { resultCode = Extensions.REQUEST_TIMEOUT }
+            }
         } else {
             Response().apply { resultCode = Extensions.HTTP_BAD_REQUEST }
         }

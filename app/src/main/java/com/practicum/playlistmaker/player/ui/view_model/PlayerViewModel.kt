@@ -20,18 +20,8 @@ import com.practicum.playlistmaker.search.domain.api.TrackDescriptionInteractor
 
 class PlayerViewModel(
     application: Application
-) : AndroidViewModel(application) {
+) : AndroidViewModel(application), MediaPlayerListener {
 
-    private val playerListener = object : MediaPlayerListener {
-
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            when (playbackState) {
-                Player.STATE_READY -> setState(PlayerState.Ready)
-                Player.STATE_ENDED -> setState(PlayerState.Stop)
-                else -> {}
-            }
-        }
-    }
     private val consumer = object : TrackDescriptionInteractor.TracksDescriptionConsumer {
 
         override fun consume(result: TrackDescription) {
@@ -46,24 +36,8 @@ class PlayerViewModel(
     private val _liveData = MutableLiveData<PlayerState>()
     val liveData: LiveData<PlayerState> get() = _liveData
 
-    private fun updateTimer(isPlaying: Boolean) {
-        if (!isPlaying && timer.isRunning) {
-            timer.stop()
-        } else if (isPlaying) {
-            timer.start(true)
-        }
-    }
-
     fun init(track: Track) {
-        playerInteractor.init(playerListener, track)
-    }
-
-    fun updateProgress() {
-        if (playerInteractor.isPlaying) {
-            setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
-        } else {
-            setState(PlayerState.Stop)
-        }
+        playerInteractor.init(this, track)
     }
 
     fun controlPlayback() {
@@ -86,13 +60,37 @@ class PlayerViewModel(
         _liveData.postValue(state)
     }
 
+    fun searchTrackDescription(url: String) {
+        trackDescriptionInteractor.searchTrackDescription(url, consumer)
+    }
+
     fun release() {
         updateTimer(playerInteractor.isPlaying)
         playerInteractor.release()
     }
 
-    fun searchTrackDescription(url: String) {
-        trackDescriptionInteractor.searchTrackDescription(url, consumer)
+    private fun updateTimer(isPlaying: Boolean) {
+        if (!isPlaying && timer.isRunning) {
+            timer.stop()
+        } else if (isPlaying) {
+            timer.start(true)
+        }
+    }
+
+    private fun updateProgress() {
+        if (playerInteractor.isPlaying) {
+            setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
+        } else {
+            setState(PlayerState.Stop)
+        }
+    }
+
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        when (playbackState) {
+            Player.STATE_READY -> setState(PlayerState.Ready)
+            Player.STATE_ENDED -> setState(PlayerState.Stop)
+            else -> {}
+        }
     }
 
     companion object {
