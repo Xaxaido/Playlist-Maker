@@ -18,7 +18,7 @@ class JsoupNetworkClient : NetworkClient {
                 } ?: Response()
 
                 body
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 Response().apply { resultCode = Extensions.HTTP_NOT_FOUND }
             }
         } else {

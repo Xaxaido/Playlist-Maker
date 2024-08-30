@@ -37,6 +37,7 @@ class PlayerViewModel(
     val liveData: LiveData<PlayerState> get() = _liveData
 
     fun init(track: Track) {
+        setState(PlayerState.Stop)
         playerInteractor.init(this, track)
     }
 
@@ -52,7 +53,7 @@ class PlayerViewModel(
             }
         }
 
-        updateTimer(!isPaused)
+        updateTimer()
         setState(if (isPaused) PlayerState.Paused else PlayerState.Playing)
     }
 
@@ -64,10 +65,10 @@ class PlayerViewModel(
         trackDescriptionInteractor.searchTrackDescription(url, consumer)
     }
 
-    private fun updateTimer(isPlaying: Boolean) {
-        if (!isPlaying && timer.isRunning) {
+    private fun updateTimer() {
+        if (timer.isRunning) {
             timer.stop()
-        } else if (isPlaying) {
+        } else {
             timer.start(true)
         }
     }
@@ -81,7 +82,7 @@ class PlayerViewModel(
     }
 
     fun release() {
-        updateTimer(playerInteractor.isPlaying)
+        updateTimer()
         playerInteractor.release()
     }
 
