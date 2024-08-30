@@ -31,7 +31,6 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private lateinit var viewModel: PlayerViewModel
     private lateinit var track: Track
-    private var previousBufferedProgress = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +71,7 @@ class PlayerActivity : AppCompatActivity() {
         })
 
         binding.btnPlay.isEnabled = false
+        binding.btnPlay.alpha = .5f
         viewModel.searchTrackDescription(track.artistViewUrl)
 
         with (binding) {
@@ -144,17 +144,15 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun updateBufferedProgress(progress: Int) {
         if (progress == 0) return
-
-        animateProgressChange(previousBufferedProgress, progress)
-        previousBufferedProgress = progress
+        animateProgressChange(progress)
     }
 
-    private fun animateProgressChange(from: Int, to: Int, onAnimationEnd: (() -> Unit)? = null) {
-        ObjectAnimator.ofInt(binding.progress, "progress", from, to).apply {
+    private fun animateProgressChange(value: Int, onAnimationEnd: () -> Unit = {}) {
+        ObjectAnimator.ofInt(binding.progress, "progress", value).apply {
             duration = 250
             addUpdateListener { animation ->
                 if (animation.animatedValue as Int == binding.progress.max) {
-                    onAnimationEnd?.invoke()
+                    onAnimationEnd()
                 }
             }
             start()
@@ -162,10 +160,11 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun ready() {
-        animateProgressChange(previousBufferedProgress, binding.progress.max) {
+        animateProgressChange(binding.progress.max) {
             binding.progress.isVisible = false
+            binding.btnPlay.isEnabled = true
+            binding.btnPlay.alpha = 1f
         }
-        binding.btnPlay.isEnabled = true
     }
 
     private fun play() { binding.btnPlay.setImageResource(R.drawable.pause_button) }
