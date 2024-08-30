@@ -58,7 +58,7 @@ class PlayerViewModel(
             }
         }
 
-        updateTimer()
+        updatePlaybackProgressTimerState()
         setState(if (isPaused) PlayerState.Paused else PlayerState.Playing)
     }
 
@@ -70,7 +70,7 @@ class PlayerViewModel(
         trackDescriptionInteractor.searchTrackDescription(url, consumer)
     }
 
-    private fun updateTimer() {
+    private fun updatePlaybackProgressTimerState() {
         val timer = timers[UPDATE_PLAYBACK_PROGRESS]!!
 
         if (timer.isRunning) {
