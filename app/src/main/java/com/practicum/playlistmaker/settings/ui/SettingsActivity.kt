@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.settings.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 
@@ -25,8 +26,10 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
-        viewModel.liveData.observe(this) {
-            binding.themeSwitch.isChecked = it
+        viewModel.liveData.observe(this) { isChecked ->
+            binding.themeSwitch.isChecked = isChecked
+            viewModel.saveTheme(isChecked)
+            Util.applyTheme(viewModel.getCurrentTheme())
         }
 
         binding.toolbar.setNavigationOnClickListener { finish() }

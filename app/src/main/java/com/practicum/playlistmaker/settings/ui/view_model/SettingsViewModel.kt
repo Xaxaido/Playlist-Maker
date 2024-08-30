@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.creator.Creator
 
 class SettingsViewModel(
@@ -24,14 +23,15 @@ class SettingsViewModel(
         _liveData.value = settingsIteractor.getThemeSwitchState()
     }
 
+    fun saveTheme(isChecked: Boolean) { settingsIteractor.updateThemeSetting(isChecked) }
+    fun getCurrentTheme() = settingsIteractor.getThemeSettings().themeName
+
     fun shareApp() { sharingInteractor.shareApp() }
     fun contactSupport() { sharingInteractor.contactSupport() }
     fun openTerms() { sharingInteractor.openTerms() }
 
     fun toggleSystemTheme(isChecked: Boolean) {
         _liveData.value = isChecked
-        settingsIteractor.updateThemeSetting(isChecked)
-        Util.applyTheme(settingsIteractor.getThemeSettings().themeName)
     }
 
     companion object {

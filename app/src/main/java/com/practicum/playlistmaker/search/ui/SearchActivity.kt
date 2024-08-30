@@ -88,7 +88,7 @@ class SearchActivity : AppCompatActivity() {
         isKeyboardVisible()
         binding.toolbar.setNavigationOnClickListener { finish() }
         viewModel.liveData.observe(this, ::setState)
-        binding.buttonRefresh.setOnClickListener { viewModel.search(searchRequest) }
+        binding.buttonRefresh.setOnClickListener { searchTracks() }
 
         binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
@@ -133,7 +133,7 @@ class SearchActivity : AppCompatActivity() {
                 showHistory(viewModel.getHistory())
             } else if (isHistoryShowed) showNoData()
 
-            viewModel.search(searchRequest)
+            searchTracks()
         }
     }
 
@@ -141,6 +141,10 @@ class SearchActivity : AppCompatActivity() {
         isKeyboardVisible = false
         val keyboard = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         keyboard.hideSoftInputFromWindow(binding.searchLayout.searchText.windowToken, 0)
+    }
+
+    private fun searchTracks() {
+        viewModel.search(searchRequest)
     }
 
     private fun sendToPlayer(track: Track) = Intent(
