@@ -64,11 +64,6 @@ class PlayerViewModel(
         trackDescriptionInteractor.searchTrackDescription(url, consumer)
     }
 
-    fun release() {
-        updateTimer(playerInteractor.isPlaying)
-        playerInteractor.release()
-    }
-
     private fun updateTimer(isPlaying: Boolean) {
         if (!isPlaying && timer.isRunning) {
             timer.stop()
@@ -83,6 +78,11 @@ class PlayerViewModel(
         } else {
             setState(PlayerState.Stop)
         }
+    }
+
+    fun release() {
+        updateTimer(playerInteractor.isPlaying)
+        playerInteractor.release()
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {

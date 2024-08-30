@@ -22,6 +22,7 @@ class SettingsActivity : AppCompatActivity() {
             this,
             SettingsViewModel.getViewModelFactory()
         )[SettingsViewModel::class.java]
+
         setListeners()
     }
 

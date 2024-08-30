@@ -140,17 +140,9 @@ class PlayerActivity : AppCompatActivity() {
         binding.currentTime.text = currentPosition
     }
 
-    private fun ready() {
-        binding.btnPlay.isEnabled = true
-    }
-
-    private fun play() {
-        binding.btnPlay.setImageResource(R.drawable.pause_button)
-    }
-
-    private fun pause() {
-        binding.btnPlay.setImageResource(R.drawable.play_button)
-    }
+    private fun ready() { binding.btnPlay.isEnabled = true }
+    private fun play() { binding.btnPlay.setImageResource(R.drawable.pause_button) }
+    private fun pause() { binding.btnPlay.setImageResource(R.drawable.play_button) }
 
     private fun stop() {
         binding.btnPlay.setImageResource(R.drawable.play_button)

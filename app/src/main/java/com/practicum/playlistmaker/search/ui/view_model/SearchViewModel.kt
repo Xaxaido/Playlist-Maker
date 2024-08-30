@@ -36,6 +36,7 @@ class SearchViewModel(
     }
     private val tracksInteractor = Creator.getTracksInteractor(getApplication())
     private val searchHistoryInteractor = Creator.getSearchHistoryInteractor(getApplication())
+    private var searchQuery = ""
     private var hasInternet = false
     private val _liveData = MutableLiveData<SearchState>()
     val liveData: LiveData<SearchState> = _liveData
@@ -43,7 +44,6 @@ class SearchViewModel(
     private val timer: Debounce by lazy {
         Debounce(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
     }
-    private lateinit var searchQuery: String
 
     init {
         InternetConnectionObserver
@@ -63,7 +63,6 @@ class SearchViewModel(
     }
 
     fun addToHistory(track: Track) { searchHistoryInteractor.addTrack(track) }
-
     fun getHistory() = searchHistoryInteractor.getHistory()
 
     private fun setState(state: SearchState) { _liveData.postValue(state) }
