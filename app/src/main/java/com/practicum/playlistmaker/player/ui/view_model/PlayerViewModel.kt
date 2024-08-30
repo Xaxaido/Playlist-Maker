@@ -33,8 +33,8 @@ class PlayerViewModel(
     private val trackDescriptionInteractor = Creator.getTrackDescriptionInteractor(getApplication())
     private val playerInteractor = Creator.getPlayerInteractor(getApplication())
     private val timers: Map<String, Debounce> = mapOf(
-        "UPDATE_PLAYBACK_PROGRESS" to Debounce { updateProgress() },
-        "UPDATE_BUFFERED_PROGRESS" to Debounce(100) {
+        UPDATE_PLAYBACK_PROGRESS to Debounce { updateProgress() },
+        UPDATE_BUFFERED_PROGRESS to Debounce(100) {
             setState(PlayerState.BufferedProgress(playerInteractor.bufferedProgress))
         },
     )
