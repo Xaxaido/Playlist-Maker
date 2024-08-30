@@ -11,6 +11,9 @@ interface PlayerState {
     class CurrentTime(
         val time: String
     ) : PlayerState
+    class BufferedProgress(
+        val progress: Int
+    ) : PlayerState
     class Description(
         val result: TrackDescription
     ) : PlayerState

@@ -23,4 +23,7 @@
     <string name="settings">설정</string>
     <string name="theme">화면 모드</string>
     <string name="theme_auto">시스템 모드</string>
+    <string name="share_app">앱 공유</string>
+    <string name="contact_support">지원 팀에 쓰기</string>
+    <string name="user_agreement">사용자 계약</string>
 </resources>

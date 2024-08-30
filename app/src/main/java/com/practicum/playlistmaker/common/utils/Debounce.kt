@@ -11,12 +11,16 @@ import kotlinx.coroutines.launch
 class Debounce(
     private val delay: Long = 500L,
     dispatcher: CoroutineDispatcher = Dispatchers.Main,
-    private val action: () -> Unit
+    private var action: () -> Unit = {},
 ) {
 
     private val scope: CoroutineScope = CoroutineScope(dispatcher)
     private var job: Job? = null
     var isRunning = false
+
+    fun addAction(action: () -> Unit) {
+        this.action = action
+    }
 
     fun start(isLoop: Boolean = false) {
         stop()

@@ -100,10 +100,24 @@
             app:layout_constraintTop_toTopOf="@id/btn_play"
             app:layout_constraintVertical_bias="0.5" />
 
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="@dimen/play_btn_progress_size"
+            android:layout_height="@dimen/play_btn_progress_size"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="1"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            app:layout_constraintBottom_toBottomOf="@id/btn_play"
+            app:layout_constraintStart_toStartOf="@id/btn_play"
+            app:layout_constraintEnd_toEndOf="@id/btn_play"
+            app:layout_constraintTop_toTopOf="@id/btn_play" />
+
         <ImageView
             android:id="@+id/btn_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/play_btn_size"
+            android:layout_height="@dimen/play_btn_size"
             android:layout_marginTop="@dimen/padding_small_15x"
             android:src="@drawable/play_button"
             app:layout_constraintBottom_toTopOf="@id/player_duration"

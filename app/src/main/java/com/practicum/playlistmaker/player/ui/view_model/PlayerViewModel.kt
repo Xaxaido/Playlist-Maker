@@ -30,9 +30,12 @@ class PlayerViewModel(
     }
     private val trackDescriptionInteractor = Creator.getTrackDescriptionInteractor(getApplication())
     private val playerInteractor = Creator.getPlayerInteractor(getApplication())
-    private val timer: Debounce by lazy {
-        Debounce { updateProgress() }
-    }
+    private val timers: Map<String, Debounce> = mapOf(
+        "UPDATE_PLAYBACK_PROGRESS" to Debounce { updateProgress() },
+        "UPDATE_BUFFERED_PROGRESS" to Debounce(100) {
+            setState(PlayerState.BufferedProgress(playerInteractor.bufferedProgress))
+        },
+    )
     private val _liveData = MutableLiveData<PlayerState>()
     val liveData: LiveData<PlayerState> get() = _liveData
 
@@ -66,6 +69,8 @@ class PlayerViewModel(
     }
 
     private fun updateTimer() {
+        val timer = timers["UPDATE_PLAYBACK_PROGRESS"]!!
+
         if (timer.isRunning) {
             timer.stop()
         } else {
@@ -82,14 +87,22 @@ class PlayerViewModel(
     }
 
     fun release() {
-        updateTimer()
+        timers.forEach {
+            if (it.value.isRunning) it.value.stop()
+        }
         playerInteractor.release()
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
-            Player.STATE_READY -> setState(PlayerState.Ready)
+            Player.STATE_READY -> {
+                timers["UPDATE_BUFFERED_PROGRESS"]!!.stop()
+                setState(PlayerState.Ready)
+            }
             Player.STATE_ENDED -> setState(PlayerState.Stop)
+            Player.STATE_BUFFERING -> {
+                timers["UPDATE_BUFFERED_PROGRESS"]!!.start(true)
+            }
             else -> {}
         }
     }

@@ -22,6 +22,7 @@ class PlayerRepositoryImpl (
     private lateinit var mediaPlayer: MediaController
     override val isPlaying get() = mediaPlayer.isPlaying
     override val currentPosition get() = mediaPlayer.currentPosition
+    override val bufferedProgress get() = mediaPlayer.bufferedPercentage
 
     override fun init(stateListener: MediaPlayerListener, track: Track) {
         val sessionToken = tokenProvider.getSessionToken(context)

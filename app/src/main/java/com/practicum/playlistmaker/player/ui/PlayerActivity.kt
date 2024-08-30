@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.player.ui
 
+import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -30,6 +31,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private lateinit var viewModel: PlayerViewModel
     private lateinit var track: Track
+    private var previousBufferedProgress = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,12 +129,12 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTrackDescription(result: TrackDescription) {
+    private fun showTrackDescription(result: TrackDescription) {
         binding.apply {
-            countryText.text = result.country
             shimmerPlaceholder.shimmer.stopShimmer()
             shimmerPlaceholder.shimmer.isVisible = false
             trackDescription.isVisible = true
+            countryText.text = result.country
         }
     }
 
@@ -140,7 +142,32 @@ class PlayerActivity : AppCompatActivity() {
         binding.currentTime.text = currentPosition
     }
 
-    private fun ready() { binding.btnPlay.isEnabled = true }
+    private fun updateBufferedProgress(progress: Int) {
+        if (progress == 0) return
+
+        animateProgressChange(previousBufferedProgress, progress)
+        previousBufferedProgress = progress
+    }
+
+    private fun animateProgressChange(from: Int, to: Int, onAnimationEnd: (() -> Unit)? = null) {
+        ObjectAnimator.ofInt(binding.progress, "progress", from, to).apply {
+            duration = 250
+            addUpdateListener { animation ->
+                if (animation.animatedValue as Int == binding.progress.max) {
+                    onAnimationEnd?.invoke()
+                }
+            }
+            start()
+        }
+    }
+
+    private fun ready() {
+        animateProgressChange(previousBufferedProgress, binding.progress.max) {
+            binding.progress.isVisible = false
+        }
+        binding.btnPlay.isEnabled = true
+    }
+
     private fun play() { binding.btnPlay.setImageResource(R.drawable.pause_button) }
     private fun pause() { binding.btnPlay.setImageResource(R.drawable.play_button) }
 
@@ -156,7 +183,8 @@ class PlayerActivity : AppCompatActivity() {
             is PlayerState.Playing -> play()
             is PlayerState.Paused -> pause()
             is PlayerState.Stop -> stop()
-            is PlayerState.Description -> getTrackDescription(state.result)
+            is PlayerState.BufferedProgress -> updateBufferedProgress(state.progress)
+            is PlayerState.Description -> showTrackDescription(state.result)
         }
     }
 

@@ -34,4 +34,6 @@
     <dimen name="album_cover_size">45dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
     <dimen name="panel_height">61dp</dimen>
+    <dimen name="play_btn_size">100dp</dimen>
+    <dimen name="play_btn_progress_size">130dp</dimen>
 </resources>
