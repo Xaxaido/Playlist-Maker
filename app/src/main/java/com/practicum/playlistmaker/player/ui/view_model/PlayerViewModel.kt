@@ -14,6 +14,8 @@ import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Util.millisToSeconds
 import com.practicum.playlistmaker.player.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
+import com.practicum.playlistmaker.common.utils.Util.UPDATE_BUFFERED_PROGRESS
+import com.practicum.playlistmaker.common.utils.Util.UPDATE_PLAYBACK_PROGRESS
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.search.domain.api.TrackDescriptionInteractor
@@ -69,7 +71,7 @@ class PlayerViewModel(
     }
 
     private fun updateTimer() {
-        val timer = timers["UPDATE_PLAYBACK_PROGRESS"]!!
+        val timer = timers[UPDATE_PLAYBACK_PROGRESS]!!
 
         if (timer.isRunning) {
             timer.stop()
@@ -96,12 +98,12 @@ class PlayerViewModel(
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
             Player.STATE_READY -> {
-                timers["UPDATE_BUFFERED_PROGRESS"]!!.stop()
+                timers[UPDATE_BUFFERED_PROGRESS]!!.stop()
                 setState(PlayerState.Ready)
             }
             Player.STATE_ENDED -> setState(PlayerState.Stop)
             Player.STATE_BUFFERING -> {
-                timers["UPDATE_BUFFERED_PROGRESS"]!!.start(true)
+                timers[UPDATE_BUFFERED_PROGRESS]!!.start(true)
             }
             else -> {}
         }

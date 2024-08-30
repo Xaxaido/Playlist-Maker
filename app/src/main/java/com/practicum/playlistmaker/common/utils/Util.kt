@@ -13,6 +13,8 @@ object Util {
     const val USER_INPUT_DELAY = 2000L
     const val BUTTON_ENABLED_DELAY = 1000L
     const val PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER = 1
+    const val UPDATE_PLAYBACK_PROGRESS = "UPDATE_PLAYBACK_PROGRESS"
+    const val UPDATE_BUFFERED_PROGRESS = "UPDATE_BUFFERED_PROGRESS"
 
     fun Number.dpToPx(context: Context) = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
