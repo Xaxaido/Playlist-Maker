@@ -71,12 +71,8 @@ class PlayerViewModel(
     }
 
     private fun updatePlaybackProgressTimerState() {
-        val timer = timers[UPDATE_PLAYBACK_PROGRESS]!!
-
-        if (timer.isRunning) {
-            timer.stop()
-        } else {
-            timer.start(true)
+        (timers[UPDATE_PLAYBACK_PROGRESS] as Debounce).apply {
+            if (isRunning) stop() else start(true)
         }
     }
 
@@ -89,21 +85,19 @@ class PlayerViewModel(
     }
 
     fun release() {
-        timers.forEach {
-            if (it.value.isRunning) it.value.stop()
-        }
+        timers.forEach { it.value.stop() }
         playerInteractor.release()
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
             Player.STATE_READY -> {
-                timers[UPDATE_BUFFERED_PROGRESS]!!.stop()
+                (timers[UPDATE_BUFFERED_PROGRESS] as Debounce).stop()
                 setState(PlayerState.Ready)
             }
             Player.STATE_ENDED -> setState(PlayerState.Stop)
             Player.STATE_BUFFERING -> {
-                timers[UPDATE_BUFFERED_PROGRESS]!!.start(true)
+                (timers[UPDATE_BUFFERED_PROGRESS] as Debounce).start(true)
             }
             else -> {}
         }

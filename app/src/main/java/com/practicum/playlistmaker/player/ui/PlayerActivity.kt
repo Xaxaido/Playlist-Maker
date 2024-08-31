@@ -43,8 +43,6 @@ class PlayerActivity : AppCompatActivity() {
             PlayerViewModel.getViewModelFactory()
         )[PlayerViewModel::class.java]
 
-        binding.shimmerPlaceholder.shimmer.startShimmer()
-
         IntentCompat.getParcelableExtra(
             intent,
             Util.KEY_TRACK,
@@ -62,6 +60,8 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        binding.shimmerPlaceholder.shimmer.startShimmer()
+
         binding.albumCover.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
             override fun onGlobalLayout() {
@@ -70,8 +70,7 @@ class PlayerActivity : AppCompatActivity() {
             }
         })
 
-        binding.btnPlay.isEnabled = false
-        binding.btnPlay.alpha = .5f
+        updatePlayBtnState(false)
         viewModel.searchTrackDescription(track.artistViewUrl)
 
         with (binding) {
@@ -111,7 +110,7 @@ class PlayerActivity : AppCompatActivity() {
             binding.expandedContainer.apply {
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
                 )
             }
 
@@ -129,22 +128,18 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun showTrackDescription(result: TrackDescription) {
-        binding.apply {
-            shimmerPlaceholder.shimmer.stopShimmer()
-            shimmerPlaceholder.shimmer.isVisible = false
-            trackDescription.isVisible = true
-            countryText.text = result.country
+    private fun updatePlayBtnState(isActive: Boolean) {
+        binding.btnPlay.apply {
+            isEnabled = isActive
+            alpha = if (isActive) 1f else .5f
         }
     }
 
-    private fun updateCurrentTime(currentPosition: String) {
-        binding.currentTime.text = currentPosition
-    }
-
-    private fun updateBufferedProgress(progress: Int) {
-        if (progress == 0) return
-        animateProgressChange(progress)
+    private fun updatePlayBtnIcon(isPlaying: Boolean) {
+        binding.btnPlay.setImageResource(
+            if (isPlaying) R.drawable.pause_button
+            else R.drawable.play_button
+        )
     }
 
     private fun animateProgressChange(value: Int, onAnimationEnd: () -> Unit = {}) {
@@ -159,20 +154,37 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateCurrentTime(currentPosition: String) {
+        binding.currentTime.text = currentPosition
+    }
+
     private fun ready() {
         animateProgressChange(binding.progress.max) {
             binding.progress.isVisible = false
-            binding.btnPlay.isEnabled = true
-            binding.btnPlay.alpha = 1f
+            updatePlayBtnState(true)
         }
     }
 
-    private fun play() { binding.btnPlay.setImageResource(R.drawable.pause_button) }
-    private fun pause() { binding.btnPlay.setImageResource(R.drawable.play_button) }
+    private fun play() { updatePlayBtnIcon(true) }
+    private fun pause() { updatePlayBtnIcon(false) }
 
     private fun stop() {
-        binding.btnPlay.setImageResource(R.drawable.play_button)
+        updatePlayBtnIcon(false)
         binding.currentTime.setText(R.string.default_duration_start)
+    }
+
+    private fun updateBufferedProgress(progress: Int) {
+        if (progress == 0) return
+        animateProgressChange(progress)
+    }
+
+    private fun showTrackDescription(result: TrackDescription) {
+        binding.apply {
+            shimmerPlaceholder.shimmer.stopShimmer()
+            shimmerPlaceholder.shimmer.isVisible = false
+            trackDescription.isVisible = true
+            countryText.text = result.country
+        }
     }
 
     private fun setState(state: PlayerState) {
