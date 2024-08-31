@@ -1,44 +1,45 @@
-package com.practicum.playlistmaker.common.utils.internet
+package com.practicum.playlistmaker.search.data.impl
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.practicum.playlistmaker.common.utils.InternetAvailability
+import com.practicum.playlistmaker.search.domain.api.InternetConnectionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object InternetConnectionObserver{
+class InternetConnectionRepositoryImpl(
+    context: Context
+) : InternetConnectionRepository {
+
+    private val _internetStatus = MutableLiveData<Boolean>()
+    override val internetStatus: LiveData<Boolean> = _internetStatus
+
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
-    private var cm: ConnectivityManager? = null
+    private val cm: ConnectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
-    private var connectionCallback: InternetConnectionCallback? = null
-
-    fun instance(context: Context): InternetConnectionObserver {
-        cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return this
-    }
-
-    fun setCallback(connectionCallback: InternetConnectionCallback): InternetConnectionObserver {
-        InternetConnectionObserver.connectionCallback = connectionCallback
-        return this
-    }
 
     private fun createNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
-
         override fun onAvailable(network: Network) {
-            val networkCapabilities = cm?.getNetworkCapabilities(network)
+            val networkCapabilities = cm.getNetworkCapabilities(network)
             val hasInternetCapability = networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             if (hasInternetCapability == true) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val hasInternet = InternetAvailability.check(network.socketFactory)
-                    if (hasInternet) {
-                        withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
+                        if (hasInternet) {
                             validNetworks.add(network)
-                            checkValidNetworks()
+                        } else {
+                            validNetworks.remove(network)
                         }
+                        checkValidNetworks()
                     }
                 }
             }
@@ -51,26 +52,19 @@ object InternetConnectionObserver{
     }
 
     private fun checkValidNetworks() {
-        val status = validNetworks.size > 0
-
-        if(status) {
-            connectionCallback?.onConnected()
-        } else {
-            connectionCallback?.onDisconnected()
-        }
+        _internetStatus.postValue(validNetworks.size > 0)
     }
 
-    fun register(): InternetConnectionObserver {
+    override fun register() {
         val networkRequest = NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
 
         networkCallback = createNetworkCallback()
-        cm?.registerNetworkCallback(networkRequest, networkCallback)
-        return this
+        cm.registerNetworkCallback(networkRequest, networkCallback)
     }
 
-    fun unRegister() {
-        cm?.unregisterNetworkCallback(networkCallback)
+    override fun unregister() {
+        cm.unregisterNetworkCallback(networkCallback)
     }
 }

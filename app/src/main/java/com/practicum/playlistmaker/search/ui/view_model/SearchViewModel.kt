@@ -9,18 +9,18 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Extensions
-import com.practicum.playlistmaker.common.utils.internet.InternetConnectionCallback
-import com.practicum.playlistmaker.common.utils.internet.InternetConnectionObserver
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
     private val searchHistoryInteractor: SearchHistoryInteractor,
-) : ViewModel(), InternetConnectionCallback {
+    private val internetConnectionInteractor: InternetConnectionInteractor,
+) : ViewModel() {
 
     private val consumer = object : TracksInteractor.TracksConsumer {
 
@@ -36,19 +36,14 @@ class SearchViewModel(
     }
     private var searchQuery = ""
     private var hasInternet = false
+    private val internetStatus: LiveData<Boolean> = internetConnectionInteractor.internetStatus
     private val _liveData = MutableLiveData<SearchState>()
     val liveData: LiveData<SearchState> = _liveData
-
     private val timer: Debounce by lazy {
         Debounce(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
     }
 
-    init {
-        InternetConnectionObserver
-            .instance(Creator.appContext)
-            .setCallback(this)
-            .register()
-    }
+    init { observeInternetConnection() }
 
     fun search(term: String) {
         searchQuery = term
@@ -76,11 +71,16 @@ class SearchViewModel(
         tracksInteractor.searchTracks(term, consumer)
     }
 
-    override fun onConnected() { hasInternet = true }
-    override fun onDisconnected() { hasInternet = false }
+    private fun observeInternetConnection() {
+        internetConnectionInteractor.register()
+        internetStatus.observeForever { isConnected ->
+            hasInternet = isConnected
+        }
+    }
+
     override fun onCleared() {
         timer.stop()
-        InternetConnectionObserver.unRegister()
+        internetConnectionInteractor.unregister()
     }
 
     companion object {
@@ -90,6 +90,7 @@ class SearchViewModel(
                 SearchViewModel(
                     Creator.getTracksInteractor(),
                     Creator.getSearchHistoryInteractor(),
+                    Creator.getInternetConnectionInteractor(),
                 )
             }
         }

@@ -29,6 +29,10 @@ import com.practicum.playlistmaker.search.domain.impl.TracksInteractorImpl
 import com.practicum.playlistmaker.sharing.data.impl.SharingRepositoryImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.impl.PlayerInteractorImpl
+import com.practicum.playlistmaker.search.data.impl.InternetConnectionRepositoryImpl
+import com.practicum.playlistmaker.search.domain.api.InternetConnectionInteractor
+import com.practicum.playlistmaker.search.domain.api.InternetConnectionRepository
+import com.practicum.playlistmaker.search.domain.impl.InternetConnectionInteractorImpl
 import com.practicum.playlistmaker.search.domain.impl.SearchHistoryInteractorImpl
 import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
@@ -36,26 +40,25 @@ import com.practicum.playlistmaker.search.domain.impl.TrackDescriptionInteractor
 
 object Creator {
 
-    private lateinit var _appContext: Context
-    val appContext get() = _appContext
+    private lateinit var appContext: Context
 
     fun init(appContext: Context) {
-        _appContext = appContext
+        this.appContext = appContext
     }
 
     private fun getPrefs(): SharedPreferences =
-        _appContext.getSharedPreferences(_appContext.getString(R.string.prefs_file_name), MODE_PRIVATE)
+        appContext.getSharedPreferences(appContext.getString(R.string.prefs_file_name), MODE_PRIVATE)
 
     /* SearchTrack */
     private fun getTracksRepository(): TracksRepository = TracksRepositoryImpl(
-        RetrofitNetworkClient(_appContext)
+        RetrofitNetworkClient(appContext)
     )
     fun getTracksInteractor(): TracksInteractor = TracksInteractorImpl(
         getTracksRepository()
     )
 
     /* SearchTrackDescription */
-    private fun getSearchTrackDescriptionData(): SearchTrackDescriptionData = SearchTrackDescriptionData(_appContext)
+    private fun getSearchTrackDescriptionData(): SearchTrackDescriptionData = SearchTrackDescriptionData(appContext)
 
     private fun getTrackDescriptionRepository(): TrackDescriptionRepository =
         TrackDescriptionRepositoryImpl(JsoupNetworkClient(), getSearchTrackDescriptionData())
@@ -65,9 +68,9 @@ object Creator {
 
     /* Settings */
     private fun getSettingsRepository(): SettingsRepository =
-        SettingsRepositoryImpl(_appContext, getPrefs())
+        SettingsRepositoryImpl(appContext, getPrefs())
 
-    private fun getSharingRepository(): SharingRepository = SharingRepositoryImpl(_appContext)
+    private fun getSharingRepository(): SharingRepository = SharingRepositoryImpl(appContext)
 
     fun getSettingsInteractor(): SettingsInteractor =
         SettingsInteractorImpl(getSettingsRepository())
@@ -77,17 +80,24 @@ object Creator {
 
     /* SearchHistory */
     private fun getSearchHistoryRepository(): SearchHistoryRepository =
-        SearchHistoryRepositoryImpl(_appContext, getPrefs())
+        SearchHistoryRepositoryImpl(appContext, getPrefs())
 
     fun getSearchHistoryInteractor(): SearchHistoryInteractor =
         SearchHistoryInteractorImpl(getSearchHistoryRepository())
+
+    /* InternetConnection */
+    private fun getInternetConnectionRepository(): InternetConnectionRepository =
+        InternetConnectionRepositoryImpl(appContext)
+
+    fun getInternetConnectionInteractor(): InternetConnectionInteractor =
+        InternetConnectionInteractorImpl(getInternetConnectionRepository())
 
     /* Player */
     private fun getPlaybackServiceTokenProvider(): PlaybackServiceTokenProvider =
         PlaybackServiceTokenProviderImpl()
 
     private fun getPlayerRepository(): PlayerRepository =
-        PlayerRepositoryImpl(_appContext, getPlaybackServiceTokenProvider())
+        PlayerRepositoryImpl(appContext, getPlaybackServiceTokenProvider())
 
     fun getPlayerInteractor(): PlayerInteractor =
         PlayerInteractorImpl(getPlayerRepository())

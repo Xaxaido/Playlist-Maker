@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.common.utils.internet
+package com.practicum.playlistmaker.common.utils
 
 import java.io.IOException
 import java.net.InetSocketAddress
