@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.search.ui.view_model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
@@ -37,6 +38,7 @@ class SearchViewModel(
     private var searchQuery = ""
     private var hasInternet = false
     private val internetStatus: LiveData<Boolean> = internetConnectionInteractor.internetStatus
+    private val internetStatusObserver = Observer<Boolean> { hasInternet = it }
     private val _liveData = MutableLiveData<SearchState>()
     val liveData: LiveData<SearchState> = _liveData
     private val timer: Debounce by lazy {
@@ -73,14 +75,13 @@ class SearchViewModel(
 
     private fun observeInternetConnection() {
         internetConnectionInteractor.register()
-        internetStatus.observeForever { isConnected ->
-            hasInternet = isConnected
-        }
+        internetStatus.observeForever(internetStatusObserver)
     }
 
     override fun onCleared() {
         timer.stop()
         internetConnectionInteractor.unregister()
+        internetStatus.removeObserver(internetStatusObserver)
     }
 
     companion object {

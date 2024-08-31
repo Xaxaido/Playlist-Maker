@@ -5,11 +5,10 @@ import com.practicum.playlistmaker.search.domain.api.InternetConnectionInteracto
 import com.practicum.playlistmaker.search.domain.api.InternetConnectionRepository
 
 class InternetConnectionInteractorImpl(
-    private val internetConnectionRepository: InternetConnectionRepository
+    private val internetConnectionRepository: InternetConnectionRepository,
 ) : InternetConnectionInteractor {
 
     override val internetStatus: LiveData<Boolean> = internetConnectionRepository.internetStatus
-
     override fun register() { internetConnectionRepository.register() }
     override fun unregister() { internetConnectionRepository.unregister() }
 }

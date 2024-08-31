@@ -15,12 +15,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class InternetConnectionRepositoryImpl(
-    context: Context
+    context: Context,
 ) : InternetConnectionRepository {
 
     private val _internetStatus = MutableLiveData<Boolean>()
     override val internetStatus: LiveData<Boolean> = _internetStatus
-
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     private val cm: ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -30,6 +29,7 @@ class InternetConnectionRepositoryImpl(
         override fun onAvailable(network: Network) {
             val networkCapabilities = cm.getNetworkCapabilities(network)
             val hasInternetCapability = networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+
             if (hasInternetCapability == true) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val hasInternet = InternetAvailability.check(network.socketFactory)
