@@ -10,7 +10,8 @@ class App: Application() {
         super.onCreate()
 
         Creator.init(applicationContext)
-        val systemTheme = Creator.getSettingsInteractor().getThemeSettings().themeName
-        Util.applyTheme(systemTheme)
+        Creator.getSettingsInteractor().getThemeSettings().apply {
+            Util.applyTheme(themeName)
+        }
     }
 }

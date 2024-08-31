@@ -45,7 +45,7 @@ class SearchViewModel(
 
     init {
         InternetConnectionObserver
-            .instance(Creator.context)
+            .instance(Creator.appContext)
             .setCallback(this)
             .register()
     }
