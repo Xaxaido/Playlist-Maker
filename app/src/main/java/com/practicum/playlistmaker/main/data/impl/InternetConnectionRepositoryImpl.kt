@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.data.impl
+package com.practicum.playlistmaker.main.data.impl
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -8,7 +8,7 @@ import android.net.NetworkRequest
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.practicum.playlistmaker.common.utils.InternetAvailability
-import com.practicum.playlistmaker.search.domain.api.InternetConnectionRepository
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

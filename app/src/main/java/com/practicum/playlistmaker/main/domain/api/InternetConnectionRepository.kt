@@ -1,8 +1,8 @@
-package com.practicum.playlistmaker.search.domain.api
+package com.practicum.playlistmaker.main.domain.api
 
 import androidx.lifecycle.LiveData
 
-interface InternetConnectionInteractor {
+interface InternetConnectionRepository {
     val internetStatus: LiveData<Boolean>
     fun register()
     fun unregister()

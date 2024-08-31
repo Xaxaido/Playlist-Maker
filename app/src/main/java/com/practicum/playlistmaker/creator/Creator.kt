@@ -29,10 +29,10 @@ import com.practicum.playlistmaker.search.domain.impl.TracksInteractorImpl
 import com.practicum.playlistmaker.sharing.data.impl.SharingRepositoryImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.impl.PlayerInteractorImpl
-import com.practicum.playlistmaker.search.data.impl.InternetConnectionRepositoryImpl
-import com.practicum.playlistmaker.search.domain.api.InternetConnectionInteractor
-import com.practicum.playlistmaker.search.domain.api.InternetConnectionRepository
-import com.practicum.playlistmaker.search.domain.impl.InternetConnectionInteractorImpl
+import com.practicum.playlistmaker.main.data.impl.InternetConnectionRepositoryImpl
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
+import com.practicum.playlistmaker.main.domain.impl.InternetConnectionInteractorImpl
 import com.practicum.playlistmaker.search.domain.impl.SearchHistoryInteractorImpl
 import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl

@@ -13,7 +13,7 @@ import com.practicum.playlistmaker.common.utils.Extensions
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.player.domain.model.Track
-import com.practicum.playlistmaker.search.domain.api.InternetConnectionInteractor
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 

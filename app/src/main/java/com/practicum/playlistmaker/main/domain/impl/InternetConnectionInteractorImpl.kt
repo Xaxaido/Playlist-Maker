@@ -1,8 +1,8 @@
-package com.practicum.playlistmaker.search.domain.impl
+package com.practicum.playlistmaker.main.domain.impl
 
 import androidx.lifecycle.LiveData
-import com.practicum.playlistmaker.search.domain.api.InternetConnectionInteractor
-import com.practicum.playlistmaker.search.domain.api.InternetConnectionRepository
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
 
 class InternetConnectionInteractorImpl(
     private val internetConnectionRepository: InternetConnectionRepository,
