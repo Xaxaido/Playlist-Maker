@@ -9,7 +9,8 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val systemTheme = Creator.getSettingsInteractor(this).getThemeSettings().themeName
+        Creator.init(applicationContext)
+        val systemTheme = Creator.getSettingsInteractor().getThemeSettings().themeName
         Util.applyTheme(systemTheme)
     }
 }

@@ -7,12 +7,12 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
@@ -29,7 +29,9 @@ import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel: PlayerViewModel by viewModels {
+        PlayerViewModel.getViewModelFactory()
+    }
     private lateinit var track: Track
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +39,6 @@ class PlayerActivity : AppCompatActivity() {
 
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = ViewModelProvider(
-            this,
-            PlayerViewModel.getViewModelFactory()
-        )[PlayerViewModel::class.java]
 
         IntentCompat.getParcelableExtra(
             intent,
@@ -54,7 +51,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
-        viewModel.liveData.observe(this, ::setState)
+        viewModel.liveData.observe(this, ::renderState)
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
     }
@@ -187,7 +184,7 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun setState(state: PlayerState) {
+    private fun renderState(state: PlayerState) {
         when (state) {
             is PlayerState.CurrentTime -> updateCurrentTime(state.time)
             is PlayerState.Ready -> ready()

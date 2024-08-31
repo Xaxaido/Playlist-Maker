@@ -1,11 +1,9 @@
 package com.practicum.playlistmaker.player.ui.view_model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.media3.common.Player
@@ -17,12 +15,14 @@ import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util.UPDATE_BUFFERED_PROGRESS
 import com.practicum.playlistmaker.common.utils.Util.UPDATE_PLAYBACK_PROGRESS
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
+import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.search.domain.api.TrackDescriptionInteractor
 
 class PlayerViewModel(
-    application: Application
-) : AndroidViewModel(application), MediaPlayerListener {
+    private val trackDescriptionInteractor: TrackDescriptionInteractor,
+    private val playerInteractor: PlayerInteractor,
+) : ViewModel(), MediaPlayerListener {
 
     private val consumer = object : TrackDescriptionInteractor.TracksDescriptionConsumer {
 
@@ -30,8 +30,6 @@ class PlayerViewModel(
             setState(PlayerState.Description(result))
         }
     }
-    private val trackDescriptionInteractor = Creator.getTrackDescriptionInteractor(getApplication())
-    private val playerInteractor = Creator.getPlayerInteractor(getApplication())
     private val timers: Map<String, Debounce> = mapOf(
         UPDATE_PLAYBACK_PROGRESS to Debounce { updateProgress() },
         UPDATE_BUFFERED_PROGRESS to Debounce(100) {
@@ -108,7 +106,8 @@ class PlayerViewModel(
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 PlayerViewModel(
-                    this[APPLICATION_KEY] as Application
+                    Creator.getTrackDescriptionInteractor(),
+                    Creator.getPlayerInteractor(),
                 )
             }
         }

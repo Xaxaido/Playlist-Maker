@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.creator
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
@@ -33,57 +34,64 @@ import com.practicum.playlistmaker.search.domain.impl.SearchHistoryInteractorImp
 import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import com.practicum.playlistmaker.search.domain.impl.TrackDescriptionInteractorImpl
-import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 
+@SuppressLint("StaticFieldLeak")
 object Creator {
 
-    private fun getPrefs(context: Context): SharedPreferences =
-        context.getSharedPreferences(context.getString(R.string.prefs_file_name), MODE_PRIVATE)
+    private lateinit var _context: Context
+    val context get() = _context
 
-    private fun getTracksRepository(context: Context): TracksRepository = TracksRepositoryImpl(
-        RetrofitNetworkClient(context)
+    fun init(appContext: Context) {
+        _context = appContext
+    }
+
+    private fun getPrefs(): SharedPreferences =
+        _context.getSharedPreferences(_context.getString(R.string.prefs_file_name), MODE_PRIVATE)
+
+    private fun getTracksRepository(): TracksRepository = TracksRepositoryImpl(
+        RetrofitNetworkClient(_context)
     )
-    fun getTracksInteractor(context: Context): TracksInteractor = TracksInteractorImpl(
-        getTracksRepository(context)
+    fun getTracksInteractor(): TracksInteractor = TracksInteractorImpl(
+        getTracksRepository()
     )
 
     /* SearchTrackDescription */
-    private fun getSearchTrackDescriptionData(context: Context): SearchTrackDescriptionData = SearchTrackDescriptionData(context)
+    private fun getSearchTrackDescriptionData(): SearchTrackDescriptionData = SearchTrackDescriptionData(_context)
 
-    private fun getTrackDescriptionRepository(context: Context): TrackDescriptionRepository =
-        TrackDescriptionRepositoryImpl(JsoupNetworkClient(), getSearchTrackDescriptionData(context))
+    private fun getTrackDescriptionRepository(): TrackDescriptionRepository =
+        TrackDescriptionRepositoryImpl(JsoupNetworkClient(), getSearchTrackDescriptionData())
 
-    fun getTrackDescriptionInteractor(context: Context): TrackDescriptionInteractor =
-        TrackDescriptionInteractorImpl(getTrackDescriptionRepository(context))
+    fun getTrackDescriptionInteractor(): TrackDescriptionInteractor =
+        TrackDescriptionInteractorImpl(getTrackDescriptionRepository())
     /* SearchTrackDescription */
 
     /* Settings */
-    private fun getSettingsRepository(context: Context): SettingsRepository =
-        SettingsRepositoryImpl(context, getPrefs(context))
+    private fun getSettingsRepository(): SettingsRepository =
+        SettingsRepositoryImpl(_context, getPrefs())
 
-    private fun getSharingRepository(context: Context): SharingRepository = SharingRepositoryImpl(context)
+    private fun getSharingRepository(): SharingRepository = SharingRepositoryImpl(_context)
 
-    fun getSettingsInteractor(context: Context): SettingsInteractor =
-        SettingsInteractorImpl(getSettingsRepository(context))
+    fun getSettingsInteractor(): SettingsInteractor =
+        SettingsInteractorImpl(getSettingsRepository())
 
-    fun getSharingInteractor(context: Context): SharingInteractor =
-        SharingInteractorImpl(getSharingRepository(context))
+    fun getSharingInteractor(): SharingInteractor =
+        SharingInteractorImpl(getSharingRepository())
     /* Settings */
 
-    private fun getSearchHistoryRepository(context: Context): SearchHistoryRepository =
-        SearchHistoryRepositoryImpl(context, getPrefs(context))
+    private fun getSearchHistoryRepository(): SearchHistoryRepository =
+        SearchHistoryRepositoryImpl(_context, getPrefs())
 
-    fun getSearchHistoryInteractor(context: Context): SearchHistoryInteractor =
-        SearchHistoryInteractorImpl(getSearchHistoryRepository(context))
+    fun getSearchHistoryInteractor(): SearchHistoryInteractor =
+        SearchHistoryInteractorImpl(getSearchHistoryRepository())
 
     /* Player */
     private fun getPlaybackServiceTokenProvider(): PlaybackServiceTokenProvider =
         PlaybackServiceTokenProviderImpl()
 
-    private fun getPlayerRepository(context: Context): PlayerRepository =
-        PlayerRepositoryImpl(context, getPlaybackServiceTokenProvider())
+    private fun getPlayerRepository(): PlayerRepository =
+        PlayerRepositoryImpl(_context, getPlaybackServiceTokenProvider())
 
-    fun getPlayerInteractor(context: Context): PlayerInteractor =
-        PlayerInteractorImpl(getPlayerRepository(context))
+    fun getPlayerInteractor(): PlayerInteractor =
+        PlayerInteractorImpl(getPlayerRepository())
     /* Player */
 }

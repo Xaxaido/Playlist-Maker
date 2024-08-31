@@ -6,11 +6,11 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Util
@@ -33,7 +33,9 @@ import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModels {
+        SearchViewModel.getViewModelFactory()
+    }
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var stickyFooterDecoration: StickyFooterDecoration
     private var searchRequest = ""
@@ -57,11 +59,6 @@ class SearchActivity : AppCompatActivity() {
 
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
 
         trackAdapter = TrackAdapter()
         binding.recycler.adapter = trackAdapter
@@ -87,7 +84,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setListeners() {
         isKeyboardVisible()
         binding.toolbar.setNavigationOnClickListener { finish() }
-        viewModel.liveData.observe(this, ::setState)
+        viewModel.liveData.observe(this, ::renderState)
         binding.buttonRefresh.setOnClickListener { searchTracks() }
 
         binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -186,7 +183,7 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.submitTracksList(isDecorationNeeded, list, doOnEnd)
     }
 
-    private fun setState(state: SearchState) {
+    private fun renderState(state: SearchState) {
         when (state) {
             is SearchState.SearchResults -> showContent(state.results)
             is SearchState.ConnectionError -> alisa show Error

@@ -1,11 +1,9 @@
 package com.practicum.playlistmaker.search.ui.view_model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.common.resources.SearchState
@@ -16,11 +14,13 @@ import com.practicum.playlistmaker.common.utils.internet.InternetConnectionObser
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 
 class SearchViewModel(
-    application: Application
-) : AndroidViewModel(application), InternetConnectionCallback {
+    private val tracksInteractor: TracksInteractor,
+    private val searchHistoryInteractor: SearchHistoryInteractor,
+) : ViewModel(), InternetConnectionCallback {
 
     private val consumer = object : TracksInteractor.TracksConsumer {
 
@@ -34,8 +34,6 @@ class SearchViewModel(
             }
         }
     }
-    private val tracksInteractor = Creator.getTracksInteractor(getApplication())
-    private val searchHistoryInteractor = Creator.getSearchHistoryInteractor(getApplication())
     private var searchQuery = ""
     private var hasInternet = false
     private val _liveData = MutableLiveData<SearchState>()
@@ -47,7 +45,7 @@ class SearchViewModel(
 
     init {
         InternetConnectionObserver
-            .instance(getApplication())
+            .instance(Creator.context)
             .setCallback(this)
             .register()
     }
@@ -90,7 +88,8 @@ class SearchViewModel(
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 SearchViewModel(
-                    this[APPLICATION_KEY] as Application
+                    Creator.getTracksInteractor(),
+                    Creator.getSearchHistoryInteractor(),
                 )
             }
         }

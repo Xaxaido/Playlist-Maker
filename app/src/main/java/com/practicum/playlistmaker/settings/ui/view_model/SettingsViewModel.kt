@@ -1,21 +1,20 @@
 package com.practicum.playlistmaker.settings.ui.view_model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
+import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 
 class SettingsViewModel(
-    application: Application
-) : AndroidViewModel(application) {
+    private val settingsIteractor: SettingsInteractor,
+    private val sharingInteractor: SharingInteractor,
+) : ViewModel() {
 
-    private val settingsIteractor = Creator.getSettingsInteractor(getApplication())
-    private val sharingInteractor = Creator.getSharingInteractor(getApplication())
     private val _liveData = MutableLiveData<Boolean>()
     val liveData: LiveData<Boolean> get() = _liveData
 
@@ -39,7 +38,8 @@ class SettingsViewModel(
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 SettingsViewModel(
-                    this[APPLICATION_KEY] as Application
+                    Creator.getSettingsInteractor(),
+                    Creator.getSharingInteractor(),
                 )
             }
         }
