@@ -36,8 +36,6 @@ class Debounce(
     }
 
     fun stop() {
-        if (!isRunning) return
-
         isRunning = false
         job?.cancel()
         job = null

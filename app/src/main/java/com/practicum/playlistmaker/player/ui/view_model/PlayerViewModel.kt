@@ -83,7 +83,9 @@ class PlayerViewModel(
     }
 
     fun release() {
-        timers.forEach { it.value.stop() }
+        timers.forEach {
+            if (it.value.isRunning) it.value.stop()
+        }
         playerInteractor.release()
     }
 

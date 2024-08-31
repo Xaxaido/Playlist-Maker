@@ -37,15 +37,17 @@ class SearchViewModel(
     }
     private var searchQuery = ""
     private var hasInternet = false
-    private val internetStatus: LiveData<Boolean> = internetConnectionInteractor.internetStatus
     private val internetStatusObserver = Observer<Boolean> { hasInternet = it }
-    private val _liveData = MutableLiveData<SearchState>()
-    val liveData: LiveData<SearchState> = _liveData
     private val timer: Debounce by lazy {
         Debounce(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
     }
+    private val _liveData = MutableLiveData<SearchState>()
+    val liveData: LiveData<SearchState> = _liveData
 
-    init { observeInternetConnection() }
+    init {
+        internetConnectionInteractor.register()
+        internetConnectionInteractor.internetStatus.observeForever(internetStatusObserver)
+    }
 
     fun search(term: String) {
         searchQuery = term
@@ -73,15 +75,10 @@ class SearchViewModel(
         tracksInteractor.searchTracks(term, consumer)
     }
 
-    private fun observeInternetConnection() {
-        internetConnectionInteractor.register()
-        internetStatus.observeForever(internetStatusObserver)
-    }
-
     override fun onCleared() {
         timer.stop()
         internetConnectionInteractor.unregister()
-        internetStatus.removeObserver(internetStatusObserver)
+        internetConnectionInteractor.internetStatus.removeObserver(internetStatusObserver)
     }
 
     companion object {
