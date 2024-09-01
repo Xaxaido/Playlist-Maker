@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="image_view_stub">아이콘</string>
+    <string name="search">검색</string>
+    <string name="search_hint">검색</string>
+    <string name="nothing_found">검색 결과 없음</string>
+    <string name="search_history_title">찾은 노래</string>
+    <string name="search_history_btn_clear">검색 기록 지우기</string>
+    <string name="history_delete_item">삭제</string>
+    <string name="history_add_to_fav">좋아</string>
+    <string name="history_remove_from_fav">싫어</string>
+    <string name="player_duration">지속</string>
+    <string name="player_album">앨범</string>
+    <string name="player_year">연도</string>
+    <string name="player_genre">장르</string>
+    <string name="player_country">나라</string>
+    <string name="player_unknown">알려지지 않음</string>
+    <string name="update">리프레시하다</string>
+    <string name="media_library">보관함</string>
+    <string name="favorite_tracks">즐겨찾기</string>
+    <string name="playlists">플레이리스트</string>
+    <string name="new_playlist">플레이리스트 추가</string>
+    <string name="settings">설정</string>
+    <string name="theme">화면 모드</string>
+    <string name="theme_auto">시스템 모드</string>
+    <string name="share_app">앱 공유</string>
+    <string name="contact_support">지원 팀에 쓰기</string>
+    <string name="user_agreement">사용자 계약</string>
+</resources>

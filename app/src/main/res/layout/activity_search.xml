@@ -42,7 +42,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <com.practicum.playlistmaker.presentation.widgets.BlurredImageView
+            <com.practicum.playlistmaker.common.widgets.BlurredImageView
                 android:id="@+id/blur_image_view_footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
