@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_layout"
     style="@style/LayoutFullScreen"
-    tools:context=".main.ui.MainActivity" >
+    android:background="@color/activityMainBgColor"
+    tools:context=".main.ui.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         style="@style/Theme.PlaylistMaker.AppBarOverlay"
-        android:backgroundTint="@color/activityMainBgColor">
+        android:backgroundTint="@color/activityMainBgColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -18,36 +23,86 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:id="@+id/content_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="@dimen/header_margin"
-        android:background="@color/activityMainBgColor"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/padding_small_8x"
-        android:paddingEnd="@dimen/padding_small_8x"
-        android:paddingBottom="@dimen/bottom_layout_margin"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+        app:layout_constraintGuide_begin="@dimen/padding_small_8x" />
 
-        <Button
-            android:id="@+id/btn_search"
-            style="@style/BigButton"
-            android:text="@string/search"
-            app:icon="@drawable/ic_search" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/padding_small_8x" />
 
-        <Button
-            android:id="@+id/btn_media_library"
-            style="@style/BigButton"
-            android:text="@string/media_library"
-            app:icon="@drawable/ic_media_library" />
+    <Button
+        android:id="@+id/btn_search"
+        style="@style/BigButton"
+        android:layout_marginTop="@dimen/header_margin"
+        android:text="@string/search"
+        app:icon="@drawable/ic_search"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintBottom_toTopOf="@id/btn_media_library" />
 
-        <Button
-            android:id="@+id/btn_settings"
-            style="@style/BigButton"
-            android:text="@string/settings"
-            app:icon="@drawable/ic_settings" />
+    <Button
+        android:id="@+id/btn_media_library"
+        style="@style/BigButton"
+        android:text="@string/media_library"
+        app:icon="@drawable/ic_media_library"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/btn_search"
+        app:layout_constraintBottom_toTopOf="@id/btn_settings" />
+
+    <Button
+        android:id="@+id/btn_settings"
+        style="@style/BigButton"
+        android:layout_marginBottom="@dimen/bottom_layout_margin"
+        android:text="@string/settings"
+        app:icon="@drawable/ic_settings"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/btn_media_library"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/no_internet_msg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/padding_small_8x"
+        android:background="@color/activityMainBgColor"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <com.google.android.material.button.MaterialButton
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:padding="0dp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:text="@string/no_internet_connection"
+            android:enabled="false"
+            app:icon="@drawable/no_internet"
+            app:iconGravity="textStart"
+            app:iconTint="@color/white" />
+
+        <TextView
+            android:id="@+id/btn_close_no_internet_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/rippleColor"
+            android:text="@string/close" />
 
     </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

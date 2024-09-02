@@ -1,15 +1,15 @@
 package com.practicum.playlistmaker.common.resources
 
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 
 sealed interface SearchState {
 
     data object Loading: SearchState
     data object NothingFound: SearchState
-    data class SearchResults(
+    data class InternetResults(
         val results: List<Track>
     ) : SearchState
-    data class SearchHistory(
+    data class InternetHistory(
         val history: List<Track>
     ) : SearchState
     data class ConnectionError(

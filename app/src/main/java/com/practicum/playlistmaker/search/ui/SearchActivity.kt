@@ -1,11 +1,13 @@
 package com.practicum.playlistmaker.search.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
@@ -15,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackParcelable
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.resources.VisibilityState.Error
 import com.practicum.playlistmaker.common.resources.VisibilityState.History
 import com.practicum.playlistmaker.common.resources.VisibilityState.Loading
@@ -27,7 +29,8 @@ import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityIt
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.common.utils.Debounce
-import com.practicum.playlistmaker.common.widgets.StickyFooterDecoration
+import com.practicum.playlistmaker.common.widgets.recycler.StickyFooterDecoration
+import com.practicum.playlistmaker.common.widgets.recycler.TrackItemAnimator
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 
 class SearchActivity : AppCompatActivity() {
@@ -54,6 +57,13 @@ class SearchActivity : AppCompatActivity() {
             )
         )
     }
+    private val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && isHistoryShowed) {
+                showHistory(viewModel.getHistory())
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -62,7 +72,7 @@ class SearchActivity : AppCompatActivity() {
 
         trackAdapter = TrackAdapter()
         binding.recycler.adapter = trackAdapter
-        binding.recycler.itemAnimator = null
+        binding.recycler.itemAnimator = TrackItemAnimator()
         stickyFooterDecoration = StickyFooterDecoration()
         setListeners()
         showNoData()
@@ -98,9 +108,9 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.setOnTrackClickListener { track ->
             if (!isClickEnabled) return@setOnTrackClickListener
 
+            isClickEnabled = false
             viewModel.addToHistory(track)
             sendToPlayer(track)
-            isClickEnabled = false
             Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
         }
 
@@ -149,7 +159,7 @@ class SearchActivity : AppCompatActivity() {
         PlayerActivity::class.java,
     ).apply {
         putExtra(Util.KEY_TRACK, track.toTrackParcelable())
-        startActivity(this)
+        startForResult.launch(this@apply)
     }
 
     private fun showNoData() {
@@ -160,9 +170,9 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showHistory(list: List<Track>) {
         isHistoryShowed = true
-        list.apply {
-            if (this.isNotEmpty()) {
-                updateData(true, this) {
+        list.also {
+            if (it.isNotEmpty()) {
+                updateData(true, it) {
                     alisa show History
                 }
             } else showNoData()
@@ -185,9 +195,9 @@ class SearchActivity : AppCompatActivity() {
 
     private fun renderState(state: SearchState) {
         when (state) {
-            is SearchState.SearchResults -> showContent(state.results)
+            is SearchState.InternetResults -> showContent(state.results)
             is SearchState.ConnectionError -> alisa show Error
-            is SearchState.SearchHistory -> showHistory(state.history)
+            is SearchState.InternetHistory -> showHistory(state.history)
             is SearchState.NothingFound -> alisa show NothingFound
             is SearchState.Loading -> alisa show Loading
         }

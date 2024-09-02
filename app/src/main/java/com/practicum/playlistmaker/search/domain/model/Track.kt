@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.player.domain.model
+package com.practicum.playlistmaker.search.domain.model
 
 data class Track(
     val trackId: Long,

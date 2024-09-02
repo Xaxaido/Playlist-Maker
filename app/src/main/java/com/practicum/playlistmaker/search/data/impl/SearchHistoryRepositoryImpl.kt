@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.domain.model.Track
-import com.practicum.playlistmaker.common.utils.Extensions
+import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 
 class SearchHistoryRepositoryImpl(
@@ -28,7 +28,7 @@ class SearchHistoryRepositoryImpl(
         with (getHistory().toMutableList()) {
             removeIf { it.trackId == track.trackId }
             add(0, track)
-            if (size > Extensions.HISTORY_MAX_COUNT) removeLast()
+            if (size > Util.HISTORY_MAX_COUNT) removeLast()
             saveHistory(this)
         }
     }

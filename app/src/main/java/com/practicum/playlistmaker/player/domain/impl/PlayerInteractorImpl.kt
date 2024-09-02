@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.player.domain.impl
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.api.PlayerRepository
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 
 class PlayerInteractorImpl(
     private val playerRepository: PlayerRepository,

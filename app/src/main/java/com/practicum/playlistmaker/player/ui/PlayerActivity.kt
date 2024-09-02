@@ -1,6 +1,8 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.animation.ObjectAnimator
+import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -10,6 +12,7 @@ import android.view.ViewTreeObserver
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.animation.doOnEnd
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -18,11 +21,11 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.common.utils.Util.dpToPx
-import com.practicum.playlistmaker.player.domain.model.TrackParcelable
+import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
+import com.practicum.playlistmaker.search.domain.model.TrackParcelable
 import com.practicum.playlistmaker.common.utils.DtoConverter.toTrack
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 
@@ -52,8 +55,14 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun setListeners() {
         viewModel.liveData.observe(this, ::renderState)
-        binding.toolbar.setNavigationOnClickListener { finish() }
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
+
+        binding.toolbar.setNavigationOnClickListener {
+            Intent().apply {
+                setResult(Activity.RESULT_OK, this)
+            }
+            finish()
+        }
     }
 
     private fun setupUI() {
@@ -142,11 +151,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun animateProgressChange(value: Int, onAnimationEnd: () -> Unit = {}) {
         ObjectAnimator.ofInt(binding.progress, "progress", value).apply {
             duration = 250
-            addUpdateListener { animation ->
-                if (animation.animatedValue as Int == binding.progress.max) {
-                    onAnimationEnd()
-                }
-            }
+            doOnEnd { onAnimationEnd() }
             start()
         }
     }

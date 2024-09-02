@@ -11,7 +11,7 @@ import com.practicum.playlistmaker.player.data.MediaPlayerListenerAdapter
 import com.practicum.playlistmaker.player.data.PlaybackServiceTokenProvider
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerRepository
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 
 class PlayerRepositoryImpl (
     private val context: Context,

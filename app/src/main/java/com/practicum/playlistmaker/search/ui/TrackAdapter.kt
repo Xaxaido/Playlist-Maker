@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.player.domain.model.Track
-import com.practicum.playlistmaker.common.resources.TrackListItem
+import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.TrackListItem
 import com.practicum.playlistmaker.databinding.ItemFooterBinding
 import com.practicum.playlistmaker.databinding.ItemHeaderBinding
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
@@ -15,6 +15,8 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
 
     private var onTrackClick: (Track) -> Unit = {}
     private var onClearHistoryClick: () -> Unit = {}
+
+    init { setHasStableIds(true) }
 
     fun getOnClearHistoryClickListener() = onClearHistoryClick()
 
@@ -43,6 +45,14 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
     fun setFooterVisibility(position: Int, isVisible: Boolean) {
         (getItem(position) as TrackListItem.Footer).isVisible = isVisible
         notifyItemChanged(position)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return when (val item = currentList[position]) {
+            is TrackListItem.TrackItem -> item.track.trackId
+            is TrackListItem.Header -> Long.MAX_VALUE - 1
+            is TrackListItem.Footer -> Long.MAX_VALUE
+        }
     }
 
     override fun getItemViewType(position: Int): Int {

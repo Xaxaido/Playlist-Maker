@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.player.domain.model
+package com.practicum.playlistmaker.search.domain.model
 
 import android.os.Parcel
 import android.os.Parcelable

@@ -1,6 +1,4 @@
-package com.practicum.playlistmaker.common.resources
-
-import com.practicum.playlistmaker.player.domain.model.Track
+package com.practicum.playlistmaker.search.domain.model
 
 sealed class TrackListItem {
     data class TrackItem(val track: Track) : TrackListItem()

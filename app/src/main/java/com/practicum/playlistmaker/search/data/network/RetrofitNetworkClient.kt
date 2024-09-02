@@ -4,7 +4,7 @@ import android.content.Context
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
-import com.practicum.playlistmaker.common.utils.Extensions
+import com.practicum.playlistmaker.common.utils.Util
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -27,10 +27,10 @@ class RetrofitNetworkClient(
 
                 body.apply { resultCode = result.code() }
             } catch (e: Throwable) {
-                return Response().apply { resultCode = Extensions.REQUEST_TIMEOUT }
+                return Response().apply { resultCode = Util.REQUEST_TIMEOUT }
             }
         } else {
-            Response().apply { resultCode = Extensions.HTTP_BAD_REQUEST }
+            Response().apply { resultCode = Util.HTTP_BAD_REQUEST }
         }
     }
 }

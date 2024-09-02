@@ -9,9 +9,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.media3.common.Player
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.common.resources.PlayerState
-import com.practicum.playlistmaker.common.utils.Util.millisToSeconds
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
+import com.practicum.playlistmaker.common.utils.DebounceR
 import com.practicum.playlistmaker.common.utils.Util.UPDATE_BUFFERED_PROGRESS
 import com.practicum.playlistmaker.common.utils.Util.UPDATE_PLAYBACK_PROGRESS
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
@@ -36,6 +37,9 @@ class PlayerViewModel(
             setState(PlayerState.BufferedProgress(playerInteractor.bufferedProgress))
         },
     )
+
+    private val timer = DebounceR { updateProgress() }
+
     private val _liveData = MutableLiveData<PlayerState>()
     val liveData: LiveData<PlayerState> get() = _liveData
 
@@ -69,9 +73,13 @@ class PlayerViewModel(
     }
 
     private fun updatePlaybackProgressTimerState() {
-        (timers[UPDATE_PLAYBACK_PROGRESS] as Debounce).apply {
+        timer.apply {
             if (isRunning) stop() else start(true)
         }
+
+        /*(timers[UPDATE_PLAYBACK_PROGRESS] as Debounce).apply {
+            if (isRunning) stop() else start(true)
+        }*/
     }
 
     private fun updateProgress() {
@@ -83,6 +91,7 @@ class PlayerViewModel(
     }
 
     fun release() {
+        if (timer.isRunning) timer.stop()
         timers.forEach {
             if (it.value.isRunning) it.value.stop()
         }

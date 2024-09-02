@@ -1,32 +1,24 @@
 package com.practicum.playlistmaker.common.utils
 
-import android.content.Context
-import android.util.TypedValue
 import androidx.appcompat.app.AppCompatDelegate
 import com.practicum.playlistmaker.common.resources.AppTheme
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 object Util {
 
     const val KEY_TRACK = "KEY_TRACK"
     const val USER_INPUT_DELAY = 2000L
     const val BUTTON_ENABLED_DELAY = 1000L
+    const val ANIMATION_SHORT= 250L
     const val PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER = 1
+    const val HISTORY_MAX_COUNT = 10
+    const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
     const val UPDATE_PLAYBACK_PROGRESS = "UPDATE_PLAYBACK_PROGRESS"
     const val UPDATE_BUFFERED_PROGRESS = "UPDATE_BUFFERED_PROGRESS"
-
-    fun Number.dpToPx(context: Context) = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        this.toFloat(),
-        context.resources.displayMetrics
-    ).toInt()
-
-
-    fun Long.millisToSeconds() = SimpleDateFormat(
-        "mm : ss",
-        Locale.getDefault()
-    ).format(this) ?: ""
+    const val NO_CONNECTION = -1
+    const val HTTP_OK = 200
+    const val HTTP_BAD_REQUEST = 400
+    const val HTTP_NOT_FOUND = 404
+    const val REQUEST_TIMEOUT = 408
 
     fun applyTheme(theme: String) {
         AppCompatDelegate.setDefaultNightMode(

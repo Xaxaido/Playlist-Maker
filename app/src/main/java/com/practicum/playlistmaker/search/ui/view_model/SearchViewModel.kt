@@ -9,10 +9,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Debounce
-import com.practicum.playlistmaker.common.utils.Extensions
+import com.practicum.playlistmaker.common.utils.DebounceR
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.creator.Creator
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
@@ -27,7 +27,7 @@ class SearchViewModel(
 
         override fun consume(tracks: List<Track>?, error: Int?) {
             when {
-                !tracks.isNullOrEmpty() -> setState(SearchState.SearchResults(results = tracks))
+                !tracks.isNullOrEmpty() -> setState(SearchState.InternetResults(results = tracks))
                 else -> {
                     if (error != null) setState(SearchState.ConnectionError(error = error))
                     else setState(SearchState.NothingFound)
@@ -38,8 +38,11 @@ class SearchViewModel(
     private var searchQuery = ""
     private var hasInternet = false
     private val internetStatusObserver = Observer<Boolean> { hasInternet = it }
-    private val timer: Debounce by lazy {
+    /*private val timer: Debounce by lazy {
         Debounce(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
+    }*/
+    private val timer: DebounceR by lazy {
+        DebounceR(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
     }
     private val _liveData = MutableLiveData<SearchState>()
     val liveData: LiveData<SearchState> = _liveData
@@ -56,7 +59,7 @@ class SearchViewModel(
 
     fun clearHistory() {
         searchHistoryInteractor.clearHistory()
-        setState(SearchState.SearchResults(emptyList()))
+        setState(SearchState.InternetResults(emptyList()))
     }
 
     fun addToHistory(track: Track) { searchHistoryInteractor.addTrack(track) }
@@ -67,7 +70,7 @@ class SearchViewModel(
     private fun doSearch(term: String) {
         if (searchQuery.isEmpty()) return
         if (!hasInternet) {
-            setState(SearchState.ConnectionError(error = Extensions.NO_CONNECTION))
+            setState(SearchState.ConnectionError(error = Util.NO_CONNECTION))
             return
         }
 

@@ -10,8 +10,8 @@ class App: Application() {
         super.onCreate()
 
         Creator.init(applicationContext)
-        Creator.getSettingsInteractor().getThemeSettings().apply {
-            Util.applyTheme(themeName)
+        Creator.getSettingsInteractor().getThemeSettings().also { theme ->
+            Util.applyTheme(theme.themeName)
         }
     }
 }

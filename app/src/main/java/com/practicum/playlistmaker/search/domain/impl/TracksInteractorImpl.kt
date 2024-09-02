@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.search.domain.impl
 
-import com.practicum.playlistmaker.common.resources.TracksSearchState
+import com.practicum.playlistmaker.common.resources.TracksRequestState
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
 import java.util.concurrent.Executors
@@ -12,8 +12,8 @@ class TracksInteractorImpl(private val repository: TracksRepository) : TracksInt
     override fun searchTracks(term: String, consumer: TracksInteractor.TracksConsumer) {
         executor.execute {
             when(val result = repository.searchTracks(term)) {
-                is TracksSearchState.Success -> { consumer.consume(result.tracks, null) }
-                is TracksSearchState.Error -> { consumer.consume(null, result.error) }
+                is TracksRequestState.Success -> { consumer.consume(result.tracks, null) }
+                is TracksRequestState.Error -> { consumer.consume(null, result.error) }
             }
         }
     }
