@@ -9,7 +9,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Debounce
-import com.practicum.playlistmaker.common.utils.DebounceR
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -38,11 +37,8 @@ class SearchViewModel(
     private var searchQuery = ""
     private var hasInternet = false
     private val internetStatusObserver = Observer<Boolean> { hasInternet = it }
-    /*private val timer: Debounce by lazy {
+    private val timer: Debounce by lazy {
         Debounce(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
-    }*/
-    private val timer: DebounceR by lazy {
-        DebounceR(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
     }
     private val _liveData = MutableLiveData<SearchState>()
     val liveData: LiveData<SearchState> = _liveData
@@ -51,6 +47,8 @@ class SearchViewModel(
         internetConnectionInteractor.register()
         internetConnectionInteractor.internetStatus.observeForever(internetStatusObserver)
     }
+
+    fun stopSearch() { tracksInteractor.cancelRequest() }
 
     fun search(term: String) {
         searchQuery = term
@@ -63,6 +61,7 @@ class SearchViewModel(
     }
 
     fun addToHistory(track: Track) { searchHistoryInteractor.addTrack(track) }
+    fun removeFromHistory(track: Track) { searchHistoryInteractor.removeTrack(track) }
     fun getHistory() = searchHistoryInteractor.getHistory()
 
     private fun setState(state: SearchState) { _liveData.postValue(state) }

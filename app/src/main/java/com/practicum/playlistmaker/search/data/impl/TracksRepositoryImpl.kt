@@ -33,4 +33,7 @@ class TracksRepositoryImpl(
             }
         }
     }
+
+    override fun cancelRequest() { networkClient.cancelRequest() }
+
 }

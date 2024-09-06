@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.search.ui
 
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -11,7 +12,7 @@ import com.practicum.playlistmaker.databinding.ItemTrackBinding
 
 class TrackViewHolder(
     private val binding: ItemTrackBinding,
-    private var onTrackClick: (Track) -> Unit = {},
+    private val onTrackClick: (Track) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(track: Track) {
@@ -25,5 +26,6 @@ class TrackViewHolder(
         binding.trackTitle.text = track.trackName
         binding.artistName.setText(track.artistName, track.trackTimeMillis)
         itemView.setOnClickListener { onTrackClick(track) }
+        itemView.isVisible = true
     }
 }

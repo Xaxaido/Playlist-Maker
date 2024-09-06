@@ -1,7 +1,12 @@
 package com.practicum.playlistmaker.common.utils
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.scale
 import com.practicum.playlistmaker.common.resources.AppTheme
+import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
 
 object Util {
 
@@ -19,6 +24,13 @@ object Util {
     const val HTTP_BAD_REQUEST = 400
     const val HTTP_NOT_FOUND = 404
     const val REQUEST_TIMEOUT = 408
+    const val REQUEST_CANCELLED = -2
+    const val ICON_SIZE = 32
+    const val PARTICLE_DURATION = 2000L
+    const val WIND_EFFECT = 1f
+    const val PARTICLE_SIZE = 1.5f
+    const val UNDERLAY_BUTTON_TEXT_SIZE = 30f
+    const val UNDERLAY_BUTTON_WIDTH = 200
 
     fun applyTheme(theme: String) {
         AppCompatDelegate.setDefaultNightMode(
@@ -29,4 +41,11 @@ object Util {
             }
         )
     }
+
+    fun drawableToBitmap(context: Context, image: Drawable?) =
+        image?.toBitmap()?.scale(
+            ICON_SIZE.dpToPx(context),
+            ICON_SIZE.dpToPx(context),
+            false
+        )
 }

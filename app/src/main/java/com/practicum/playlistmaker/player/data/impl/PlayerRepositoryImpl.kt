@@ -19,10 +19,10 @@ class PlayerRepositoryImpl (
 ) : PlayerRepository {
 
     private lateinit var controller: ListenableFuture<MediaController>
-    private lateinit var mediaPlayer: MediaController
-    override val isPlaying get() = mediaPlayer.isPlaying
-    override val currentPosition get() = mediaPlayer.currentPosition
-    override val bufferedProgress get() = mediaPlayer.bufferedPercentage
+    private var mediaPlayer: MediaController? = null
+    override val isPlaying get() = mediaPlayer?.isPlaying ?: false
+    override val currentPosition get() = mediaPlayer?.currentPosition ?: -1
+    override val bufferedProgress get() = mediaPlayer?.bufferedPercentage ?: 0
 
     override fun init(stateListener: MediaPlayerListener, track: Track) {
         val sessionToken = tokenProvider.getSessionToken(context)
@@ -32,7 +32,7 @@ class PlayerRepositoryImpl (
             addListener({
                 if (isDone) {
                     mediaPlayer = get()
-                    mediaPlayer.addListener(MediaPlayerListenerAdapter(stateListener))
+                    mediaPlayer?.addListener(MediaPlayerListenerAdapter(stateListener))
                     prepareMedia(track)
                 }
             }, MoreExecutors.directExecutor())
@@ -51,15 +51,15 @@ class PlayerRepositoryImpl (
             )
             .build()
 
-        mediaPlayer.setMediaItem(mediaItem)
-        mediaPlayer.prepare()
+        mediaPlayer?.setMediaItem(mediaItem)
+        mediaPlayer?.prepare()
     }
 
-    override fun play() { mediaPlayer.play() }
-    override fun pause() { mediaPlayer.pause() }
+    override fun play() { mediaPlayer?.play() }
+    override fun pause() { mediaPlayer?.pause() }
 
     override fun release() {
-        mediaPlayer.pause()
+        mediaPlayer?.pause()
         MediaController.releaseFuture(controller)
     }
 }

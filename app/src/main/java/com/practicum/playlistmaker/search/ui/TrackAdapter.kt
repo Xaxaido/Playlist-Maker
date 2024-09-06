@@ -50,8 +50,8 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
     override fun getItemId(position: Int): Long {
         return when (val item = currentList[position]) {
             is TrackListItem.TrackItem -> item.track.trackId
-            is TrackListItem.Header -> Long.MAX_VALUE - 1
-            is TrackListItem.Footer -> Long.MAX_VALUE
+            is TrackListItem.Header -> Long.MAX_VALUE
+            is TrackListItem.Footer -> Long.MIN_VALUE
         }
     }
 
@@ -84,7 +84,9 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = getItem(position)) {
-            is TrackListItem.TrackItem -> (holder as TrackViewHolder).bind(item.track)
+            is TrackListItem.TrackItem -> {
+                (holder as TrackViewHolder).bind(item.track)
+            }
             is TrackListItem.Header -> (holder as HeaderViewHolder).bind()
             is TrackListItem.Footer -> (holder as FooterViewHolder).bind(item.isVisible)
         }

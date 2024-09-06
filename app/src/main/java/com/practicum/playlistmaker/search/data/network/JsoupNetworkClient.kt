@@ -6,7 +6,7 @@ import com.practicum.playlistmaker.search.data.dto.TrackDescriptionSearchRespons
 import com.practicum.playlistmaker.common.utils.Util
 import org.jsoup.Jsoup
 
-class JsoupNetworkClient : NetworkClient {
+class JsoupNetworkClient : NetworkClientBase {
 
     override fun doRequest(dto: Any): Response {
        return if (dto is SearchRequest) {

@@ -12,5 +12,7 @@ class SearchHistoryInteractorImpl(
 
     override fun addTrack(track: Track) { searchHistoryRepository.addTrack(track) }
 
+    override fun removeTrack(track: Track) { searchHistoryRepository.removeTrack(track) }
+
     override fun clearHistory() { searchHistoryRepository.clearHistory() }
 }

@@ -3,6 +3,8 @@ package com.practicum.playlistmaker.search.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -13,7 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackParcelable
@@ -29,8 +33,10 @@ import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityIt
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.common.utils.Debounce
+import com.practicum.playlistmaker.common.widgets.recycler.ParticleAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.StickyFooterDecoration
-import com.practicum.playlistmaker.common.widgets.recycler.TrackItemAnimator
+import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
+import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 
 class SearchActivity : AppCompatActivity() {
@@ -41,8 +47,9 @@ class SearchActivity : AppCompatActivity() {
     }
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var stickyFooterDecoration: StickyFooterDecoration
+    private lateinit var swipeHelper: SwipeHelper
     private var searchRequest = ""
-    private var isHistoryShowed = true
+    private var isHistoryShowed = false
     private var isClickEnabled = true
     private var isKeyboardVisible = false
     private val alisa: ViewsList by lazy {
@@ -70,25 +77,27 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        trackAdapter = TrackAdapter()
-        binding.recycler.adapter = trackAdapter
-        binding.recycler.itemAnimator = TrackItemAnimator()
-        stickyFooterDecoration = StickyFooterDecoration()
+        setupUI()
         setListeners()
         showNoData()
     }
 
-    private fun isKeyboardVisible() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            binding.contentLayout.windowInsetsController?.addOnControllableInsetsChangedListener { _, insets ->
-                isKeyboardVisible = (insets and WindowInsetsCompat.Type.ime()) != 0
+    private fun setupUI() {
+        trackAdapter = TrackAdapter()
+        binding.recycler.adapter = trackAdapter
+        binding.recycler.itemAnimator = DefaultItemAnimator()
+        stickyFooterDecoration = StickyFooterDecoration()
+        swipeHelper = initSwipeHelper()
+    }
+
+    private fun initSwipeHelper() = object : SwipeHelper(this, binding.recycler) {
+
+        override fun instantiateUnderlayButton() =
+            if (isHistoryShowed) {
+                mutableListOf(btnDelete(), btnAddToFav())
+            } else {
+                mutableListOf(btnAddToFav())
             }
-        } else {
-            binding.contentLayout.viewTreeObserver.addOnGlobalLayoutListener {
-                val heightDiff = binding.contentLayout.rootView.height - binding.contentLayout.height
-                isKeyboardVisible = heightDiff > 200
-            }
-        }
     }
 
     private fun setListeners() {
@@ -104,6 +113,7 @@ class SearchActivity : AppCompatActivity() {
                 if (dy > 0 && isKeyboardVisible) hideKeyboard()
             }
         })
+
 
         trackAdapter.setOnTrackClickListener { track ->
             if (!isClickEnabled) return@setOnTrackClickListener
@@ -140,7 +150,21 @@ class SearchActivity : AppCompatActivity() {
                 showHistory(viewModel.getHistory())
             } else if (isHistoryShowed) showNoData()
 
-            searchTracks()
+            if (searchRequest.isNotEmpty()) searchTracks()
+            else viewModel.stopSearch()
+        }
+    }
+
+    private fun isKeyboardVisible() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            binding.contentLayout.windowInsetsController?.addOnControllableInsetsChangedListener { _, insets ->
+                isKeyboardVisible = (insets and WindowInsetsCompat.Type.ime()) != 0
+            }
+        } else {
+            binding.contentLayout.viewTreeObserver.addOnGlobalLayoutListener {
+                val heightDiff = binding.contentLayout.rootView.height - binding.contentLayout.height
+                isKeyboardVisible = heightDiff > 200
+            }
         }
     }
 
@@ -168,6 +192,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun showError(error: Int) {
+        when (error) {
+            Util.REQUEST_CANCELLED -> showNoData()
+            else -> alisa show Error
+        }
+    }
+
     private fun showHistory(list: List<Track>) {
         isHistoryShowed = true
         list.also {
@@ -190,16 +221,71 @@ class SearchActivity : AppCompatActivity() {
         if (!isDecorationNeeded) stickyFooterDecoration.detach()
         else stickyFooterDecoration.attachRecyclerView(binding.recycler, trackAdapter)
 
-        trackAdapter.submitTracksList(isDecorationNeeded, list, doOnEnd)
+        trackAdapter.submitTracksList(isDecorationNeeded, list) {
+            doOnEnd()
+        }
     }
 
     private fun renderState(state: SearchState) {
         when (state) {
             is SearchState.InternetResults -> showContent(state.results)
-            is SearchState.ConnectionError -> alisa show Error
+            is SearchState.ConnectionError -> showError(state.error)
             is SearchState.InternetHistory -> showHistory(state.history)
             is SearchState.NothingFound -> alisa show NothingFound
             is SearchState.Loading -> alisa show Loading
+        }
+    }
+
+    private fun startParticleAnimation(pos: Int, onAnimationEnd: () -> Unit) {
+        val viewToRemove =
+            binding.recycler.findViewHolderForAdapterPosition(pos)?.itemView ?: return
+
+        viewToRemove.isVisible = false
+
+        val bitmap = Bitmap.createBitmap(viewToRemove.width, viewToRemove.height, Bitmap.Config.ARGB_8888)
+
+        Canvas(bitmap).also {
+            viewToRemove.draw(it)
+        }
+
+        binding.particleView.animator = ParticleAnimator(
+            this,
+            binding.particleView,
+            bitmap,
+            0f,
+            viewToRemove.top.toFloat()
+        )
+        binding.particleView.startAnimation { onAnimationEnd() }
+    }
+
+    private val btnDelete: () -> UnderlayButton = {
+        UnderlayButton(
+            this,
+            getString(R.string.history_delete_item),
+            R.drawable.ic_delete,
+            getColor(R.color.red),
+            getColor(R.color.white)
+        ) { pos ->
+            trackAdapter.notifyItemChanged(pos)
+            viewModel.removeFromHistory(viewModel.getHistory()[pos - 1])
+            Debounce(Util.ANIMATION_SHORT) {
+                startParticleAnimation(pos) {
+
+                    showHistory(viewModel.getHistory())
+                }
+            }.start()
+        }
+    }
+
+    private val btnAddToFav: () -> UnderlayButton = {
+        UnderlayButton(
+            this,
+            getString(R.string.history_add_to_fav),
+            R.drawable.ic_add_to_fav,
+            getColor(R.color.greyLight),
+            getColor(R.color.black)
+        ) { pos ->
+            trackAdapter.notifyItemChanged(pos)
         }
     }
 }

@@ -7,7 +7,7 @@ class SharingInteractorImpl (
     private val sharingRepository: SharingRepository
 ) : SharingInteractor {
 
-    override fun shareApp() { sharingRepository.shareApp() }
-    override fun contactSupport() { sharingRepository.contactSupport() }
-    override fun openTerms() { sharingRepository.openTerms() }
+    override fun getShareApp() = sharingRepository.getShareApp()
+    override fun getContactSupport() = sharingRepository.getContactSupport()
+    override fun getOpenTerms() = sharingRepository.getOpenTerms()
 }

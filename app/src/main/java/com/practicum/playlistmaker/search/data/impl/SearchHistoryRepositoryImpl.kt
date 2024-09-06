@@ -33,6 +33,13 @@ class SearchHistoryRepositoryImpl(
         }
     }
 
+    override fun removeTrack(track: Track) {
+        with (getHistory().toMutableList()) {
+            remove(track)
+            saveHistory(this)
+        }
+    }
+
     override fun clearHistory() { saveHistory(emptyList()) }
 
     private fun saveHistory(history: List<Track>) {

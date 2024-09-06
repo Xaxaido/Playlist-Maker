@@ -90,6 +90,7 @@
             android:padding="0dp"
             android:textAllCaps="false"
             android:textColor="@color/white"
+            android:fontFamily="@font/ys_400"
             android:text="@string/no_internet_connection"
             android:enabled="false"
             app:icon="@drawable/no_internet"
@@ -100,6 +101,7 @@
             android:id="@+id/btn_close_no_internet_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/ys_500"
             android:textColor="@color/rippleColor"
             android:text="@string/close" />
 

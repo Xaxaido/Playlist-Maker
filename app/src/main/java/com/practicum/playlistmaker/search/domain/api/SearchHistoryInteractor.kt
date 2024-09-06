@@ -5,5 +5,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 interface SearchHistoryInteractor {
     fun getHistory(): List<Track>
     fun addTrack(track: Track)
+    fun removeTrack(track: Track)
     fun clearHistory()
 }

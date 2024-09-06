@@ -17,4 +17,6 @@ class TracksInteractorImpl(private val repository: TracksRepository) : TracksInt
             }
         }
     }
+
+    override fun cancelRequest() { repository.cancelRequest() }
 }
