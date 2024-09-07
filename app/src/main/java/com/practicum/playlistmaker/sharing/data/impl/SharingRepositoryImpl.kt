@@ -11,22 +11,24 @@ class SharingRepositoryImpl(
 ) : SharingRepository {
 
     override fun getShareApp() = ShareAction(
-        actionType = ActionType.SHARE_APP,
-        content = context.getString(R.string.share_app_content)
+        ActionType.SHARE_APP,
+        mapOf(ShareAction.CONTENT to context.getString(R.string.share_app_content))
     )
 
     override fun getContactSupport() = ShareAction(
-        actionType = ActionType.CONTACT_SUPPORT,
-        email = context.getString(R.string.contact_support_email),
-        subject = buildString {
-            append("${context.getString(R.string.contact_support_subject)} ")
-            append(context.getString(R.string.app_name))
-        },
-        content = context.getString(R.string.contact_support_text)
+        ActionType.CONTACT_SUPPORT,
+        mapOf(
+            ShareAction.EMAIL to context.getString(R.string.contact_support_email),
+            ShareAction.SUBJECT to buildString {
+                append("${context.getString(R.string.contact_support_subject)} ")
+                append(context.getString(R.string.app_name))
+            },
+            ShareAction.CONTENT to context.getString(R.string.contact_support_text),
+        )
     )
 
     override fun getOpenTerms() = ShareAction(
-        actionType = ActionType.OPEN_TERMS,
-        content = context.getString(R.string.user_agreement_content),
+        ActionType.OPEN_TERMS,
+        mapOf(ShareAction.CONTENT to context.getString(R.string.user_agreement_content))
     )
 }

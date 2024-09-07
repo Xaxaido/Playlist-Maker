@@ -1,27 +1,20 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.SearchState
-import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackParcelable
-import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.resources.VisibilityState.Error
 import com.practicum.playlistmaker.common.resources.VisibilityState.History
 import com.practicum.playlistmaker.common.resources.VisibilityState.Loading
@@ -30,14 +23,20 @@ import com.practicum.playlistmaker.common.resources.VisibilityState.NothingFound
 import com.practicum.playlistmaker.common.resources.VisibilityState.SearchResults
 import com.practicum.playlistmaker.common.resources.VisibilityState.ViewsList
 import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityItem
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.common.utils.Debounce
+import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackParcelable
+import com.practicum.playlistmaker.common.utils.Util
+import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.ParticleAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.StickyFooterDecoration
 import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
 import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
+import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.player.ui.PlayerActivity
+import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -49,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var stickyFooterDecoration: StickyFooterDecoration
     private lateinit var swipeHelper: SwipeHelper
     private var searchRequest = ""
-    private var isHistoryShowed = false
+    private var isHistoryShown = false
     private var isClickEnabled = true
     private var isKeyboardVisible = false
     private val alisa: ViewsList by lazy {
@@ -64,12 +63,6 @@ class SearchActivity : AppCompatActivity() {
             )
         )
     }
-    private val startForResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK && isHistoryShowed) {
-                showHistory(viewModel.getHistory())
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,10 +75,15 @@ class SearchActivity : AppCompatActivity() {
         showNoData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (isHistoryShown) showHistory(viewModel.getHistory(), false)
+    }
+
     private fun setupUI() {
         trackAdapter = TrackAdapter()
         binding.recycler.adapter = trackAdapter
-        binding.recycler.itemAnimator = DefaultItemAnimator()
+        binding.recycler.itemAnimator = ItemAnimator()//DefaultItemAnimator()
         stickyFooterDecoration = StickyFooterDecoration()
         swipeHelper = initSwipeHelper()
     }
@@ -93,7 +91,7 @@ class SearchActivity : AppCompatActivity() {
     private fun initSwipeHelper() = object : SwipeHelper(this, binding.recycler) {
 
         override fun instantiateUnderlayButton() =
-            if (isHistoryShowed) {
+            if (isHistoryShown) {
                 mutableListOf(btnDelete(), btnAddToFav())
             } else {
                 mutableListOf(btnAddToFav())
@@ -114,7 +112,6 @@ class SearchActivity : AppCompatActivity() {
             }
         })
 
-
         trackAdapter.setOnTrackClickListener { track ->
             if (!isClickEnabled) return@setOnTrackClickListener
 
@@ -132,27 +129,31 @@ class SearchActivity : AppCompatActivity() {
 
         binding.searchLayout.buttonClear.setOnClickListener {
             hideKeyboard()
-            isHistoryShowed = true
-            binding.searchLayout.searchText.clearFocus()
-            binding.searchLayout.searchText.text = Editable.Factory.getInstance().newEditable("")
+            isHistoryShown = true
+            binding.searchLayout.searchText.setText("")
         }
 
         binding.searchLayout.searchText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && searchRequest.isEmpty()) showHistory(viewModel.getHistory())
-            else showNoData()
+            updateSearchHistoryVisibility(hasFocus)
         }
 
         binding.searchLayout.searchText.doOnTextChanged { text, _, _, _ ->
             searchRequest = text.toString()
-            binding.searchLayout.buttonClear.isVisible = searchRequest.isNotEmpty()
-
-            if (searchRequest.isEmpty() && binding.searchLayout.searchText.hasFocus()) {
-                showHistory(viewModel.getHistory())
-            } else if (isHistoryShowed) showNoData()
+            updateClearBtnVisibility(searchRequest.isNotEmpty())
+            updateSearchHistoryVisibility(binding.searchLayout.searchText.hasFocus())
 
             if (searchRequest.isNotEmpty()) searchTracks()
             else viewModel.stopSearch()
         }
+    }
+
+    private fun updateSearchHistoryVisibility(hasFocus: Boolean) {
+        if (hasFocus && searchRequest.isEmpty()) showHistory(viewModel.getHistory())
+        else if (isHistoryShown) showNoData()
+    }
+
+    private fun updateClearBtnVisibility(isVisible: Boolean) {
+        binding.searchLayout.buttonClear.isVisible = isVisible
     }
 
     private fun isKeyboardVisible() {
@@ -174,17 +175,15 @@ class SearchActivity : AppCompatActivity() {
         keyboard.hideSoftInputFromWindow(binding.searchLayout.searchText.windowToken, 0)
     }
 
-    private fun searchTracks() {
-        viewModel.search(searchRequest)
-    }
-
     private fun sendToPlayer(track: Track) = Intent(
         this,
         PlayerActivity::class.java,
     ).apply {
         putExtra(Util.KEY_TRACK, track.toTrackParcelable())
-        startForResult.launch(this@apply)
+        startActivity(this)
     }
+
+    private fun searchTracks() { viewModel.search(searchRequest) }
 
     private fun showNoData() {
         updateData(false, emptyList()) {
@@ -199,11 +198,11 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun showHistory(list: List<Track>) {
-        isHistoryShowed = true
+    private fun showHistory(list: List<Track>, isDataSetChanged: Boolean = true) {
+        isHistoryShown = true
         list.also {
             if (it.isNotEmpty()) {
-                updateData(true, it) {
+                updateData(true, it, isDataSetChanged) {
                     alisa show History
                 }
             } else showNoData()
@@ -211,19 +210,22 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showContent(list: List<Track>) {
-        isHistoryShowed = false
+        isHistoryShown = false
         updateData(false, list) {
             alisa show SearchResults
         }
     }
 
-    private fun updateData(isDecorationNeeded: Boolean, list: List<Track>, doOnEnd: () -> Unit) {
+    private fun updateData(
+        isDecorationNeeded: Boolean,
+        list: List<Track>,
+        isDataSetChanged: Boolean = true,
+        doOnEnd: () -> Unit
+    ) {
         if (!isDecorationNeeded) stickyFooterDecoration.detach()
         else stickyFooterDecoration.attachRecyclerView(binding.recycler, trackAdapter)
 
-        trackAdapter.submitTracksList(isDecorationNeeded, list) {
-            doOnEnd()
-        }
+        trackAdapter.submitTracksList(isDecorationNeeded, list, isDataSetChanged, doOnEnd)
     }
 
     private fun renderState(state: SearchState) {
@@ -237,16 +239,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun startParticleAnimation(pos: Int, onAnimationEnd: () -> Unit) {
-        val viewToRemove =
-            binding.recycler.findViewHolderForAdapterPosition(pos)?.itemView ?: return
+        val viewToRemove = binding.recycler.findViewHolderForAdapterPosition(pos)?.itemView ?: return
 
         viewToRemove.isVisible = false
 
         val bitmap = Bitmap.createBitmap(viewToRemove.width, viewToRemove.height, Bitmap.Config.ARGB_8888)
 
-        Canvas(bitmap).also {
-            viewToRemove.draw(it)
-        }
+        Canvas(bitmap).also { viewToRemove.draw(it) }
 
         binding.particleView.animator = ParticleAnimator(
             this,
@@ -270,8 +269,7 @@ class SearchActivity : AppCompatActivity() {
             viewModel.removeFromHistory(viewModel.getHistory()[pos - 1])
             Debounce(Util.ANIMATION_SHORT) {
                 startParticleAnimation(pos) {
-
-                    showHistory(viewModel.getHistory())
+                    showHistory(viewModel.getHistory(), false)
                 }
             }.start()
         }

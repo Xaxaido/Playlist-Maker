@@ -52,22 +52,22 @@ class SettingsActivity : AppCompatActivity() {
             ActionType.SHARE_APP -> {
                 Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, action.content)
+                    putExtra(Intent.EXTRA_TEXT, action.extra[ShareAction.CONTENT])
                     startActivity(Intent.createChooser(this, null))
                 }
             }
             ActionType.CONTACT_SUPPORT -> {
                 Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("mailto:")
-                    putExtra(Intent.EXTRA_EMAIL, arrayOf(action.email))
-                    putExtra(Intent.EXTRA_SUBJECT, action.subject)
-                    putExtra(Intent.EXTRA_TEXT, action.content)
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf(action.extra[ShareAction.EMAIL]))
+                    putExtra(Intent.EXTRA_SUBJECT, action.extra[ShareAction.SUBJECT])
+                    putExtra(Intent.EXTRA_TEXT, action.extra[ShareAction.CONTENT])
                     startActivity(this)
                 }
             }
             ActionType.OPEN_TERMS -> {
                 Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(action.content)
+                    data = Uri.parse(action.extra[ShareAction.CONTENT])
                     startActivity(this)
                 }
             }

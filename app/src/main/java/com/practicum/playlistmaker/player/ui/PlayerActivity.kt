@@ -1,8 +1,6 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.animation.ObjectAnimator
-import android.app.Activity
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -56,13 +54,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun setListeners() {
         viewModel.liveData.observe(this, ::renderState)
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
-
-        binding.toolbar.setNavigationOnClickListener {
-            Intent().apply {
-                setResult(Activity.RESULT_OK, this)
-            }
-            finish()
-        }
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupUI() {

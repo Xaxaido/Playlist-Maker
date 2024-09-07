@@ -14,7 +14,7 @@ import android.view.View.OnTouchListener
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.search.ui.TrackViewHolder
+import com.practicum.playlistmaker.search.ui.recycler.TrackViewHolder
 import java.util.LinkedList
 import java.util.Queue
 

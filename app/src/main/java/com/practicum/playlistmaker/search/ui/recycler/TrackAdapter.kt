@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.ui
+package com.practicum.playlistmaker.search.ui.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -16,8 +16,6 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
     private var onTrackClick: (Track) -> Unit = {}
     private var onClearHistoryClick: () -> Unit = {}
 
-    init { setHasStableIds(true) }
-
     fun getOnClearHistoryClickListener() = onClearHistoryClick()
 
     fun setOnTrackClickListener(onClickListener: (Track) -> Unit) {
@@ -31,28 +29,32 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
     fun submitTracksList(
         isDecorationNeeded: Boolean = false,
         list: List<Track>,
+        isDataSetChanged: Boolean = false,
         doOnEnd: (() -> Unit) = {},
     ) {
+        val items = convertToTrackListItem(isDecorationNeeded, list)
+        if (isDataSetChanged) submitList(null)
+        submitList(items, doOnEnd)
+    }
+
+    fun setFooterVisibility(position: Int, isVisible: Boolean) {
+        if (position < 0) return
+
+        (getItem(position) as TrackListItem.Footer).isVisible = isVisible
+        notifyItemChanged(position)
+    }
+
+    private fun convertToTrackListItem(
+        isDecorationNeeded: Boolean = false,
+        list: List<Track>,
+    ): List<TrackListItem> {
         val items = mutableListOf<TrackListItem>()
 
         if (isDecorationNeeded) items.add(TrackListItem.Header)
         items.addAll(list.map { TrackListItem.TrackItem(it) })
         if (isDecorationNeeded) items.add(TrackListItem.Footer())
 
-        submitList(items, doOnEnd)
-    }
-
-    fun setFooterVisibility(position: Int, isVisible: Boolean) {
-        (getItem(position) as TrackListItem.Footer).isVisible = isVisible
-        notifyItemChanged(position)
-    }
-
-    override fun getItemId(position: Int): Long {
-        return when (val item = currentList[position]) {
-            is TrackListItem.TrackItem -> item.track.trackId
-            is TrackListItem.Header -> Long.MAX_VALUE
-            is TrackListItem.Footer -> Long.MIN_VALUE
-        }
+        return items
     }
 
     override fun getItemViewType(position: Int): Int {

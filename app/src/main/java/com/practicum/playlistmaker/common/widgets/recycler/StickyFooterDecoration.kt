@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.widgets.BlurredImageView
-import com.practicum.playlistmaker.search.ui.TrackAdapter
+import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 
 class StickyFooterDecoration : RecyclerView.ItemDecoration() {
 
