@@ -15,6 +15,7 @@ class SearchHistoryRepositoryImpl(
 ) : SearchHistoryRepository {
 
     private val key = context.getString(R.string.search_history)
+    private val _history get() = getHistory().toMutableList()
 
     override fun getHistory(): List<Track> = run {
         val prefsHistory = prefs.getString(key, null)
@@ -25,7 +26,7 @@ class SearchHistoryRepositoryImpl(
     }
 
     override fun addTrack(track: Track) {
-        with (getHistory().toMutableList()) {
+        _history.apply {
             removeIf { it.trackId == track.trackId }
             add(0, track)
             if (size > Util.HISTORY_MAX_COUNT) removeLast()
@@ -33,11 +34,9 @@ class SearchHistoryRepositoryImpl(
         }
     }
 
-    override fun removeTrack(track: Track) {
-        with (getHistory().toMutableList()) {
-            remove(track)
-            saveHistory(this)
-        }
+    override fun removeTrack(pos: Int) {
+        _history.removeAt(pos)
+        saveHistory(_history)
     }
 
     override fun clearHistory() { saveHistory(emptyList()) }

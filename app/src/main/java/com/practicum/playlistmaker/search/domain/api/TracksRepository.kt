@@ -1,8 +1,8 @@
 package com.practicum.playlistmaker.search.domain.api
 
-import com.practicum.playlistmaker.common.resources.TracksRequestState
+import com.practicum.playlistmaker.common.resources.TracksSearchState
 
 interface TracksRepository {
-    fun searchTracks(term: String): TracksRequestState
+    fun searchTracks(term: String): TracksSearchState
     fun cancelRequest()
 }

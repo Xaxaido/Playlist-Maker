@@ -6,13 +6,14 @@ sealed interface SearchState {
 
     data object Loading: SearchState
     data object NothingFound: SearchState
-    data class InternetResults(
-        val results: List<Track>
-    ) : SearchState
-    data class InternetHistory(
-        val history: List<Track>
-    ) : SearchState
     data class ConnectionError(
         val error: Int
+    ) : SearchState
+    data class TrackSearchResults(
+        val results: List<Track>
+    ) : SearchState
+    data class TrackSearchHistory(
+        val history: List<Track>,
+        val isDataSetChanged: Boolean,
     ) : SearchState
 }

@@ -37,7 +37,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 
-
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
@@ -77,13 +76,13 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (isHistoryShown) showHistory(viewModel.getHistory(), false)
+        if (isHistoryShown) viewModel.getHistory(false)
     }
 
     private fun setupUI() {
         trackAdapter = TrackAdapter()
         binding.recycler.adapter = trackAdapter
-        binding.recycler.itemAnimator = ItemAnimator()//DefaultItemAnimator()
+        binding.recycler.itemAnimator = ItemAnimator()
         stickyFooterDecoration = StickyFooterDecoration()
         swipeHelper = initSwipeHelper()
     }
@@ -148,7 +147,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun updateSearchHistoryVisibility(hasFocus: Boolean) {
-        if (hasFocus && searchRequest.isEmpty()) showHistory(viewModel.getHistory())
+        if (hasFocus && searchRequest.isEmpty()) viewModel.getHistory(true)
         else if (isHistoryShown) showNoData()
     }
 
@@ -193,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showError(error: Int) {
         when (error) {
-            Util.REQUEST_CANCELLED -> showNoData()
+            Util.REQUEST_CANCELLED -> viewModel.getHistory(false)
             else -> alisa show Error
         }
     }
@@ -230,9 +229,9 @@ class SearchActivity : AppCompatActivity() {
 
     private fun renderState(state: SearchState) {
         when (state) {
-            is SearchState.InternetResults -> showContent(state.results)
+            is SearchState.TrackSearchResults -> showContent(state.results)
+            is SearchState.TrackSearchHistory -> showHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)
-            is SearchState.InternetHistory -> showHistory(state.history)
             is SearchState.NothingFound -> alisa show NothingFound
             is SearchState.Loading -> alisa show Loading
         }
@@ -240,13 +239,10 @@ class SearchActivity : AppCompatActivity() {
 
     private fun startParticleAnimation(pos: Int, onAnimationEnd: () -> Unit) {
         val viewToRemove = binding.recycler.findViewHolderForAdapterPosition(pos)?.itemView ?: return
-
-        viewToRemove.isVisible = false
-
         val bitmap = Bitmap.createBitmap(viewToRemove.width, viewToRemove.height, Bitmap.Config.ARGB_8888)
 
         Canvas(bitmap).also { viewToRemove.draw(it) }
-
+        viewToRemove.isVisible = false
         binding.particleView.animator = ParticleAnimator(
             this,
             binding.particleView,
@@ -266,10 +262,10 @@ class SearchActivity : AppCompatActivity() {
             getColor(R.color.white)
         ) { pos ->
             trackAdapter.notifyItemChanged(pos)
-            viewModel.removeFromHistory(viewModel.getHistory()[pos - 1])
+            viewModel.removeFromHistory(pos - 1)
             Debounce(Util.ANIMATION_SHORT) {
                 startParticleAnimation(pos) {
-                    showHistory(viewModel.getHistory(), false)
+                    viewModel.getHistory(false)
                 }
             }.start()
         }

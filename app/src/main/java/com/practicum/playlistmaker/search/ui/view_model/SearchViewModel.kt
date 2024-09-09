@@ -26,7 +26,7 @@ class SearchViewModel(
 
         override fun consume(tracks: List<Track>?, error: Int?) {
             when {
-                !tracks.isNullOrEmpty() -> setState(SearchState.InternetResults(results = tracks))
+                !tracks.isNullOrEmpty() -> setState(SearchState.TrackSearchResults(results = tracks))
                 else -> {
                     if (error != null) setState(SearchState.ConnectionError(error = error))
                     else setState(SearchState.NothingFound)
@@ -48,26 +48,31 @@ class SearchViewModel(
         internetConnectionInteractor.internetStatus.observeForever(internetStatusObserver)
     }
 
-    fun stopSearch() { tracksInteractor.cancelRequest() }
-
     fun search(term: String) {
         searchQuery = term
         timer.start()
     }
 
-    fun clearHistory() {
-        searchHistoryInteractor.clearHistory()
-        setState(SearchState.InternetResults(emptyList()))
+    fun getHistory(isDatasetChanged: Boolean) {
+        setState(
+            SearchState.TrackSearchHistory(
+                searchHistoryInteractor.getHistory(),
+                isDatasetChanged,
+            )
+        )
     }
 
-    fun addToHistory(track: Track) { searchHistoryInteractor.addTrack(track) }
-    fun removeFromHistory(track: Track) { searchHistoryInteractor.removeTrack(track) }
-    fun getHistory() = searchHistoryInteractor.getHistory()
+    fun clearHistory() {
+        searchHistoryInteractor.clearHistory()
+        setState(SearchState.TrackSearchResults(emptyList()))
+    }
 
+    fun stopSearch() { tracksInteractor.cancelRequest() }
+    fun addToHistory(track: Track) { searchHistoryInteractor.addTrack(track) }
+    fun removeFromHistory(pos: Int) { searchHistoryInteractor.removeTrack(pos) }
     private fun setState(state: SearchState) { _liveData.postValue(state) }
 
     private fun doSearch(term: String) {
-        if (searchQuery.isEmpty()) return
         if (!hasInternet) {
             setState(SearchState.ConnectionError(error = Util.NO_CONNECTION))
             return
