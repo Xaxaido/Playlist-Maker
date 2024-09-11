@@ -27,7 +27,7 @@ class SearchHistoryRepositoryImpl(
 
     override fun addTrack(track: Track) {
         _history.apply {
-            removeIf { it.trackId == track.trackId }
+            removeIf { it.id == track.id }
             add(0, track)
             if (size > Util.HISTORY_MAX_COUNT) removeLast()
             saveHistory(this)
@@ -35,8 +35,10 @@ class SearchHistoryRepositoryImpl(
     }
 
     override fun removeTrack(pos: Int) {
-        _history.removeAt(pos)
-        saveHistory(_history)
+        _history.apply {
+            removeAt(pos)
+            saveHistory(this)
+        }
     }
 
     override fun clearHistory() { saveHistory(emptyList()) }

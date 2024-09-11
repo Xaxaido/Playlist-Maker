@@ -110,7 +110,7 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
             override fun areItemsTheSame(oldItem: TrackListItem, newItem: TrackListItem): Boolean {
                 return when {
                     oldItem is TrackListItem.TrackItem &&newItem is TrackListItem.TrackItem -> {
-                        oldItem.track.trackId == newItem.track.trackId
+                        oldItem.track.id == newItem.track.id
                     }
                     oldItem is TrackListItem.Header && newItem is TrackListItem.Header -> true
                     oldItem is TrackListItem.Footer && newItem is TrackListItem.Footer -> true
@@ -124,9 +124,7 @@ class TrackAdapter : ListAdapter<TrackListItem, RecyclerView.ViewHolder>(diffCal
                         oldItem.track == newItem.track
                     }
                     oldItem is TrackListItem.Header && newItem is TrackListItem.Header -> true
-                    oldItem is TrackListItem.Footer && newItem is TrackListItem.Footer -> {
-                        oldItem.isVisible == newItem.isVisible
-                    }
+                    oldItem is TrackListItem.Footer && newItem is TrackListItem.Footer -> true
                     else -> false
                 }
             }

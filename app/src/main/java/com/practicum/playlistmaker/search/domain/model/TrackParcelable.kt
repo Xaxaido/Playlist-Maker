@@ -4,16 +4,16 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class TrackParcelable(
-    val trackId: Long,
+    val id: Long,
     val trackName: String,
     val artistName: String,
-    val trackTimeMillis: String,
-    val artworkUrl100: String?,
-    val collectionName: String?,
+    val duration: String,
+    val albumCover: String?,
+    val albumName: String?,
     val releaseDate: String?,
-    val primaryGenreName: String?,
+    val genre: String?,
     val country: String?,
-    val previewUrl: String?,
+    val previewUrl: String,
     val artistViewUrl: String,
 ) : Parcelable {
 
@@ -27,19 +27,19 @@ data class TrackParcelable(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString(),
-        parcel.readString() ?: ""
+        parcel.readString()  ?: "",
+        parcel.readString() ?: "",
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(trackId)
+        parcel.writeLong(id)
         parcel.writeString(trackName)
         parcel.writeString(artistName)
-        parcel.writeString(trackTimeMillis)
-        parcel.writeString(artworkUrl100)
-        parcel.writeString(collectionName)
+        parcel.writeString(duration)
+        parcel.writeString(albumCover)
+        parcel.writeString(albumName)
         parcel.writeString(releaseDate)
-        parcel.writeString(primaryGenreName)
+        parcel.writeString(genre)
         parcel.writeString(country)
         parcel.writeString(previewUrl)
         parcel.writeString(artistViewUrl)

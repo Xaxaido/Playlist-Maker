@@ -25,28 +25,28 @@ object DtoConverter {
     )
 
     fun TrackParcelable.toTrack() = Track(
-        trackId,
+        id,
         trackName,
         artistName,
-        trackTimeMillis,
-        artworkUrl100,
-        collectionName,
+        duration,
+        albumCover,
+        albumName,
         releaseDate,
-        primaryGenreName,
+        genre,
         country,
         previewUrl,
         artistViewUrl,
     )
 
     fun Track.toTrackParcelable() = TrackParcelable(
-        trackId,
+        id,
         trackName,
         artistName,
-        trackTimeMillis,
-        artworkUrl100,
-        collectionName,
+        duration,
+        albumCover,
+        albumName,
         releaseDate,
-        primaryGenreName,
+        genre,
         country,
         previewUrl,
         artistViewUrl,

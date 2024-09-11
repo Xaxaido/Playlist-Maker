@@ -17,14 +17,14 @@ class TrackViewHolder(
 
     fun bind(track: Track) {
         Glide.with(itemView)
-            .load(track.artworkUrl100)
+            .load(track.albumCover)
             .placeholder(ContextCompat.getDrawable(itemView.context, R.drawable.album_cover_stub))
             .centerCrop()
             .transform(RoundedCorners(2.dpToPx(itemView.context)))
             .into(binding.cover)
 
         binding.trackTitle.text = track.trackName
-        binding.artistName.setText(track.artistName, track.trackTimeMillis)
+        binding.artistName.setText(track.artistName, track.duration)
         itemView.setOnClickListener { onTrackClick(track) }
         itemView.isVisible = true
     }

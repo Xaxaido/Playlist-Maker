@@ -74,10 +74,10 @@ class PlayerActivity : AppCompatActivity() {
         with (binding) {
             playerTrackTitle.text = track.trackName
             playerArtistName.text = track.artistName
-            playerDurationText.text = track.trackTimeMillis
+            playerDurationText.text = track.duration
             yearText.text = track.releaseDate ?: ""
-            genreText.text = track.primaryGenreName
-            albumTitleText.text = track.collectionName
+            genreText.text = track.genre
+            albumTitleText.text = track.albumName
         }
 
         Glide.with(this)

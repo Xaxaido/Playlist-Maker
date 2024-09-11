@@ -25,7 +25,8 @@ class TracksRepositoryImpl(
                 if (result.isEmpty()) {
                     TracksSearchState.Success(emptyList())
                 } else {
-                    TracksSearchState.Success(result.map { it.toTrack() })
+                    val items = result.filter { !it.previewUrl.isNullOrEmpty() }
+                    TracksSearchState.Success(items.map { it.toTrack() })
                 }
             }
             else -> {
