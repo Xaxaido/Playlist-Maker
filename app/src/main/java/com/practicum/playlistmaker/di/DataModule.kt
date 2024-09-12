@@ -51,7 +51,5 @@ val dataModule = module {
         PlaybackServiceTokenProviderImpl()
     }
 
-    single {
-        InternetConnection()
-    }
+    factory { InternetConnection() }
 }
