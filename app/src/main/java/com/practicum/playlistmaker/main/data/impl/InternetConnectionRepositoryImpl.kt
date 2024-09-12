@@ -7,7 +7,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.practicum.playlistmaker.common.utils.InternetAvailability
+import com.practicum.playlistmaker.main.data.network.InternetConnection
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,31 +15,28 @@ import kotlinx.coroutines.launch
 
 class InternetConnectionRepositoryImpl(
     context: Context,
+    private val internetConnection: InternetConnection,
 ) : InternetConnectionRepository {
 
     private val _internetStatus = MutableLiveData<Boolean>()
     override val internetStatus: LiveData<Boolean> = _internetStatus
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
-    private val cm: ConnectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
 
     private fun createNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) {
-            val networkCapabilities = cm.getNetworkCapabilities(network)
-            val hasInternetCapability = networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            if (!hasCapability()) return
 
-            if (hasInternetCapability == true) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val hasInternet = InternetAvailability.check(network.socketFactory)
-                    if (hasInternet) {
-                        validNetworks.add(network)
-                    } else {
-                        validNetworks.remove(network)
-                    }
-                    checkValidNetworks()
+            CoroutineScope(Dispatchers.IO).launch {
+                val hasInternet = internetConnection.check(network.socketFactory)
+                if (hasInternet) {
+                    validNetworks.add(network)
+                } else {
+                    validNetworks.remove(network)
                 }
+                checkValidNetworks()
             }
         }
 
@@ -49,12 +46,9 @@ class InternetConnectionRepositoryImpl(
         }
     }
 
-    private fun checkNetworkAtStart() {
-        cm.activeNetwork?.let{
-            val hasInternetCapability = cm.getNetworkCapabilities(it)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            _internetStatus.postValue(hasInternetCapability == true)
-        } ?: _internetStatus.postValue(false)
-    }
+    private fun hasCapability() = cm.activeNetwork?.let {
+        cm.getNetworkCapabilities(it)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    } ?: false
 
     private fun checkValidNetworks() {
         _internetStatus.postValue(validNetworks.size > 0)
@@ -67,7 +61,7 @@ class InternetConnectionRepositoryImpl(
 
         networkCallback = createNetworkCallback()
         cm.registerNetworkCallback(networkRequest, networkCallback)
-        checkNetworkAtStart()
+        _internetStatus.postValue(hasCapability())
     }
 
     override fun unregister() {

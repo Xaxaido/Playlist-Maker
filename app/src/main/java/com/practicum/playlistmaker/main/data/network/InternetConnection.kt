@@ -1,14 +1,10 @@
-package com.practicum.playlistmaker.common.utils
+package com.practicum.playlistmaker.main.data.network
 
 import java.io.IOException
 import java.net.InetSocketAddress
 import javax.net.SocketFactory
 
-object InternetAvailability {
-
-    private const val HOST_NAME = "8.8.8.8"
-    private const val PORT = 53
-    private const val CONNECTION_TIMEOUT = 1500
+class InternetConnection {
 
     fun check(socketFactory: SocketFactory): Boolean {
         return try {
@@ -19,5 +15,11 @@ object InternetAvailability {
         } catch (e: IOException) {
             false
         }
+    }
+
+    companion object {
+        private const val HOST_NAME = "8.8.8.8"
+        private const val PORT = 53
+        private const val CONNECTION_TIMEOUT = 1500
     }
 }

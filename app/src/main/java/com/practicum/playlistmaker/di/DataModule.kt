@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.di
 import android.content.Context
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.main.data.network.InternetConnection
 import com.practicum.playlistmaker.player.data.PlaybackServiceTokenProvider
 import com.practicum.playlistmaker.player.data.impl.PlaybackServiceTokenProviderImpl
 import com.practicum.playlistmaker.search.data.network.ITunesService
@@ -48,5 +49,9 @@ val dataModule = module {
 
     single<PlaybackServiceTokenProvider> {
         PlaybackServiceTokenProviderImpl()
+    }
+
+    single {
+        InternetConnection()
     }
 }

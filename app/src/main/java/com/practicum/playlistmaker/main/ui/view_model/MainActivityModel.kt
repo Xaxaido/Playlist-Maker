@@ -28,7 +28,7 @@ class MainActivityModel(
     private fun setState(state: InternetState) { _liveData.postValue(state) }
 
     override fun onCleared() {
-        internetConnectionInteractor.unregister()
         internetConnectionInteractor.internetStatus.removeObserver(internetStatusObserver)
+        internetConnectionInteractor.unregister()
     }
 }

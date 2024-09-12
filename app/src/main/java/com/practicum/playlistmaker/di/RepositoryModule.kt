@@ -43,6 +43,6 @@ val repositoryModule = module {
     }
 
     single<InternetConnectionRepository> {
-        InternetConnectionRepositoryImpl(get())
+        InternetConnectionRepositoryImpl(get(), get())
     }
 }
