@@ -12,17 +12,19 @@ import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 class SearchHistoryRepositoryImpl(
     context: Context,
     private val prefs: SharedPreferences,
+    private val gson: Gson,
 ) : SearchHistoryRepository {
 
     private val key = context.getString(R.string.search_history)
-    private val _history get() = getHistory().toMutableList()
+    private val _history by lazy { getSearchHistory() }
+    override val history: List<Track> get() = _history
 
-    override fun getHistory(): List<Track> = run {
+    private fun getSearchHistory(): MutableList<Track> {
         val prefsHistory = prefs.getString(key, null)
 
-        if (!prefsHistory.isNullOrBlank()) {
-            Gson().fromJson(prefsHistory, object : TypeToken<List<Track>>() {}.type) ?: emptyList()
-        } else emptyList()
+        return if (!prefsHistory.isNullOrBlank()) {
+            gson.fromJson(prefsHistory, object : TypeToken<List<Track>>() {}.type) ?: mutableListOf()
+        } else mutableListOf()
     }
 
     override fun addTrack(track: Track) {
@@ -30,20 +32,21 @@ class SearchHistoryRepositoryImpl(
             removeIf { it.id == track.id }
             add(0, track)
             if (size > Util.HISTORY_MAX_COUNT) removeLast()
-            saveHistory(this)
         }
+        saveHistory()
     }
 
     override fun removeTrack(pos: Int) {
-        _history.apply {
-            removeAt(pos)
-            saveHistory(this)
-        }
+        _history.removeAt(pos)
+        saveHistory()
     }
 
-    override fun clearHistory() { saveHistory(emptyList()) }
+    override fun clearHistory() {
+        _history.clear()
+        saveHistory()
+    }
 
-    private fun saveHistory(history: List<Track>) {
-        prefs.edit().putString(key, Gson().toJson(history)).apply()
+    private fun saveHistory() {
+        prefs.edit().putString(key, gson.toJson(_history)).apply()
     }
 }

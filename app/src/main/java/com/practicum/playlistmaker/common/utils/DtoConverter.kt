@@ -10,19 +10,21 @@ import com.practicum.playlistmaker.common.utils.Extensions.toDate
 
 object DtoConverter {
 
-    fun TrackDto.toTrack() = Track(
-        trackId,
-        trackName,
-        artistName,
-        trackTimeMillis.millisToSeconds(),
-        artworkUrl100,
-        collectionName,
-        releaseDate?.toDate(),
-        primaryGenreName,
-        country,
-        previewUrl,
-        artistViewUrl,
-    )
+    fun List<TrackDto>.toTracksList() = map {
+        Track(
+            it.trackId,
+            it.trackName,
+            it.artistName,
+            it.trackTimeMillis.millisToSeconds(),
+            it.artworkUrl100,
+            it.collectionName,
+            it.releaseDate?.toDate(),
+            it.primaryGenreName,
+            it.country,
+            it.previewUrl!!,
+            it.artistViewUrl,
+        )
+    }
 
     fun TrackParcelable.toTrack() = Track(
         id,

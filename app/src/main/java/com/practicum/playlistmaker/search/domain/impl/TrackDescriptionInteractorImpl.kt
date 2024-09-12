@@ -4,8 +4,9 @@ import com.practicum.playlistmaker.search.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.search.domain.api.TrackDescriptionRepository
 import java.util.concurrent.Executors
 
-class TrackDescriptionInteractorImpl(private val repository: TrackDescriptionRepository) :
-    TrackDescriptionInteractor {
+class TrackDescriptionInteractorImpl(
+    private val repository: TrackDescriptionRepository,
+) : TrackDescriptionInteractor {
 
     private val executor = Executors.newCachedThreadPool()
 

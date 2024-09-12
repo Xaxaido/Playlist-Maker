@@ -4,11 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.common.resources.InternetState
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 
 class MainActivityModel(
@@ -34,16 +30,5 @@ class MainActivityModel(
     override fun onCleared() {
         internetConnectionInteractor.unregister()
         internetConnectionInteractor.internetStatus.removeObserver(internetStatusObserver)
-    }
-
-    companion object {
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                MainActivityModel(
-                    Creator.getInternetConnectionInteractor(),
-                )
-            }
-        }
     }
 }

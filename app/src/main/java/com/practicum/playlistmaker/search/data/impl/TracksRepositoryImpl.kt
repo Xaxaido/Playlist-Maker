@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.search.data.impl
 
 import com.practicum.playlistmaker.common.resources.TracksSearchState
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTrack
+import com.practicum.playlistmaker.common.utils.DtoConverter.toTracksList
 import com.practicum.playlistmaker.search.data.network.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.TracksSearchResponse
@@ -25,8 +25,9 @@ class TracksRepositoryImpl(
                 if (result.isEmpty()) {
                     TracksSearchState.Success(emptyList())
                 } else {
-                    val items = result.filter { !it.previewUrl.isNullOrEmpty() }
-                    TracksSearchState.Success(items.map { it.toTrack() })
+                    result.filter { !it.previewUrl.isNullOrEmpty() }.let {
+                        TracksSearchState.Success(it.toTracksList())
+                    }
                 }
             }
             else -> {

@@ -3,11 +3,7 @@ package com.practicum.playlistmaker.player.ui.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.media3.common.Player
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -100,18 +96,6 @@ class PlayerViewModel(
                 (timers[UPDATE_BUFFERED_PROGRESS] as Debounce).start(true)
             }
             else -> {}
-        }
-    }
-
-    companion object {
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(
-                    Creator.getTrackDescriptionInteractor(),
-                    Creator.getPlayerInteractor(),
-                )
-            }
         }
     }
 }

@@ -4,13 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
@@ -56,7 +52,7 @@ class SearchViewModel(
     fun getHistory(isDatasetChanged: Boolean) {
         setState(
             SearchState.TrackSearchHistory(
-                searchHistoryInteractor.getHistory(),
+                searchHistoryInteractor.history,
                 isDatasetChanged,
             )
         )
@@ -86,18 +82,5 @@ class SearchViewModel(
         timer.stop()
         internetConnectionInteractor.unregister()
         internetConnectionInteractor.internetStatus.removeObserver(internetStatusObserver)
-    }
-
-    companion object {
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(
-                    Creator.getTracksInteractor(),
-                    Creator.getSearchHistoryInteractor(),
-                    Creator.getInternetConnectionInteractor(),
-                )
-            }
-        }
     }
 }
