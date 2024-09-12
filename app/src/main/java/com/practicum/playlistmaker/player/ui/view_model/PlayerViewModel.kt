@@ -60,8 +60,10 @@ class PlayerViewModel(
         _liveData.postValue(state)
     }
 
-    fun searchTrackDescription(url: String) {
-        trackDescriptionInteractor.searchTrackDescription(url, consumer)
+    fun searchTrackDescription(url: String?) {
+        url?.let{
+            trackDescriptionInteractor.searchTrackDescription(it, consumer)
+        } ?: setState(PlayerState.Description(TrackDescription(null)))
     }
 
     private fun updatePlaybackProgressTimerState() {

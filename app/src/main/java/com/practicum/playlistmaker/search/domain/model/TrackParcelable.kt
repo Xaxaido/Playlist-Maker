@@ -14,7 +14,7 @@ data class TrackParcelable(
     val genre: String?,
     val country: String?,
     val previewUrl: String,
-    val artistViewUrl: String,
+    val artistViewUrl: String?,
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(

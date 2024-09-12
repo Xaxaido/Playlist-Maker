@@ -75,6 +75,7 @@
         android:layout_height="@dimen/toolbar_height"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/padding_small_8x"
+        android:gravity="center_vertical"
         android:background="@color/activityMainBgColor"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"

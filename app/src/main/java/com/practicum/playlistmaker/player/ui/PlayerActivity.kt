@@ -171,11 +171,13 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun showTrackDescription(result: TrackDescription) {
+        val country = result.country ?: getString(R.string.player_unknown)
+
         binding.apply {
             shimmerPlaceholder.shimmer.stopShimmer()
             shimmerPlaceholder.shimmer.isVisible = false
             trackDescription.isVisible = true
-            countryText.text = result.country
+            countryText.text = country
         }
     }
 

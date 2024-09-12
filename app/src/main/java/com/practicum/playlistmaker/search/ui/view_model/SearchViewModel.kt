@@ -40,7 +40,6 @@ class SearchViewModel(
     val liveData: LiveData<SearchState> = _liveData
 
     init {
-        internetConnectionInteractor.register()
         internetConnectionInteractor.internetStatus.observeForever(internetStatusObserver)
     }
 
@@ -80,7 +79,6 @@ class SearchViewModel(
 
     override fun onCleared() {
         timer.stop()
-        internetConnectionInteractor.unregister()
         internetConnectionInteractor.internetStatus.removeObserver(internetStatusObserver)
     }
 }

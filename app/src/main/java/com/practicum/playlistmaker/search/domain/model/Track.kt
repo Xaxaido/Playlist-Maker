@@ -11,7 +11,7 @@ data class Track(
     val genre: String?,
     val country: String?,
     val previewUrl: String,
-    val artistViewUrl: String,
+    val artistViewUrl: String?,
 ) {
 
     fun getPlayerAlbumCover() = albumCover?.replaceAfterLast('/', "512x512bb.jpg") ?: ""

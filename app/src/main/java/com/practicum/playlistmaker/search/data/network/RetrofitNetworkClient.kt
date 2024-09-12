@@ -18,8 +18,7 @@ class RetrofitNetworkClient(
             call = iTunesService.searchTracks(dto.term)
             val result = call?.execute()
 
-            result?.body()?.apply {
-                resultCode = result.code()
+            result?.body()?.apply { resultCode = result.code()
             } ?: Response()
         } catch (e: IOException) {
             Response().apply {

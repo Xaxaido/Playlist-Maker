@@ -18,7 +18,7 @@ class ParticleAnimator(
     private val particleView: ParticleView,
     private val bitmap: Bitmap,
     private val startX: Float,
-    private val startY: Float
+    private val startY: Float,
 ) {
 
     private val particles = mutableListOf<Particle>()
@@ -55,8 +55,8 @@ class ParticleAnimator(
                 val srcX = col * cellWidth
                 val srcY = row * cellHeight
 
-                val angle = Math.toRadians(-45.0) // 45 градусов вверх и вправо
-                val speed = (Math.random() * 10 + 5).toFloat() // Adjust speed as needed
+                val angle = Math.toRadians(-45.0)
+                val speed = (Math.random() * 10 + 5).toFloat()
                 val vx = (speed * cos(angle)).toFloat()
                 val vy = (speed * sin(angle)).toFloat()
 
@@ -88,14 +88,13 @@ class ParticleAnimator(
     }
 
     private fun updateParticles(progress: Float) {
-        val initialProgress = 0f // Время, в течение которого элемент остается целым
+        val initialProgress = 0f
         for (particle in particles) {
             if (progress > initialProgress) {
                 val adjustedProgress = (progress - initialProgress) / (1 - initialProgress)
                 particle.x += particle.vx * adjustedProgress
                 particle.y += particle.vy * adjustedProgress
 
-                // Эффект ветра вверх и вправо, постепенно увеличивающийся
                 val windEffect = Util.WIND_EFFECT * adjustedProgress
                 particle.x += windEffect
                 particle.y -= windEffect
