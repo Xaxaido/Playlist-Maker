@@ -19,6 +19,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
 
+    single {
+        androidContext().let {
+            it.getSharedPreferences(it.getString(R.string.prefs_file_name), Context.MODE_PRIVATE)
+        }
+    }
+
+    factory { Gson() }
+
+    factory { InternetConnection() }
+
     single<ITunesService> {
         Retrofit.Builder()
             .baseUrl(androidContext().getString(R.string.itunes_base_url))
@@ -31,14 +41,6 @@ val dataModule = module {
         RetrofitNetworkClient(get())
     }
 
-    single {
-        androidContext()
-            .getSharedPreferences(androidContext()
-            .getString(R.string.prefs_file_name), Context.MODE_PRIVATE)
-    }
-
-    factory { Gson() }
-
     single<NetworkClientBase> {
         JsoupNetworkClient()
     }
@@ -50,6 +52,4 @@ val dataModule = module {
     single<PlaybackServiceTokenProvider> {
         PlaybackServiceTokenProviderImpl()
     }
-
-    factory { InternetConnection() }
 }

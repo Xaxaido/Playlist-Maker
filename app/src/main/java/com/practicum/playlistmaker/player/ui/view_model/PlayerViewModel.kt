@@ -13,14 +13,15 @@ import com.practicum.playlistmaker.common.utils.Util.UPDATE_PLAYBACK_PROGRESS
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
-import com.practicum.playlistmaker.search.domain.api.TrackDescriptionInteractor
+import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
+import com.practicum.playlistmaker.player.domain.api.TracksDescriptionConsumer
 
 class PlayerViewModel(
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
     private val playerInteractor: PlayerInteractor,
 ) : ViewModel(), MediaPlayerListener {
 
-    private val consumer = object : TrackDescriptionInteractor.TracksDescriptionConsumer {
+    private val consumer = object : TracksDescriptionConsumer {
 
         override fun consume(result: TrackDescription) {
             setState(PlayerState.Description(result))

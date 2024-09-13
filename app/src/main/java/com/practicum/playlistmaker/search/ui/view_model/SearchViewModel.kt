@@ -10,6 +10,7 @@ import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
+import com.practicum.playlistmaker.search.domain.api.TracksConsumer
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 
 class SearchViewModel(
@@ -18,7 +19,7 @@ class SearchViewModel(
     private val internetConnectionInteractor: InternetConnectionInteractor,
 ) : ViewModel() {
 
-    private val consumer = object : TracksInteractor.TracksConsumer {
+    private val consumer = object : TracksConsumer {
 
         override fun consume(tracks: List<Track>?, error: Int?) {
             when {

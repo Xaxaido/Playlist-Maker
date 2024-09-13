@@ -5,10 +5,10 @@ import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
 import com.practicum.playlistmaker.player.data.impl.PlayerRepositoryImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerRepository
 import com.practicum.playlistmaker.search.data.impl.SearchHistoryRepositoryImpl
-import com.practicum.playlistmaker.search.data.impl.TrackDescriptionRepositoryImpl
+import com.practicum.playlistmaker.player.data.impl.TrackDescriptionRepositoryImpl
 import com.practicum.playlistmaker.search.data.impl.TracksRepositoryImpl
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
-import com.practicum.playlistmaker.search.domain.api.TrackDescriptionRepository
+import com.practicum.playlistmaker.player.domain.api.TrackDescriptionRepository
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
 import com.practicum.playlistmaker.settings.data.api.SettingsRepository
 import com.practicum.playlistmaker.settings.data.impl.SettingsRepositoryImpl

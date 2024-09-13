@@ -2,18 +2,21 @@ package com.practicum.playlistmaker.main.data.network
 
 import java.io.IOException
 import java.net.InetSocketAddress
+import java.net.Socket
 import javax.net.SocketFactory
 
 class InternetConnection {
 
-    fun check(socketFactory: SocketFactory): Boolean {
+    fun isInternetAvailable(socketFactory: SocketFactory): Boolean {
+        var socket: Socket? = null
         return try {
-            val socket = socketFactory.createSocket() ?: throw IOException()
+            socket = socketFactory.createSocket() ?: throw IOException()
             socket.connect(InetSocketAddress(HOST_NAME, PORT), CONNECTION_TIMEOUT)
-            socket.close()
             true
         } catch (e: IOException) {
             false
+        } finally {
+            socket?.close()
         }
     }
 

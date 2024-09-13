@@ -27,17 +27,7 @@ class InternetConnectionRepositoryImpl(
     private fun createNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) {
-            if (!hasCapability()) return
-
-            CoroutineScope(Dispatchers.IO).launch {
-                val hasInternet = internetConnection.check(network.socketFactory)
-                if (hasInternet) {
-                    validNetworks.add(network)
-                } else {
-                    validNetworks.remove(network)
-                }
-                checkValidNetworks()
-            }
+            if (isNetworkCapable()) checkInternetConnection(network)
         }
 
         override fun onLost(network: Network) {
@@ -46,9 +36,23 @@ class InternetConnectionRepositoryImpl(
         }
     }
 
-    private fun hasCapability() = cm.activeNetwork?.let {
+    private fun isNetworkCapable() = cm.activeNetwork?.let {
         cm.getNetworkCapabilities(it)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     } ?: false
+
+    private fun checkInternetConnection(network: Network?) {
+        network?.also {
+            CoroutineScope(Dispatchers.IO).launch {
+                val hasInternet = internetConnection.isInternetAvailable(it.socketFactory)
+                if (hasInternet) {
+                    validNetworks.add(it)
+                } else {
+                    validNetworks.remove(it)
+                }
+                checkValidNetworks()
+            }
+        } ?: checkValidNetworks()
+    }
 
     private fun checkValidNetworks() {
         _internetStatus.postValue(validNetworks.size > 0)
@@ -61,7 +65,7 @@ class InternetConnectionRepositoryImpl(
 
         networkCallback = createNetworkCallback()
         cm.registerNetworkCallback(networkRequest, networkCallback)
-        _internetStatus.postValue(hasCapability())
+        checkInternetConnection(cm.activeNetwork)
     }
 
     override fun unregister() {
