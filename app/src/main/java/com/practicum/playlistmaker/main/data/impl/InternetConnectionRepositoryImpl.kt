@@ -28,6 +28,7 @@ class InternetConnectionRepositoryImpl(
 
         override fun onAvailable(network: Network) {
             if (isNetworkCapable()) checkInternetConnection(network)
+            else checkValidNetworks()
         }
 
         override fun onLost(network: Network) {
