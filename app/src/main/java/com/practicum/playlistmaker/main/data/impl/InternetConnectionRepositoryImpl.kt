@@ -20,11 +20,9 @@ class InternetConnectionRepositoryImpl(
 
     private val _internetStatus = MutableLiveData<Boolean>()
     override val internetStatus: LiveData<Boolean> = _internetStatus
-    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
-
-    private fun createNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) {
             if (isNetworkCapable()) checkInternetConnection(network)
@@ -64,7 +62,6 @@ class InternetConnectionRepositoryImpl(
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
 
-        networkCallback = createNetworkCallback()
         cm.registerNetworkCallback(networkRequest, networkCallback)
         checkInternetConnection(cm.activeNetwork)
     }
