@@ -19,7 +19,7 @@ class InternetConnectionRepositoryImpl(
 ) : InternetConnectionRepository {
 
     private val _internetStatus = MutableLiveData<Boolean>()
-    override val internetStatus: LiveData<Boolean> = _internetStatus
+    override val internetStatus: LiveData<Boolean> get() = _internetStatus
     private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
@@ -33,6 +33,7 @@ class InternetConnectionRepositoryImpl(
             checkValidNetworks()
         }
     }
+
     private fun checkInternetConnection(network: Network?) {
         network?.also {
             CoroutineScope(Dispatchers.IO).launch {
