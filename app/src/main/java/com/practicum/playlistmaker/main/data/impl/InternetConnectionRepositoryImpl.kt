@@ -25,8 +25,7 @@ class InternetConnectionRepositoryImpl(
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) {
-            if (isNetworkCapable()) checkInternetConnection(network)
-            else checkValidNetworks()
+            checkInternetConnection(network)
         }
 
         override fun onLost(network: Network) {
@@ -34,11 +33,6 @@ class InternetConnectionRepositoryImpl(
             checkValidNetworks()
         }
     }
-
-    private fun isNetworkCapable() = cm.activeNetwork?.let {
-        cm.getNetworkCapabilities(it)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-    } ?: false
-
     private fun checkInternetConnection(network: Network?) {
         network?.also {
             CoroutineScope(Dispatchers.IO).launch {
