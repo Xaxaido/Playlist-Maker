@@ -1,11 +1,11 @@
 package com.practicum.playlistmaker.search.data.impl
 
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTrack
+import com.practicum.playlistmaker.common.resources.TracksSearchState
+import com.practicum.playlistmaker.common.utils.DtoConverter.toTracksList
 import com.practicum.playlistmaker.search.data.network.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.TracksSearchResponse
-import com.practicum.playlistmaker.common.utils.Extensions
-import com.practicum.playlistmaker.common.resources.TracksSearchState
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
 
 class TracksRepositoryImpl(
@@ -16,16 +16,18 @@ class TracksRepositoryImpl(
         val response = networkClient.doRequest(SearchRequest(term))
 
         return when (response.resultCode) {
-            Extensions.NO_CONNECTION -> {
-                TracksSearchState.Error(error = Extensions.NO_CONNECTION)
+            Util.NO_CONNECTION -> {
+                TracksSearchState.Error(error = Util.NO_CONNECTION)
             }
-            Extensions.HTTP_OK -> {
+            Util.HTTP_OK -> {
                 val result = (response as TracksSearchResponse).results
 
                 if (result.isEmpty()) {
                     TracksSearchState.Success(emptyList())
                 } else {
-                    TracksSearchState.Success(result.map { it.toTrack() })
+                    result.filter { !it.previewUrl.isNullOrEmpty() }.let {
+                        TracksSearchState.Success(it.toTracksList())
+                    }
                 }
             }
             else -> {
@@ -33,4 +35,6 @@ class TracksRepositoryImpl(
             }
         }
     }
+
+    override fun cancelRequest() { networkClient.cancelRequest() }
 }

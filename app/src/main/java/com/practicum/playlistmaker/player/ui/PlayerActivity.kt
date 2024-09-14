@@ -7,9 +7,9 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.animation.doOnEnd
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -18,20 +18,19 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.common.utils.Util.dpToPx
-import com.practicum.playlistmaker.player.domain.model.TrackParcelable
+import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
+import com.practicum.playlistmaker.search.domain.model.TrackParcelable
 import com.practicum.playlistmaker.common.utils.DtoConverter.toTrack
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
-    private val viewModel: PlayerViewModel by viewModels {
-        PlayerViewModel.getViewModelFactory()
-    }
+    private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var track: Track
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +51,8 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun setListeners() {
         viewModel.liveData.observe(this, ::renderState)
-        binding.toolbar.setNavigationOnClickListener { finish() }
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupUI() {
@@ -73,10 +72,10 @@ class PlayerActivity : AppCompatActivity() {
         with (binding) {
             playerTrackTitle.text = track.trackName
             playerArtistName.text = track.artistName
-            playerDurationText.text = track.trackTimeMillis
+            playerDurationText.text = track.duration
             yearText.text = track.releaseDate ?: ""
-            genreText.text = track.primaryGenreName
-            albumTitleText.text = track.collectionName
+            genreText.text = track.genre
+            albumTitleText.text = track.albumName
         }
 
         Glide.with(this)
@@ -142,11 +141,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun animateProgressChange(value: Int, onAnimationEnd: () -> Unit = {}) {
         ObjectAnimator.ofInt(binding.progress, "progress", value).apply {
             duration = 250
-            addUpdateListener { animation ->
-                if (animation.animatedValue as Int == binding.progress.max) {
-                    onAnimationEnd()
-                }
-            }
+            doOnEnd { onAnimationEnd() }
             start()
         }
     }
@@ -176,11 +171,13 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun showTrackDescription(result: TrackDescription) {
+        val country = result.country ?: getString(R.string.player_unknown)
+
         binding.apply {
             shimmerPlaceholder.shimmer.stopShimmer()
             shimmerPlaceholder.shimmer.isVisible = false
             trackDescription.isVisible = true
-            countryText.text = result.country
+            countryText.text = country
         }
     }
 

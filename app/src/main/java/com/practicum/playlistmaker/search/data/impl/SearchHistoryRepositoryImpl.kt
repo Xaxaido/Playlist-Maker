@@ -5,37 +5,48 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.domain.model.Track
-import com.practicum.playlistmaker.common.utils.Extensions
+import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 
 class SearchHistoryRepositoryImpl(
     context: Context,
     private val prefs: SharedPreferences,
+    private val gson: Gson,
 ) : SearchHistoryRepository {
 
     private val key = context.getString(R.string.search_history)
+    private val _history by lazy { getSearchHistory() }
+    override val history: List<Track> get() = _history
 
-    override fun getHistory(): List<Track> = run {
+    private fun getSearchHistory(): MutableList<Track> {
         val prefsHistory = prefs.getString(key, null)
 
-        if (!prefsHistory.isNullOrBlank()) {
-            Gson().fromJson(prefsHistory, object : TypeToken<List<Track>>() {}.type) ?: emptyList()
-        } else emptyList()
+        return if (!prefsHistory.isNullOrBlank()) {
+            gson.fromJson(prefsHistory, object : TypeToken<List<Track>>() {}.type) ?: mutableListOf()
+        } else mutableListOf()
     }
 
     override fun addTrack(track: Track) {
-        with (getHistory().toMutableList()) {
-            removeIf { it.trackId == track.trackId }
+        _history.apply {
+            removeIf { it.id == track.id }
             add(0, track)
-            if (size > Extensions.HISTORY_MAX_COUNT) removeLast()
-            saveHistory(this)
+            if (size > Util.HISTORY_MAX_COUNT) removeLast()
         }
+        saveHistory()
     }
 
-    override fun clearHistory() { saveHistory(emptyList()) }
+    override fun removeTrack(pos: Int) {
+        _history.removeAt(pos)
+        saveHistory()
+    }
 
-    private fun saveHistory(history: List<Track>) {
-        prefs.edit().putString(key, Gson().toJson(history)).apply()
+    override fun clearHistory() {
+        _history.clear()
+        saveHistory()
+    }
+
+    private fun saveHistory() {
+        prefs.edit().putString(key, gson.toJson(_history)).apply()
     }
 }

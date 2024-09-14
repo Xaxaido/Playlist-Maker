@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.common.resources
 
-import com.practicum.playlistmaker.player.domain.model.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 
 sealed class TracksSearchState(
     val tracks: List<Track> = emptyList(),

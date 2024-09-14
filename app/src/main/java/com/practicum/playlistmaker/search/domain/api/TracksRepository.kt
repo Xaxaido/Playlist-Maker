@@ -4,4 +4,5 @@ import com.practicum.playlistmaker.common.resources.TracksSearchState
 
 interface TracksRepository {
     fun searchTracks(term: String): TracksSearchState
+    fun cancelRequest()
 }

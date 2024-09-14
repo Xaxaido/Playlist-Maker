@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class Debounce(
@@ -16,7 +15,7 @@ class Debounce(
 
     private val scope: CoroutineScope = CoroutineScope(dispatcher)
     private var job: Job? = null
-    var isRunning = false
+    val isRunning get() = job?.isActive ?: false
 
     fun addAction(action: () -> Unit) {
         this.action = action
@@ -27,8 +26,7 @@ class Debounce(
         job = scope.launch {
             do {
                 delay(delay)
-                if (isActive) {
-                    isRunning = true
+                if (isRunning) {
                     action()
                 }
             } while (isLoop)
@@ -36,7 +34,6 @@ class Debounce(
     }
 
     fun stop() {
-        isRunning = false
         job?.cancel()
         job = null
     }
