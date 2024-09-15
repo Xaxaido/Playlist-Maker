@@ -5,17 +5,17 @@ import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.practicum.playlistmaker.player.data.MediaPlayerListenerAdapter
-import com.practicum.playlistmaker.player.data.PlaybackServiceTokenProvider
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerRepository
 import com.practicum.playlistmaker.search.domain.model.Track
 
 class PlayerRepositoryImpl (
     private val context: Context,
-    private val tokenProvider: PlaybackServiceTokenProvider,
+    private val sessionToken: SessionToken,
 ) : PlayerRepository {
 
     private lateinit var controller: ListenableFuture<MediaController>
@@ -25,8 +25,6 @@ class PlayerRepositoryImpl (
     override val bufferedProgress get() = mediaPlayer?.bufferedPercentage ?: 0
 
     override fun init(stateListener: MediaPlayerListener, track: Track) {
-        val sessionToken = tokenProvider.getSessionToken(context)
-
         controller = MediaController.Builder(context, sessionToken).buildAsync()
         controller.apply {
             addListener({

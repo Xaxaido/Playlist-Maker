@@ -8,8 +8,6 @@ import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
-import com.practicum.playlistmaker.common.utils.Util.UPDATE_BUFFERED_PROGRESS
-import com.practicum.playlistmaker.common.utils.Util.UPDATE_PLAYBACK_PROGRESS
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
@@ -100,5 +98,10 @@ class PlayerViewModel(
             }
             else -> {}
         }
+    }
+
+    private companion object {
+        const val UPDATE_PLAYBACK_PROGRESS = "UPDATE_PLAYBACK_PROGRESS"
+        const val UPDATE_BUFFERED_PROGRESS = "UPDATE_BUFFERED_PROGRESS"
     }
 }

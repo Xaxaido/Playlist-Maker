@@ -12,8 +12,6 @@ object Util {
 
     const val KEY_TRACK = "KEY_TRACK"
     const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
-    const val UPDATE_PLAYBACK_PROGRESS = "UPDATE_PLAYBACK_PROGRESS"
-    const val UPDATE_BUFFERED_PROGRESS = "UPDATE_BUFFERED_PROGRESS"
     const val ANIMATION_SHORT= 250L
     const val BUTTON_ENABLED_DELAY = 1000L
     const val USER_INPUT_DELAY = 2000L
