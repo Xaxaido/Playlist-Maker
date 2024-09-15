@@ -1,22 +1,16 @@
 package com.practicum.playlistmaker.main.domain.impl
 
-import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionCallback
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
-import javax.inject.Inject
 
-class InternetConnectionInteractorImpl @Inject constructor(
+class InternetConnectionInteractorImpl(
     private val internetConnectionRepository: InternetConnectionRepository,
 ) : InternetConnectionInteractor {
 
     override fun register() { internetConnectionRepository.register() }
     override fun unregister() { internetConnectionRepository.unregister() }
-
-    override fun addOnInternetConnectListener(callback: InternetConnectListener) {
-        internetConnectionRepository.addOnInternetConnectListener(callback)
-    }
-
-    override fun removeOnInternetConnectListener(callback: InternetConnectListener) {
-        internetConnectionRepository.removeOnInternetConnectListener(callback)
+    override fun setCallback(callback: InternetConnectionCallback) {
+        internetConnectionRepository.setCallback(callback)
     }
 }

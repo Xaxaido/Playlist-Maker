@@ -6,21 +6,18 @@ import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionCallback
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksConsumer
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class SearchViewModel @Inject constructor(
+class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
     private val searchHistoryInteractor: SearchHistoryInteractor,
-    private val internetConnectionInteractor: InternetConnectionInteractor,
-) : ViewModel(), InternetConnectListener {
+    internetConnectionInteractor: InternetConnectionInteractor,
+) : ViewModel(), InternetConnectionCallback {
 
     private val consumer = object : TracksConsumer {
 
@@ -43,12 +40,7 @@ class SearchViewModel @Inject constructor(
     val liveData: LiveData<SearchState> = _liveData
 
     init {
-        internetConnectionInteractor.addOnInternetConnectListener(this)
-    }
-
-    fun sendToPlayer(track: Track) {
-        val json = tracksInteractor.trackToJson(track)
-        setState(SearchState.SendTrackToPlayer(json))
+        internetConnectionInteractor.setCallback(this)
     }
 
     fun search(term: String) {
@@ -85,12 +77,15 @@ class SearchViewModel @Inject constructor(
         tracksInteractor.searchTracks(term, consumer)
     }
 
-    override fun onConnectionStatusUpdate(hasInternet: Boolean) {
-        this.hasInternet = hasInternet
+    override fun onConnected() {
+        hasInternet = true
+    }
+
+    override fun onDisconnected() {
+        hasInternet = false
     }
 
     override fun onCleared() {
         timer.stop()
-        internetConnectionInteractor.removeOnInternetConnectListener(this)
     }
 }
