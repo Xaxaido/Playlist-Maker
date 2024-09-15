@@ -5,9 +5,8 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.practicum.playlistmaker.main.data.network.InternetConnection
+import com.practicum.playlistmaker.main.domain.api.InternetConnectionCallback
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,10 +17,9 @@ class InternetConnectionRepositoryImpl(
     private val internetConnection: InternetConnection,
 ) : InternetConnectionRepository {
 
-    private val _internetStatus = MutableLiveData<Boolean>()
-    override val internetStatus: LiveData<Boolean> get() = _internetStatus
     private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
+    private val connectionCallbacks: MutableSet<InternetConnectionCallback> = mutableSetOf()
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) {
@@ -49,7 +47,12 @@ class InternetConnectionRepositoryImpl(
     }
 
     private fun checkValidNetworks() {
-        _internetStatus.postValue(validNetworks.size > 0)
+        val status = validNetworks.size > 0
+        if (status) {
+            connectionCallbacks.forEach { it.onConnected() }
+        } else{
+            connectionCallbacks.forEach { it.onDisconnected() }
+        }
     }
 
     override fun register() {
@@ -63,5 +66,9 @@ class InternetConnectionRepositoryImpl(
 
     override fun unregister() {
         cm.unregisterNetworkCallback(networkCallback)
+    }
+
+    override fun setCallback(callback: InternetConnectionCallback) {
+        connectionCallbacks.add(callback)
     }
 }
