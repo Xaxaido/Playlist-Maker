@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.main.domain.api
 
-interface InternetConnectionCallback {
+interface InternetConnectListener {
     fun onConnected()
     fun onDisconnected()
 }
