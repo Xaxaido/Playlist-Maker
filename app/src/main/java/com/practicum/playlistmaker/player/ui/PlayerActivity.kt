@@ -7,10 +7,10 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.animation.doOnEnd
+import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import com.bumptech.glide.Glide
@@ -19,17 +19,18 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
+import com.practicum.playlistmaker.search.ui.dto.TrackParcelable
+import com.practicum.playlistmaker.common.utils.DtoConverter.toTrack
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {
 
-    private val viewModel: PlayerViewModel by viewModels()
     private lateinit var binding: ActivityPlayerBinding
+    private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var track: Track
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,9 +39,11 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        intent.getStringExtra(Util.KEY_TRACK)?.also {
-            track = viewModel.getTrack(it)
-        }
+        IntentCompat.getParcelableExtra(
+            intent,
+            Util.KEY_TRACK,
+            TrackParcelable::class.java,
+        )?.also { track = it.toTrack() }
 
         setListeners()
         setupUI()
