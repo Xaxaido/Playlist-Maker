@@ -19,7 +19,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
-import com.practicum.playlistmaker.search.domain.model.TrackParcelable
+import com.practicum.playlistmaker.search.ui.dto.TrackParcelable
 import com.practicum.playlistmaker.common.utils.DtoConverter.toTrack
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -43,7 +43,7 @@ class PlayerActivity : AppCompatActivity() {
             intent,
             Util.KEY_TRACK,
             TrackParcelable::class.java,
-        )?.let { track = it.toTrack() }
+        )?.also { track = it.toTrack() }
 
         setListeners()
         setupUI()

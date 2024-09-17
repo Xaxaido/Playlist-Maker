@@ -4,18 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.common.resources.InternetState
-import com.practicum.playlistmaker.main.domain.api.InternetConnectionCallback
+import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 
 class MainActivityModel(
     private val internetConnectionInteractor: InternetConnectionInteractor,
-) : ViewModel(), InternetConnectionCallback {
+) : ViewModel(), InternetConnectListener {
 
     private val _liveData = MutableLiveData<InternetState>()
     val liveData: LiveData<InternetState> = _liveData
 
     init {
-        internetConnectionInteractor.setCallback(this)
+        internetConnectionInteractor.addOnInternetConnectListener(this)
         internetConnectionInteractor.register()
     }
 
@@ -30,6 +30,7 @@ class MainActivityModel(
     }
 
     override fun onCleared() {
+        internetConnectionInteractor.removeOnInternetConnectListener(this)
         internetConnectionInteractor.unregister()
     }
 }

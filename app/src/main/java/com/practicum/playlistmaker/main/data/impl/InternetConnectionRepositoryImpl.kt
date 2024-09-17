@@ -6,7 +6,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import com.practicum.playlistmaker.main.data.network.InternetConnection
-import com.practicum.playlistmaker.main.domain.api.InternetConnectionCallback
+import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ class InternetConnectionRepositoryImpl(
 
     private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
-    private val connectionCallbacks: MutableSet<InternetConnectionCallback> = mutableSetOf()
+    private val internetConnectListeners: MutableSet<InternetConnectListener> = mutableSetOf()
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) {
@@ -32,7 +32,7 @@ class InternetConnectionRepositoryImpl(
         }
     }
 
-    private fun checkInternetConnection(network: Network?) {
+    private fun checkInternetConnection(network: Network?, listener: InternetConnectListener? = null) {
         network?.also {
             CoroutineScope(Dispatchers.IO).launch {
                 val hasInternet = internetConnection.isInternetAvailable(it.socketFactory)
@@ -41,17 +41,19 @@ class InternetConnectionRepositoryImpl(
                 } else {
                     validNetworks.remove(it)
                 }
-                checkValidNetworks()
+                checkValidNetworks(listener)
             }
-        } ?: checkValidNetworks()
+        } ?: checkValidNetworks(listener)
     }
 
-    private fun checkValidNetworks() {
+    private fun checkValidNetworks(listener: InternetConnectListener? = null) {
         val status = validNetworks.size > 0
         if (status) {
-            connectionCallbacks.forEach { it.onConnected() }
-        } else{
-            connectionCallbacks.forEach { it.onDisconnected() }
+            listener?.also { it.onConnected() }
+                ?: internetConnectListeners.forEach { it.onConnected() }
+        } else {
+            listener?.also { it.onDisconnected() }
+                ?: internetConnectListeners.forEach { it.onDisconnected() }
         }
     }
 
@@ -61,14 +63,18 @@ class InternetConnectionRepositoryImpl(
             .build()
 
         cm.registerNetworkCallback(networkRequest, networkCallback)
-        checkInternetConnection(cm.activeNetwork)
     }
 
     override fun unregister() {
         cm.unregisterNetworkCallback(networkCallback)
     }
 
-    override fun setCallback(callback: InternetConnectionCallback) {
-        connectionCallbacks.add(callback)
+    override fun addOnInternetConnectListener(listener: InternetConnectListener) {
+        internetConnectListeners.add(listener)
+        checkInternetConnection(cm.activeNetwork, listener)
+    }
+
+    override fun removeOnInternetConnectListener(listener: InternetConnectListener) {
+        internetConnectListeners.remove(listener)
     }
 }

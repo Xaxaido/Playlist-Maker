@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.main.domain.api.InternetConnectionCallback
+import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
@@ -16,8 +16,8 @@ import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
     private val searchHistoryInteractor: SearchHistoryInteractor,
-    internetConnectionInteractor: InternetConnectionInteractor,
-) : ViewModel(), InternetConnectionCallback {
+    private val internetConnectionInteractor: InternetConnectionInteractor,
+) : ViewModel(), InternetConnectListener {
 
     private val consumer = object : TracksConsumer {
 
@@ -40,7 +40,7 @@ class SearchViewModel(
     val liveData: LiveData<SearchState> = _liveData
 
     init {
-        internetConnectionInteractor.setCallback(this)
+        internetConnectionInteractor.addOnInternetConnectListener(this)
     }
 
     fun search(term: String) {
@@ -87,5 +87,6 @@ class SearchViewModel(
 
     override fun onCleared() {
         timer.stop()
+        internetConnectionInteractor.removeOnInternetConnectListener(this)
     }
 }
