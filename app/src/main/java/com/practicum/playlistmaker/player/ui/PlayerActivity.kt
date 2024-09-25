@@ -10,7 +10,6 @@ import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.animation.doOnEnd
-import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import com.bumptech.glide.Glide
@@ -19,8 +18,6 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
-import com.practicum.playlistmaker.search.ui.dto.TrackParcelable
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTrack
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
@@ -39,11 +36,9 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        IntentCompat.getParcelableExtra(
-            intent,
-            Util.KEY_TRACK,
-            TrackParcelable::class.java,
-        )?.also { track = it.toTrack() }
+        intent.getStringExtra(Util.KEY_TRACK)?.also {
+            track = viewModel.getTrack(it)
+        }
 
         setListeners()
         setupUI()

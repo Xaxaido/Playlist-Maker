@@ -48,13 +48,8 @@ class InternetConnectionRepositoryImpl(
 
     private fun checkValidNetworks(listener: InternetConnectListener? = null) {
         val status = validNetworks.size > 0
-        if (status) {
-            listener?.also { it.onConnected() }
-                ?: internetConnectListeners.forEach { it.onConnected() }
-        } else {
-            listener?.also { it.onDisconnected() }
-                ?: internetConnectListeners.forEach { it.onDisconnected() }
-        }
+        listener?.also { it.onConnectionStatusUpdate(status) }
+            ?: internetConnectListeners.forEach { it.onConnectionStatusUpdate(status) }
     }
 
     override fun register() {

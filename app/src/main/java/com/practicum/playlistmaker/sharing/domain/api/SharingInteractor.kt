@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker.sharing.domain.api
 
-import com.practicum.playlistmaker.sharing.data.model.ShareAction
+import com.practicum.playlistmaker.sharing.domain.model.IntentAction
 
 interface SharingInteractor {
-    fun getShareApp(): ShareAction
-    fun getContactSupport(): ShareAction
-    fun getOpenTerms(): ShareAction
+    fun getShareApp(): IntentAction
+    fun getContactSupport(): IntentAction
+    fun getOpenTerms(): IntentAction
 }

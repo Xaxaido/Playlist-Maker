@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
-import com.practicum.playlistmaker.sharing.data.model.ActionType
-import com.practicum.playlistmaker.sharing.data.model.ShareAction
+import com.practicum.playlistmaker.sharing.domain.model.ActionType
+import com.practicum.playlistmaker.sharing.domain.model.IntentAction
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
@@ -27,7 +27,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setListeners() {
         viewModel.settingsLiveData.observe(this, ::setTheme)
-        viewModel.sharingLiveData.observe(this, ::prepareIntent)
+        viewModel.sharingLiveData.observe(this, ::startIntent)
         binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.themeSwitch.setOnClickListener {
@@ -45,27 +45,27 @@ class SettingsActivity : AppCompatActivity() {
         Util.applyTheme(viewModel.getCurrentTheme())
     }
 
-    private fun prepareIntent(action: ShareAction) {
+    private fun startIntent(action: IntentAction) {
         when (action.actionType) {
             ActionType.SHARE_APP -> {
                 Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, action.extra[ShareAction.CONTENT])
+                    putExtra(Intent.EXTRA_TEXT, action.extra[IntentAction.CONTENT])
                     startActivity(Intent.createChooser(this, null))
                 }
             }
             ActionType.CONTACT_SUPPORT -> {
                 Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("mailto:")
-                    putExtra(Intent.EXTRA_EMAIL, arrayOf(action.extra[ShareAction.EMAIL]))
-                    putExtra(Intent.EXTRA_SUBJECT, action.extra[ShareAction.SUBJECT])
-                    putExtra(Intent.EXTRA_TEXT, action.extra[ShareAction.CONTENT])
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf(action.extra[IntentAction.EMAIL]))
+                    putExtra(Intent.EXTRA_SUBJECT, action.extra[IntentAction.SUBJECT])
+                    putExtra(Intent.EXTRA_TEXT, action.extra[IntentAction.CONTENT])
                     startActivity(this)
                 }
             }
             ActionType.OPEN_TERMS -> {
                 Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(action.extra[ShareAction.CONTENT])
+                    data = Uri.parse(action.extra[IntentAction.CONTENT])
                     startActivity(this)
                 }
             }

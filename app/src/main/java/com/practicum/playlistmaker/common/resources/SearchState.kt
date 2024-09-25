@@ -16,4 +16,7 @@ sealed interface SearchState {
         val history: List<Track>,
         val isDataSetChanged: Boolean,
     ) : SearchState
+    data class SendTrackToPlayer(
+        val json: String
+    ) : SearchState
 }

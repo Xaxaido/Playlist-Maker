@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.data.impl
 
+import com.google.gson.Gson
 import com.practicum.playlistmaker.common.resources.TracksSearchState
 import com.practicum.playlistmaker.common.utils.DtoConverter.toTracksList
 import com.practicum.playlistmaker.search.data.network.NetworkClient
@@ -7,10 +8,14 @@ import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.TracksSearchResponse
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
+import com.practicum.playlistmaker.search.domain.model.Track
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
+    private val gson: Gson,
 ) : TracksRepository {
+
+    override fun trackToJson(track: Track): String = gson.toJson(track)
 
     override fun searchTracks(term: String): TracksSearchState {
         val response = networkClient.doRequest(SearchRequest(term))

@@ -13,6 +13,8 @@ class PlayerInteractorImpl(
     override val currentPosition: Long get() = playerRepository.currentPosition
     override val bufferedProgress: Int get() = playerRepository.bufferedProgress
 
+    override fun jsonToTrack(json: String) = playerRepository.jsonToTrack(json)
+
     override fun init(stateListener: MediaPlayerListener, track: Track) {
         playerRepository.init(stateListener, track)
     }
