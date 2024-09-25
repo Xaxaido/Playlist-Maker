@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.os.Build
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -34,12 +35,13 @@ import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
 
+    private val viewModel: SearchViewModel by viewModels()
     private lateinit var binding: ActivitySearchBinding
-    private val viewModel by viewModel<SearchViewModel>()
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var stickyFooterDecoration: StickyFooterDecoration
     private lateinit var swipeHelper: SwipeHelper

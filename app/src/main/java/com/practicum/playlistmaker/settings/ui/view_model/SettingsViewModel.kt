@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
 import com.practicum.playlistmaker.sharing.domain.model.IntentAction
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SettingsViewModel(
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
     private val settingsIteractor: SettingsInteractor,
     private val sharingInteractor: SharingInteractor,
 ) : ViewModel() {

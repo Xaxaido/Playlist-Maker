@@ -13,8 +13,9 @@ import com.practicum.playlistmaker.player.data.MediaPlayerListenerAdapter
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerRepository
 import com.practicum.playlistmaker.search.domain.model.Track
+import javax.inject.Inject
 
-class PlayerRepositoryImpl (
+class PlayerRepositoryImpl @Inject constructor(
     private val context: Context,
     private val sessionToken: SessionToken,
     private val gson: Gson,

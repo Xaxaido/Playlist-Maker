@@ -13,8 +13,11 @@ import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.player.domain.api.TracksDescriptionConsumer
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class PlayerViewModel(
+@HiltViewModel
+class PlayerViewModel @Inject constructor(
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
     private val playerInteractor: PlayerInteractor,
 ) : ViewModel(), MediaPlayerListener {

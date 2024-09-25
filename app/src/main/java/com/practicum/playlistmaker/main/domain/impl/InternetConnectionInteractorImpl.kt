@@ -3,8 +3,9 @@ package com.practicum.playlistmaker.main.domain.impl
 import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
+import javax.inject.Inject
 
-class InternetConnectionInteractorImpl(
+class InternetConnectionInteractorImpl @Inject constructor(
     private val internetConnectionRepository: InternetConnectionRepository,
 ) : InternetConnectionInteractor {
 
