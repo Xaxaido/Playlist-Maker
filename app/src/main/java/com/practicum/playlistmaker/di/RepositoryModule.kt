@@ -27,42 +27,42 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindInternetConnectionRepository(
-        repository: InternetConnectionRepositoryImpl
+        internetConnectionRepositoryImpl: InternetConnectionRepositoryImpl
     ): InternetConnectionRepository
 
     @Binds
     @Singleton
     abstract fun bindSearchHistoryRepository(
-        repository: SearchHistoryRepositoryImpl
+        searchHistoryRepositoryImpl: SearchHistoryRepositoryImpl
     ): SearchHistoryRepository
 
     @Binds
     @Singleton
     abstract fun bindTracksRepository(
-        repository: TracksRepositoryImpl
+        tracksRepositoryImpl: TracksRepositoryImpl
     ): TracksRepository
 
     @Binds
     @Singleton
     abstract fun bindPlayerRepository(
-        repository: PlayerRepositoryImpl
+        playerRepositoryImpl: PlayerRepositoryImpl
     ): PlayerRepository
 
     @Binds
     @Singleton
     abstract fun bindTrackDescriptionRepository(
-        repository: TrackDescriptionRepositoryImpl
+        trackDescriptionRepositoryImpl: TrackDescriptionRepositoryImpl
     ): TrackDescriptionRepository
 
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(
-        repository: SettingsRepositoryImpl
+        settingsRepositoryImpl: SettingsRepositoryImpl
     ): SettingsRepository
 
     @Binds
     @Singleton
     abstract fun bindSharingRepository(
-        repository: SharingRepositoryImpl
+        sharingRepositoryImpl: SharingRepositoryImpl
     ): SharingRepository
 }
