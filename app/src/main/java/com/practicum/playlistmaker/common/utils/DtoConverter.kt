@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.common.utils
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.settings.data.dto.ThemeSettingsDto
 import com.practicum.playlistmaker.search.data.dto.TrackDto
-import com.practicum.playlistmaker.search.domain.model.TrackParcelable
+import com.practicum.playlistmaker.search.ui.dto.TrackParcelable
 import com.practicum.playlistmaker.settings.domain.model.ThemeSettings
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Extensions.toDate
