@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.di
 
+import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
@@ -25,6 +26,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class DataModule {
+
+    @Provides
+    @Singleton
+    fun provideApplicationContext(application: Application): Context {
+        return application.applicationContext
+    }
 
     @Provides
     @Singleton
