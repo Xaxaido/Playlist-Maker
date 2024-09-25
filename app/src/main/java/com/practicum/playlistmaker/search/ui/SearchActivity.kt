@@ -23,7 +23,6 @@ import com.practicum.playlistmaker.common.resources.VisibilityState.SearchResult
 import com.practicum.playlistmaker.common.resources.VisibilityState.ViewsList
 import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityItem
 import com.practicum.playlistmaker.common.utils.Debounce
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackParcelable
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.ParticleAnimator
@@ -114,7 +113,7 @@ class SearchActivity : AppCompatActivity() {
 
             isClickEnabled = false
             viewModel.addToHistory(track)
-            sendToPlayer(track)
+            viewModel.sendToPlayer(track)
             Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
         }
 
@@ -172,12 +171,14 @@ class SearchActivity : AppCompatActivity() {
         keyboard.hideSoftInputFromWindow(binding.searchLayout.searchText.windowToken, 0)
     }
 
-    private fun sendToPlayer(track: Track) = Intent(
-        this,
-        PlayerActivity::class.java,
-    ).apply {
-        putExtra(Util.KEY_TRACK, track.toTrackParcelable())
-        startActivity(this)
+    private fun sendToPlayer(json: String) {
+        Intent(
+            this,
+            PlayerActivity::class.java,
+        ).apply {
+            putExtra(Util.KEY_TRACK, json)
+            startActivity(this)
+        }
     }
 
     private fun searchTracks() { viewModel.search(searchRequest) }
@@ -227,6 +228,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun renderState(state: SearchState) {
         when (state) {
+            is SearchState.SendTrackToPlayer -> sendToPlayer(state.json)
             is SearchState.TrackSearchResults -> showContent(state.results)
             is SearchState.TrackSearchHistory -> showHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)

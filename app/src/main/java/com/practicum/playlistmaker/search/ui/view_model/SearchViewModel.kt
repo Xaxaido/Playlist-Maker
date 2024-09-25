@@ -43,6 +43,11 @@ class SearchViewModel(
         internetConnectionInteractor.addOnInternetConnectListener(this)
     }
 
+    fun sendToPlayer(track: Track) {
+        val json = tracksInteractor.trackToJson(track)
+        setState(SearchState.SendTrackToPlayer(json))
+    }
+
     fun search(term: String) {
         searchQuery = term
         timer.start()
@@ -77,12 +82,8 @@ class SearchViewModel(
         tracksInteractor.searchTracks(term, consumer)
     }
 
-    override fun onConnected() {
-        hasInternet = true
-    }
-
-    override fun onDisconnected() {
-        hasInternet = false
+    override fun onConnectionStatusUpdate(hasInternet: Boolean) {
+        this.hasInternet = hasInternet
     }
 
     override fun onCleared() {

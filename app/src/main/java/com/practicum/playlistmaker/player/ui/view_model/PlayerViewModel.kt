@@ -34,6 +34,8 @@ class PlayerViewModel(
     private val _liveData = MutableLiveData<PlayerState>()
     val liveData: LiveData<PlayerState> get() = _liveData
 
+    fun getTrack(json: String) = playerInteractor.jsonToTrack(json)
+
     fun init(track: Track) {
         setState(PlayerState.Stop)
         playerInteractor.init(this, track)

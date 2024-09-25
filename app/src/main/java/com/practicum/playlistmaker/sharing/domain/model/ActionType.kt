@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.sharing.data.model
+package com.practicum.playlistmaker.sharing.domain.model
 
 enum class ActionType {
     SHARE_APP,

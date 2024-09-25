@@ -21,12 +21,11 @@ class MainActivityModel(
 
     private fun setState(state: InternetState) { _liveData.postValue(state) }
 
-    override fun onConnected() {
-        setState(InternetState.Connected)
-    }
-
-    override fun onDisconnected() {
-        setState(InternetState.ConnectionLost)
+    override fun onConnectionStatusUpdate(hasInternet: Boolean) {
+        setState(
+            if (hasInternet) InternetState.Connected
+            else InternetState.ConnectionLost
+        )
     }
 
     override fun onCleared() {
