@@ -9,8 +9,9 @@ import com.practicum.playlistmaker.search.data.dto.TracksSearchResponse
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
 import com.practicum.playlistmaker.search.domain.model.Track
+import javax.inject.Inject
 
-class TracksRepositoryImpl(
+class TracksRepositoryImpl @Inject constructor(
     private val networkClient: NetworkClient,
     private val gson: Gson,
 ) : TracksRepository {

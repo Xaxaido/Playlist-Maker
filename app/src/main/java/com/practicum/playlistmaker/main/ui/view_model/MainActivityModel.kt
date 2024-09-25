@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.common.resources.InternetState
 import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainActivityModel(
+@HiltViewModel
+class MainActivityModel @Inject constructor(
     private val internetConnectionInteractor: InternetConnectionInteractor,
 ) : ViewModel(), InternetConnectListener {
 
