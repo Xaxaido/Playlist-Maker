@@ -27,42 +27,42 @@ abstract class InteractorModule {
     @Binds
     @Singleton
     abstract fun bindInternetConnectionInteractor(
-        internetConnectionInteractorImpl: InternetConnectionInteractorImpl
+        interactor: InternetConnectionInteractorImpl
     ): InternetConnectionInteractor
 
     @Binds
     @Singleton
     abstract fun bindSearchHistoryInteractor(
-        searchHistoryInteractorImpl: SearchHistoryInteractorImpl
+        interactor: SearchHistoryInteractorImpl
     ): SearchHistoryInteractor
 
     @Binds
     @Singleton
     abstract fun bindTracksInteractor(
-        tracksInteractorImpl: TracksInteractorImpl
+        interactor: TracksInteractorImpl
     ): TracksInteractor
 
     @Binds
     @Singleton
     abstract fun bindPlayerInteractor(
-        playerInteractorImpl: PlayerInteractorImpl
+        interactor: PlayerInteractorImpl
     ): PlayerInteractor
 
     @Binds
     @Singleton
     abstract fun bindTrackDescriptionInteractor(
-        trackDescriptionInteractorImpl: TrackDescriptionInteractorImpl
+        interactor: TrackDescriptionInteractorImpl
     ): TrackDescriptionInteractor
 
     @Binds
     @Singleton
     abstract fun bindSettingsInteractor(
-        settingsInteractorImpl: SettingsInteractorImpl
+        interactor: SettingsInteractorImpl
     ): SettingsInteractor
 
     @Binds
     @Singleton
     abstract fun bindSharingInteractor(
-        sharingInteractorImpl: SharingInteractorImpl
+        interactor: SharingInteractorImpl
     ): SharingInteractor
 }

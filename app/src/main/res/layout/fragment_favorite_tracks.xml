@@ -20,7 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
+            android:textSize="@dimen/text_big"
             android:text="@string/empty_medialibrary"
+            android:drawablePadding="@dimen/padding_small_6x"
             app:drawableTopCompat="@drawable/nothing_found" />
 
     </FrameLayout>
