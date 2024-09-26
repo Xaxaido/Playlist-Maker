@@ -10,7 +10,9 @@ import androidx.viewbinding.ViewBinding
 abstract class BindingFragment<T : ViewBinding> : Fragment() {
 
     private var _binding: T? = null
-    protected val binding get() = _binding!!
+    protected val binding get() = requireNotNull(_binding) {
+        "Value cannot be null"
+    }
 
     abstract fun createBinding(inflater: LayoutInflater, container: ViewGroup?): T
 
