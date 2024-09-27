@@ -2,22 +2,25 @@ package com.practicum.playlistmaker.search.ui.view_model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
+import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksConsumer
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SearchViewModel(
+@HiltViewModel
+class SearchViewModel @Inject constructor(
     private val tracksInteractor: TracksInteractor,
     private val searchHistoryInteractor: SearchHistoryInteractor,
     private val internetConnectionInteractor: InternetConnectionInteractor,
-) : ViewModel() {
+) : ViewModel(), InternetConnectListener {
 
     private val consumer = object : TracksConsumer {
 
@@ -33,7 +36,6 @@ class SearchViewModel(
     }
     private var searchQuery = ""
     private var hasInternet = false
-    private val internetStatusObserver = Observer<Boolean> { hasInternet = it }
     private val timer: Debounce by lazy {
         Debounce(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
     }
@@ -41,7 +43,12 @@ class SearchViewModel(
     val liveData: LiveData<SearchState> = _liveData
 
     init {
-        internetConnectionInteractor.internetStatus.observeForever(internetStatusObserver)
+        internetConnectionInteractor.addOnInternetConnectListener(this)
+    }
+
+    fun sendToPlayer(track: Track) {
+        val json = tracksInteractor.trackToJson(track)
+        setState(SearchState.SendTrackToPlayer(json))
     }
 
     fun search(term: String) {
@@ -78,8 +85,12 @@ class SearchViewModel(
         tracksInteractor.searchTracks(term, consumer)
     }
 
+    override fun onConnectionStatusUpdate(hasInternet: Boolean) {
+        this.hasInternet = hasInternet
+    }
+
     override fun onCleared() {
         timer.stop()
-        internetConnectionInteractor.internetStatus.removeObserver(internetStatusObserver)
+        internetConnectionInteractor.removeOnInternetConnectListener(this)
     }
 }

@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.common.resources
 
 enum class AppTheme(
-    val value: String
+    val value: String,
 ) {
 
     LIGHT("light"),

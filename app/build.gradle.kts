@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.jetbrainsKsp)
+    alias(libs.plugins.daggerHilt)
 }
 
 android {
@@ -42,6 +43,11 @@ android {
 }
 
 dependencies {
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -60,7 +66,6 @@ dependencies {
     implementation(libs.paging)
     implementation(libs.fragmentKtx)
     implementation(libs.activityKtx)
-    implementation (libs.koinAndroid)
     implementation (libs.kotlinxCoroutinesCore)
     implementation (libs.viewpager2)
     implementation (libs.roomRuntime)

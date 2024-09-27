@@ -1,14 +1,22 @@
 package com.practicum.playlistmaker.main.domain.impl
 
-import androidx.lifecycle.LiveData
+import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
+import javax.inject.Inject
 
-class InternetConnectionInteractorImpl(
+class InternetConnectionInteractorImpl @Inject constructor(
     private val internetConnectionRepository: InternetConnectionRepository,
 ) : InternetConnectionInteractor {
 
-    override val internetStatus: LiveData<Boolean> = internetConnectionRepository.internetStatus
     override fun register() { internetConnectionRepository.register() }
     override fun unregister() { internetConnectionRepository.unregister() }
+
+    override fun addOnInternetConnectListener(callback: InternetConnectListener) {
+        internetConnectionRepository.addOnInternetConnectListener(callback)
+    }
+
+    override fun removeOnInternetConnectListener(callback: InternetConnectListener) {
+        internetConnectionRepository.removeOnInternetConnectListener(callback)
+    }
 }

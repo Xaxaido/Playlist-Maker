@@ -3,46 +3,66 @@ package com.practicum.playlistmaker.di
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.main.domain.impl.InternetConnectionInteractorImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
-import com.practicum.playlistmaker.player.domain.impl.PlayerInteractorImpl
-import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
+import com.practicum.playlistmaker.player.domain.impl.PlayerInteractorImpl
+import com.practicum.playlistmaker.player.domain.impl.TrackDescriptionInteractorImpl
+import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import com.practicum.playlistmaker.search.domain.impl.SearchHistoryInteractorImpl
-import com.practicum.playlistmaker.player.domain.impl.TrackDescriptionInteractorImpl
 import com.practicum.playlistmaker.search.domain.impl.TracksInteractorImpl
 import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
 import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
-import org.koin.dsl.module
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-val interactorModule = module {
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class InteractorModule {
 
-    single<TracksInteractor> {
-        TracksInteractorImpl(get())
-    }
+    @Binds
+    @Singleton
+    abstract fun bindInternetConnectionInteractor(
+        internetConnectionInteractorImpl: InternetConnectionInteractorImpl
+    ): InternetConnectionInteractor
 
-    single<SearchHistoryInteractor> {
-        SearchHistoryInteractorImpl(get())
-    }
+    @Binds
+    @Singleton
+    abstract fun bindSearchHistoryInteractor(
+        searchHistoryInteractorImpl: SearchHistoryInteractorImpl
+    ): SearchHistoryInteractor
 
-    single<TrackDescriptionInteractor> {
-        TrackDescriptionInteractorImpl(get())
-    }
+    @Binds
+    @Singleton
+    abstract fun bindTracksInteractor(
+        tracksInteractorImpl: TracksInteractorImpl
+    ): TracksInteractor
 
-    single<PlayerInteractor> {
-        PlayerInteractorImpl(get())
-    }
+    @Binds
+    @Singleton
+    abstract fun bindPlayerInteractor(
+        playerInteractorImpl: PlayerInteractorImpl
+    ): PlayerInteractor
 
-    single<SettingsInteractor> {
-        SettingsInteractorImpl(get())
-    }
+    @Binds
+    @Singleton
+    abstract fun bindTrackDescriptionInteractor(
+        trackDescriptionInteractorImpl: TrackDescriptionInteractorImpl
+    ): TrackDescriptionInteractor
 
-    single<SharingInteractor> {
-        SharingInteractorImpl(get())
-    }
+    @Binds
+    @Singleton
+    abstract fun bindSettingsInteractor(
+        settingsInteractorImpl: SettingsInteractorImpl
+    ): SettingsInteractor
 
-    single<InternetConnectionInteractor> {
-        InternetConnectionInteractorImpl(get())
-    }
+    @Binds
+    @Singleton
+    abstract fun bindSharingInteractor(
+        sharingInteractorImpl: SharingInteractorImpl
+    ): SharingInteractor
 }

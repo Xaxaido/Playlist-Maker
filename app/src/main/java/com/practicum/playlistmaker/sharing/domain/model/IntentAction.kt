@@ -1,9 +1,10 @@
-package com.practicum.playlistmaker.sharing.data.model
+package com.practicum.playlistmaker.sharing.domain.model
 
-class ShareAction(
+class IntentAction(
     val actionType: ActionType,
     val extra: Map<String, String>,
 ) {
+
     companion object {
         const val SUBJECT = "SHARE_ACTION_SUBJECT"
         const val EMAIL = "SHARE_ACTION_EMAIL"

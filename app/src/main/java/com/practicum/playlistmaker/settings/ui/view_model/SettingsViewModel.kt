@@ -4,10 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
-import com.practicum.playlistmaker.sharing.data.model.ShareAction
+import com.practicum.playlistmaker.sharing.domain.model.IntentAction
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SettingsViewModel(
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
     private val settingsIteractor: SettingsInteractor,
     private val sharingInteractor: SharingInteractor,
 ) : ViewModel() {
@@ -15,8 +18,8 @@ class SettingsViewModel(
     private val _settingsLiveData = MutableLiveData<Boolean>()
     val settingsLiveData: LiveData<Boolean> get() = _settingsLiveData
 
-    private val _sharingLiveData = MutableLiveData<ShareAction>()
-    val sharingLiveData: LiveData<ShareAction> get() = _sharingLiveData
+    private val _sharingLiveData = MutableLiveData<IntentAction>()
+    val sharingLiveData: LiveData<IntentAction> get() = _sharingLiveData
 
     init {
         _settingsLiveData.value = settingsIteractor.getThemeSwitchState()
@@ -26,7 +29,7 @@ class SettingsViewModel(
     fun saveTheme(isChecked: Boolean) { settingsIteractor.updateThemeSetting(isChecked) }
     fun getCurrentTheme() = settingsIteractor.getThemeSettings().themeName
 
-    private fun setShareAction(action: ShareAction) { _sharingLiveData.postValue(action) }
+    private fun setShareAction(action: IntentAction) { _sharingLiveData.postValue(action) }
     fun shareApp() { setShareAction(sharingInteractor.getShareApp()) }
     fun contactSupport() { setShareAction(sharingInteractor.getContactSupport()) }
     fun openTerms() { setShareAction(sharingInteractor.getOpenTerms()) }

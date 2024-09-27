@@ -4,14 +4,20 @@ import com.practicum.playlistmaker.common.resources.TracksSearchState
 import com.practicum.playlistmaker.search.domain.api.TracksConsumer
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
-import java.util.concurrent.Executors
+import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TracksInteractorImpl(private val repository: TracksRepository) : TracksInteractor {
+class TracksInteractorImpl @Inject constructor(
+    private val repository: TracksRepository,
+) : TracksInteractor {
 
-    private val executor = Executors.newCachedThreadPool()
+    override fun trackToJson(track: Track) = repository.trackToJson(track)
 
     override fun searchTracks(term: String, consumer: TracksConsumer) {
-        executor.execute {
+        CoroutineScope(Dispatchers.IO).launch {
             when(val result = repository.searchTracks(term)) {
                 is TracksSearchState.Success -> { consumer.consume(result.tracks, null) }
                 is TracksSearchState.Error -> { consumer.consume(null, result.error) }

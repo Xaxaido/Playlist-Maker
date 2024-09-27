@@ -8,15 +8,16 @@ import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
-import com.practicum.playlistmaker.common.utils.Util.UPDATE_BUFFERED_PROGRESS
-import com.practicum.playlistmaker.common.utils.Util.UPDATE_PLAYBACK_PROGRESS
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.player.domain.api.TracksDescriptionConsumer
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class PlayerViewModel(
+@HiltViewModel
+class PlayerViewModel @Inject constructor(
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
     private val playerInteractor: PlayerInteractor,
 ) : ViewModel(), MediaPlayerListener {
@@ -35,6 +36,8 @@ class PlayerViewModel(
     )
     private val _liveData = MutableLiveData<PlayerState>()
     val liveData: LiveData<PlayerState> get() = _liveData
+
+    fun getTrack(json: String) = playerInteractor.jsonToTrack(json)
 
     fun init(track: Track) {
         setState(PlayerState.Stop)
@@ -100,5 +103,10 @@ class PlayerViewModel(
             }
             else -> {}
         }
+    }
+
+    private companion object {
+        const val UPDATE_PLAYBACK_PROGRESS = "UPDATE_PLAYBACK_PROGRESS"
+        const val UPDATE_BUFFERED_PROGRESS = "UPDATE_BUFFERED_PROGRESS"
     }
 }
