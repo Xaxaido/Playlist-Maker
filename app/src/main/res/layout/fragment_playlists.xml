@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="UselessParent">
+
+    <LinearLayout
+        android:id="@+id/no_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="?attr/android:colorBackground"
+        android:clickable="true"
+        tools:visibility="visible">
+
+        <Button
+            android:id="@+id/new_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_small_9x"
+            style="@style/DarkButton"
+            android:text="@string/new_playlist" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:textSize="@dimen/text_big"
+            android:text="@string/no_playlists"
+            android:drawablePadding="@dimen/padding_small_6x"
+            app:drawableTopCompat="@drawable/nothing_found" />
+
+    </LinearLayout>
+
+</LinearLayout>
