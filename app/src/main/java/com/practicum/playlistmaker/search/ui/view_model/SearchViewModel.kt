@@ -26,7 +26,9 @@ class SearchViewModel @Inject constructor(
 
         override fun consume(tracks: List<Track>?, error: Int?) {
             when {
-                !tracks.isNullOrEmpty() -> setState(SearchState.TrackSearchResults(results = tracks))
+                !tracks.isNullOrEmpty() -> {
+                    setState(SearchState.TrackSearchResults(results = tracks))
+                }
                 else -> {
                     if (error != null) setState(SearchState.ConnectionError(error = error))
                     else setState(SearchState.NothingFound)
@@ -39,17 +41,14 @@ class SearchViewModel @Inject constructor(
     private val timer: Debounce by lazy {
         Debounce(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
     }
-    private val _liveData = MutableLiveData<SearchState>()
+    private val _liveData = MutableLiveData<SearchState>(SearchState.NoData)
     val liveData: LiveData<SearchState> = _liveData
 
     init {
         internetConnectionInteractor.addOnInternetConnectListener(this)
     }
 
-    fun sendToPlayer(track: Track) {
-        val json = tracksInteractor.trackToJson(track)
-        setState(SearchState.SendTrackToPlayer(json))
-    }
+    fun trackToJson(track: Track) = tracksInteractor.trackToJson(track)
 
     fun search(term: String) {
         searchQuery = term

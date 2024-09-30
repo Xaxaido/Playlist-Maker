@@ -4,11 +4,9 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.FrameLayout
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.common.widgets.BlurredImageView
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 
 class StickyFooterDecoration : RecyclerView.ItemDecoration() {
@@ -16,7 +14,6 @@ class StickyFooterDecoration : RecyclerView.ItemDecoration() {
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: TrackAdapter
     private lateinit var stickyContainer: FrameLayout
-    private lateinit var blurredView: BlurredImageView
     private val onGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener { updateFooterPosition() }
     private var isAttached = false
 
@@ -32,7 +29,6 @@ class StickyFooterDecoration : RecyclerView.ItemDecoration() {
 
         val rootView = (recyclerView.parent as ViewGroup)
         stickyContainer = rootView.findViewById(R.id.sticky_container)
-        blurredView = rootView.findViewById(R.id.blur_image_view_footer)
         recyclerView.viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)
     }
 
@@ -45,7 +41,7 @@ class StickyFooterDecoration : RecyclerView.ItemDecoration() {
 
     private fun showFooter() {
         val position = adapter.itemCount - 1
-        blurredView.isVisible = true
+        if (position == -1) return
 
         if (stickyContainer.childCount == 0) {
             val view = adapter.createViewHolder(stickyContainer, adapter.getItemViewType(position)).itemView
@@ -58,8 +54,6 @@ class StickyFooterDecoration : RecyclerView.ItemDecoration() {
     }
 
     private fun hideFooter() {
-        blurredView.isVisible = false
-
         if (stickyContainer.childCount > 0) {
             updateFooterVisibility(true) {
                 stickyContainer.removeAllViews()

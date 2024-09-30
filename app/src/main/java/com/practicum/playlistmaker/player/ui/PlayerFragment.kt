@@ -4,52 +4,56 @@ import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
-import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
+import com.practicum.playlistmaker.common.widgets.BaseFragment
+import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
-    private val viewModel: PlayerViewModel by viewModels()
-    private lateinit var binding: ActivityPlayerBinding
+    private val viewModel: PlayerViewModel by activityViewModels()
     private lateinit var track: Track
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentPlayerBinding {
+        return FragmentPlayerBinding.inflate(inflater, container, false)
+    }
 
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        intent.getStringExtra(Util.KEY_TRACK)?.also {
-            track = viewModel.getTrack(it)
+        arguments?.getString(Util.KEY_TRACK)?.also {
+           track = viewModel.getTrack(it)
         }
-
-        setListeners()
         setupUI()
+        setListeners()
     }
 
     private fun setListeners() {
-        viewModel.liveData.observe(this, ::renderState)
+        viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
     }
 
     private fun setupUI() {
@@ -78,23 +82,24 @@ class PlayerActivity : AppCompatActivity() {
         Glide.with(this)
             .load(track.getPlayerAlbumCover())
             .placeholder(R.drawable.player_album_cover_stub)
-            .transform(RoundedCorners(8.dpToPx(this)))
+            .transform(RoundedCorners(8.dpToPx(requireActivity())))
             .into(binding.albumCover)
     }
 
     private fun adjustLayout(coverWidth: Int) {
+        val wm =  requireActivity().windowManager
         val screenWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            windowManager.currentWindowMetrics.bounds.width()
+            wm.currentWindowMetrics.bounds.width()
         } else {
             @Suppress("DEPRECATION")
             DisplayMetrics().let { displayMetrics ->
-                windowManager.defaultDisplay.getMetrics(displayMetrics)
+                wm.defaultDisplay.getMetrics(displayMetrics)
                 displayMetrics.widthPixels
             }
         }
 
         if (coverWidth < screenWidth * Util.PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER) {
-            val scrollView = NestedScrollView(this).apply {
+            val scrollView = NestedScrollView(requireActivity()).apply {
                 id = View.generateViewId()
                 overScrollMode = View.OVER_SCROLL_NEVER
                 layoutParams = binding.expandedContainer.layoutParams

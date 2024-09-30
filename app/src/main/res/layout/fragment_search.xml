@@ -34,34 +34,25 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
                 android:overScrollMode="never"
                 android:background="?attr/android:colorBackground"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-            <com.practicum.playlistmaker.common.widgets.BlurredImageView
-                android:id="@+id/blur_image_view_footer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="centerCrop"
-                app:parentView="@id/sticky_container"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <FrameLayout
                 android:id="@+id/sticky_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toTopOf="@id/bottom_menu_stub" />
 
             <FrameLayout
                 android:id="@+id/nothing_found"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/search_screen_margin_top"
                 android:background="?attr/android:colorBackground"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -74,11 +65,10 @@
             <LinearLayout
                 android:id="@+id/network_failure"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/search_screen_margin_top"
                 android:background="?attr/android:colorBackground"
-                android:gravity="center"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:background="@null">
 
@@ -98,10 +88,10 @@
             <FrameLayout
                 android:id="@+id/progressBar"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/search_screen_margin_top"
                 android:background="?attr/android:colorBackground"
                 android:clickable="true"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:background="@null">
 
@@ -113,15 +103,28 @@
 
             </FrameLayout>
 
-
             <com.practicum.playlistmaker.common.widgets.recycler.ParticleView
                 android:id="@+id/particle_view"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:id="@+id/bottom_menu_stub"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/bottom_menu_height"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.practicum.playlistmaker.common.widgets.BlurredImageView
+                android:id="@+id/blur_image_view_bottom_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:parentView="@id/bottom_menu_stub"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

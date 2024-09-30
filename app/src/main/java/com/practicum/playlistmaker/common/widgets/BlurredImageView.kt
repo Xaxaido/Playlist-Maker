@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.view.isVisible
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.utils.Blur
 
@@ -30,11 +32,13 @@ class BlurredImageView @JvmOverloads constructor(
     private var parentViewId: Int = NO_ID
     private lateinit var targetView: View
     private lateinit var contentView: View
+    private var padding = 0
     private var targetHeight = 0
 
     init {
-        val a: TypedArray = context.theme.obtainStyledAttributes(attrs,
-            R.styleable.BlurredImageView, 0, 0)
+        val a: TypedArray = context.theme.obtainStyledAttributes(
+            attrs, R.styleable.BlurredImageView, 0, 0
+        )
         try {
             parentViewId = a.getResourceId(R.styleable.BlurredImageView_parentView, NO_ID)
         } finally {
@@ -73,13 +77,16 @@ class BlurredImageView @JvmOverloads constructor(
             else -> -1
         }
 
-        if (startY == -1) return null
+        if (startY == -1) {
+            return null
+        }
 
         val bitmap = Bitmap.createBitmap(width, contentHeight, Bitmap.Config.ARGB_8888)
 
         Canvas(bitmap).apply {
             translate(0f, (-contentView.scrollY).toFloat())
-            contentView.draw(this)
+            if (contentView.isVisible) contentView.draw(this)
+            else drawColor(Color.TRANSPARENT)
         }
 
         return Bitmap.createBitmap(bitmap, 0, startY, width, targetHeight)
@@ -95,6 +102,7 @@ class BlurredImageView @JvmOverloads constructor(
 
         targetView = rootView.findViewById(parentViewId)
         contentView = rootView.findViewById(R.id.recycler)
+        padding = contentView.paddingBottom
         setSize()
     }
 }

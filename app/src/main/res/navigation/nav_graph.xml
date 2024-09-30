@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/media_library_fragment">
+
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.practicum.playlistmaker.search.ui.SearchFragment"
+        tools:layout="@layout/fragment_search" >
+
+        <action
+            android:id="@+id/send_to_player"
+            app:destination="@id/player_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/player_fragment"
+        android:name="com.practicum.playlistmaker.player.ui.PlayerFragment"
+        tools:layout="@layout/fragment_player" />
+
+    <fragment
+        android:id="@+id/media_library_fragment"
+        android:name="com.practicum.playlistmaker.medialibrary.ui.MediaLibraryFragment"
+        tools:layout="@layout/fragment_media_library" />
+
+    <fragment
+        android:id="@+id/favoriteTracksFragment"
+        android:name="com.practicum.playlistmaker.medialibrary.ui.FavoriteTracksFragment"
+        tools:layout="@layout/fragment_favorite_tracks" />
+
+    <fragment
+        android:id="@+id/playlistsFragment"
+        android:name="com.practicum.playlistmaker.medialibrary.ui.PlaylistsFragment"
+        tools:layout="@layout/fragment_playlists" />
+
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:name="com.practicum.playlistmaker.settings.ui.SettingsFragment"
+        tools:layout="@layout/fragment_settings" />
+</navigation>

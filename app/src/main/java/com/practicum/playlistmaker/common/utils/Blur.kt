@@ -4,6 +4,7 @@ package com.practicum.playlistmaker.common.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
@@ -13,13 +14,16 @@ import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
+import com.practicum.playlistmaker.R
 
 object Blur {
 
     private const val BLUR_RADIUS: Float = 25f
-    private const val RENDER_EFFECT_BLUR_RADIUS: Float = 20f
+    private const val RENDER_EFFECT_BLUR_RADIUS: Float = 25f
+    private var colorOverlay = -1
 
     fun blur(context: Context, view: ImageView, originalBitmap: Bitmap) {
+        colorOverlay = context.getColor(R.color.bottom_menu_color)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             blurWithRenderEffect(view, originalBitmap)
         } else {
@@ -34,6 +38,7 @@ object Blur {
         val canvas = Canvas(blurredBitmap)
 
         canvas.drawBitmap(bitmap, 0f, 0f, null)
+        canvas.drawColor(colorOverlay)
         view.setImageBitmap(blurredBitmap)
         view.setRenderEffect(renderEffect)
     }
@@ -50,6 +55,12 @@ object Blur {
             blurScript.setInput(input)
             blurScript.forEach(output)
             output.copyTo(inputBitmap)
+
+            val canvas = Canvas(inputBitmap)
+            val paint = Paint()
+
+            paint.color = colorOverlay
+            canvas.drawColor(paint.color)
         } finally {
             input.destroy()
             output.destroy()

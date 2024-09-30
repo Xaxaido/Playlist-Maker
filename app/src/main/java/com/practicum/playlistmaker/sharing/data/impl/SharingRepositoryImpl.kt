@@ -5,10 +5,11 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.sharing.data.api.SharingRepository
 import com.practicum.playlistmaker.sharing.domain.model.ActionType
 import com.practicum.playlistmaker.sharing.domain.model.IntentAction
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class SharingRepositoryImpl @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
 ) : SharingRepository {
 
     override fun getShareApp() = IntentAction(

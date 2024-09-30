@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_layout"
     style="@style/LayoutFullScreen"
-    android:background="@color/activityMainBgColor"
+    android:background="?attr/android:colorBackground"
     tools:context=".main.ui.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -23,50 +23,26 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/left_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/padding_small_8x" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:navGraph="@navigation/nav_graph"
+        app:defaultNavHost="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/right_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/padding_small_8x" />
-
-    <Button
-        android:id="@+id/btn_search"
-        style="@style/BigButton"
-        android:layout_marginTop="@dimen/header_margin"
-        android:text="@string/search"
-        app:icon="@drawable/ic_search"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline"
-        app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
-        app:layout_constraintBottom_toTopOf="@id/btn_media_library" />
-
-    <Button
-        android:id="@+id/btn_media_library"
-        style="@style/BigButton"
-        android:text="@string/media_library"
-        app:icon="@drawable/ic_media_library"
-        app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/btn_search"
-        app:layout_constraintBottom_toTopOf="@id/btn_settings" />
-
-    <Button
-        android:id="@+id/btn_settings"
-        style="@style/BigButton"
-        android:layout_marginBottom="@dimen/bottom_layout_margin"
-        android:text="@string/settings"
-        app:icon="@drawable/ic_settings"
-        app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/btn_media_library"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_menu_height"
+        android:background="@android:color/transparent"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@drawable/nav_color"
+        app:itemTextColor="@drawable/nav_color"
+        app:itemActiveIndicatorStyle="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <LinearLayout

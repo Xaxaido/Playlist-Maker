@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.di
 
-import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
@@ -18,6 +17,7 @@ import com.practicum.playlistmaker.search.data.source.SearchTrackDescriptionData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,13 +29,9 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideApplicationContext(application: Application): Context {
-        return application.applicationContext
-    }
-
-    @Provides
-    @Singleton
-    fun provideSharedPreferences(context: Context): SharedPreferences {
+    fun provideSharedPreferences(
+        @ApplicationContext context: Context,
+    ): SharedPreferences {
         return context.getSharedPreferences(context.getString(R.string.prefs_file_name), Context.MODE_PRIVATE)
     }
 
@@ -50,13 +46,17 @@ class DataModule {
     }
 
     @Provides
-    fun provideSessionToken(context: Context): SessionToken {
+    fun provideSessionToken(
+        @ApplicationContext context: Context,
+    ): SessionToken {
         return SessionToken(context, ComponentName(context, PlaybackService::class.java))
     }
 
     @Provides
     @Singleton
-    fun provideRetrofit(context: Context): ITunesService {
+    fun provideRetrofit(
+        @ApplicationContext context: Context,
+    ): ITunesService {
         return Retrofit.Builder()
             .baseUrl(context.getString(R.string.itunes_base_url))
             .addConverterFactory(GsonConverterFactory.create())
@@ -78,7 +78,9 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideSearchTrackDescriptionData(context: Context): SearchTrackDescriptionData {
+    fun provideSearchTrackDescriptionData(
+        @ApplicationContext context: Context,
+    ): SearchTrackDescriptionData {
         return SearchTrackDescriptionData(context)
     }
 }

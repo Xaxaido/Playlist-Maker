@@ -2,20 +2,19 @@
 package com.practicum.playlistmaker.main.ui
 
 import android.animation.ObjectAnimator
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.InternetState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
 import com.practicum.playlistmaker.main.ui.view_model.MainActivityModel
-import com.practicum.playlistmaker.medialibrary.ui.MediaLibraryActivity
-import com.practicum.playlistmaker.search.ui.SearchActivity
-import com.practicum.playlistmaker.settings.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,24 +29,26 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupUI()
         setListeners()
+    }
+
+    private fun setupUI() {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        binding.bottomNav.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.player_fragment-> binding.bottomNav.isVisible = false
+                else -> binding.bottomNav.isVisible = true
+            }
+        }
     }
 
     private  fun setListeners() {
         viewModel.liveData.observe(this, ::renderState)
         binding.btnCloseNoInternetMsg.setOnClickListener { hideErrorMsg() }
-
-        binding.btnSearch.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
-        }
-
-        binding.btnMediaLibrary.setOnClickListener {
-            startActivity(Intent(this, MediaLibraryActivity::class.java))
-        }
-
-        binding.btnSettings.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-        }
     }
 
     private fun updateErrorMessage(from: Float, to: Float, onAnimationEnd: () -> Unit = {}) {

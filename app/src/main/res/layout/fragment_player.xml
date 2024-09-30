@@ -16,7 +16,8 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
-            style="@style/Theme.PlaylistMaker.PopupOverlay" />
+            style="@style/Theme.PlaylistMaker.PopupOverlay"
+            app:navigationIcon="@drawable/ic_back" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

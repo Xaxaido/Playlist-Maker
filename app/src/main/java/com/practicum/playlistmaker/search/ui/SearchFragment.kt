@@ -1,17 +1,21 @@
 package com.practicum.playlistmaker.search.ui
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.SearchState
@@ -25,23 +29,23 @@ import com.practicum.playlistmaker.common.resources.VisibilityState.ViewsList
 import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityItem
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
+import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
+import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
 import com.practicum.playlistmaker.common.widgets.recycler.ParticleAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.StickyFooterDecoration
 import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
 import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.player.ui.PlayerActivity
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
-    private val viewModel: SearchViewModel by viewModels()
-    private lateinit var binding: ActivitySearchBinding
+    private val viewModel: SearchViewModel by activityViewModels()
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var stickyFooterDecoration: StickyFooterDecoration
     private lateinit var swipeHelper: SwipeHelper
@@ -49,44 +53,54 @@ class SearchActivity : AppCompatActivity() {
     private var isHistoryShown = false
     private var isClickEnabled = true
     private var isKeyboardVisible = false
-    private val alisa: ViewsList by lazy {
-        ViewsList(
+    private lateinit var alisa: ViewsList
+    private val keyboardStateListener = ViewTreeObserver.OnGlobalLayoutListener {
+        Rect().also {
+            binding.contentLayout.getWindowVisibleDisplayFrame(it)
+            val screenHeight = binding.contentLayout.rootView.height
+            val keyboardHeight = screenHeight - it.bottom
+            isKeyboardVisible = keyboardHeight > screenHeight * 0.15
+        }
+    }
+
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSearchBinding {
+        return FragmentSearchBinding.inflate(inflater, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupUI()
+        setListeners()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.contentLayout.viewTreeObserver.removeOnGlobalLayoutListener(keyboardStateListener)
+    }
+
+    private fun setupUI() {
+        alisa = ViewsList(
             listOf(
                 VisibilityItem(binding.networkFailure, listOf(Error)),
                 VisibilityItem(binding.nothingFound, listOf(NothingFound)),
                 VisibilityItem(binding.progressBar, listOf(Loading)),
                 VisibilityItem(binding.stickyContainer, listOf(History)),
-                VisibilityItem(binding.blurImageViewFooter, listOf(History)),
                 VisibilityItem(binding.recycler, listOf(History, SearchResults)),
             )
         )
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        setupUI()
-        setListeners()
-        showNoData()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (isHistoryShown) viewModel.getHistory(false)
-    }
-
-    private fun setupUI() {
         trackAdapter = TrackAdapter()
         binding.recycler.adapter = trackAdapter
         binding.recycler.itemAnimator = ItemAnimator()
         stickyFooterDecoration = StickyFooterDecoration()
         swipeHelper = initSwipeHelper()
+        val padding = resources.getDimensionPixelSize(R.dimen.bottom_menu_height)
+        binding.recycler.addItemDecoration(PaddingItemDecoration(padding))
     }
 
-    private fun initSwipeHelper() = object : SwipeHelper(this, binding.recycler) {
+    private fun initSwipeHelper() = object : SwipeHelper(requireActivity(), binding.recycler) {
 
         override fun instantiateUnderlayButton() =
             if (isHistoryShown) {
@@ -98,8 +112,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setListeners() {
         isKeyboardVisible()
-        binding.toolbar.setNavigationOnClickListener { finish() }
-        viewModel.liveData.observe(this, ::renderState)
+        viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.buttonRefresh.setOnClickListener { searchTracks() }
 
         binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -115,7 +128,7 @@ class SearchActivity : AppCompatActivity() {
 
             isClickEnabled = false
             viewModel.addToHistory(track)
-            viewModel.sendToPlayer(track)
+            sendToPlayer(viewModel.trackToJson(track))
             Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
         }
 
@@ -129,25 +142,26 @@ class SearchActivity : AppCompatActivity() {
             hideKeyboard()
             isHistoryShown = true
             binding.searchLayout.searchText.setText("")
+            viewModel.getHistory(true)
         }
 
-        binding.searchLayout.searchText.setOnFocusChangeListener { _, hasFocus ->
-            updateSearchHistoryVisibility(hasFocus)
+        binding.searchLayout.searchText.also { editText ->
+
+            editText.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && searchRequest.isEmpty() && !isHistoryShown) viewModel.getHistory(true)
+            }
+
+            editText.doOnTextChanged { text, _, _, _ ->
+                val hasFocus = editText.hasFocus()
+
+                searchRequest = text.toString()
+                updateClearBtnVisibility(searchRequest.isNotEmpty())
+
+                if (hasFocus && isHistoryShown) showNoData()
+                if (searchRequest.isNotEmpty() && hasFocus) searchTracks()
+                else viewModel.stopSearch()
+            }
         }
-
-        binding.searchLayout.searchText.doOnTextChanged { text, _, _, _ ->
-            searchRequest = text.toString()
-            updateClearBtnVisibility(searchRequest.isNotEmpty())
-            updateSearchHistoryVisibility(binding.searchLayout.searchText.hasFocus())
-
-            if (searchRequest.isNotEmpty()) searchTracks()
-            else viewModel.stopSearch()
-        }
-    }
-
-    private fun updateSearchHistoryVisibility(hasFocus: Boolean) {
-        if (hasFocus && searchRequest.isEmpty()) viewModel.getHistory(true)
-        else if (isHistoryShown) showNoData()
     }
 
     private fun updateClearBtnVisibility(isVisible: Boolean) {
@@ -160,30 +174,26 @@ class SearchActivity : AppCompatActivity() {
                 isKeyboardVisible = (insets and WindowInsetsCompat.Type.ime()) != 0
             }
         } else {
-            binding.contentLayout.viewTreeObserver.addOnGlobalLayoutListener {
-                val heightDiff = binding.contentLayout.rootView.height - binding.contentLayout.height
-                isKeyboardVisible = heightDiff > 200
-            }
+            binding.contentLayout.viewTreeObserver.addOnGlobalLayoutListener(keyboardStateListener)
         }
     }
 
     private fun hideKeyboard() {
         isKeyboardVisible = false
-        val keyboard = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val keyboard = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         keyboard.hideSoftInputFromWindow(binding.searchLayout.searchText.windowToken, 0)
     }
 
     private fun sendToPlayer(json: String) {
-        Intent(
-            this,
-            PlayerActivity::class.java,
-        ).apply {
-            putExtra(Util.KEY_TRACK, json)
-            startActivity(this)
-        }
+        findNavController().navigate(
+            R.id.send_to_player,
+            Bundle().apply {
+                putString(Util.KEY_TRACK, json)
+            }
+        )
     }
 
-    private fun searchTracks() { viewModel.search(searchRequest) }
+    private fun searchTracks() {viewModel.search(searchRequest) }
 
     private fun showNoData() {
         updateData(false, emptyList()) {
@@ -205,7 +215,9 @@ class SearchActivity : AppCompatActivity() {
                 updateData(true, it, isDataSetChanged) {
                     alisa show History
                 }
-            } else showNoData()
+            } else {
+                showNoData()
+            }
         }
     }
 
@@ -225,12 +237,14 @@ class SearchActivity : AppCompatActivity() {
         if (!isDecorationNeeded) stickyFooterDecoration.detach()
         else stickyFooterDecoration.attachRecyclerView(binding.recycler, trackAdapter)
 
-        trackAdapter.submitTracksList(isDecorationNeeded, list, isDataSetChanged, doOnEnd)
+        trackAdapter.submitTracksList(isDecorationNeeded, list, isDataSetChanged) {
+            doOnEnd()
+        }
     }
 
     private fun renderState(state: SearchState) {
         when (state) {
-            is SearchState.SendTrackToPlayer -> sendToPlayer(state.json)
+            is SearchState.NoData -> showNoData()
             is SearchState.TrackSearchResults -> showContent(state.results)
             is SearchState.TrackSearchHistory -> showHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)
@@ -246,7 +260,7 @@ class SearchActivity : AppCompatActivity() {
         Canvas(bitmap).also { viewToRemove.draw(it) }
         viewToRemove.isVisible = false
         binding.particleView.animator = ParticleAnimator(
-            this,
+            requireActivity(),
             binding.particleView,
             bitmap,
             0f,
@@ -257,11 +271,11 @@ class SearchActivity : AppCompatActivity() {
 
     private val btnDelete: () -> UnderlayButton = {
         UnderlayButton(
-            this,
+            requireActivity(),
             getString(R.string.history_delete_item),
             R.drawable.ic_delete,
-            getColor(R.color.red),
-            getColor(R.color.white)
+            requireActivity().getColor(R.color.red),
+            requireActivity().getColor(R.color.white)
         ) { pos ->
             trackAdapter.notifyItemChanged(pos)
             viewModel.removeFromHistory(pos - 1)
@@ -275,11 +289,11 @@ class SearchActivity : AppCompatActivity() {
 
     private val btnAddToFav: () -> UnderlayButton = {
         UnderlayButton(
-            this,
+            requireActivity(),
             getString(R.string.history_add_to_fav),
             R.drawable.ic_add_to_fav,
-            getColor(R.color.greyLight),
-            getColor(R.color.black)
+            requireActivity().getColor(R.color.greyLight),
+            requireActivity().getColor(R.color.black)
         ) { pos ->
             trackAdapter.notifyItemChanged(pos)
         }

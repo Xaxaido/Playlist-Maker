@@ -8,13 +8,14 @@ import android.net.NetworkRequest
 import com.practicum.playlistmaker.main.data.network.InternetConnection
 import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class InternetConnectionRepositoryImpl @Inject constructor(
-    context: Context,
+    @ApplicationContext context: Context,
     private val internetConnection: InternetConnection,
 ) : InternetConnectionRepository {
 
