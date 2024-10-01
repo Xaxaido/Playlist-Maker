@@ -6,17 +6,6 @@
     android:orientation="vertical"
     tools:context=".medialibrary.ui.MediaLibraryFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        style="@style/Theme.PlaylistMaker.AppBarOverlay" >
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Theme.PlaylistMaker.PopupOverlay"
-            app:title="@string/media_library" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab"
         android:layout_width="match_parent"

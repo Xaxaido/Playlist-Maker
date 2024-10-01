@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKsp)
     alias(libs.plugins.daggerHilt)
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {

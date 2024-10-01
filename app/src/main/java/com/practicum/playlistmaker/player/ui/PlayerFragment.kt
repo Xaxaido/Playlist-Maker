@@ -1,37 +1,35 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.animation.ObjectAnimator
-import android.os.Build
-import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import androidx.constraintlayout.widget.ConstraintSet
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
-import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
-import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
+import com.practicum.playlistmaker.search.domain.model.Track
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private val viewModel: PlayerViewModel by activityViewModels()
-    private lateinit var track: Track
+    private val args: PlayerFragmentArgs by navArgs()
+    private var track: Track? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -40,90 +38,69 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         return FragmentPlayerBinding.inflate(inflater, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        return if (nextAnim == 0) {
+           super.onCreateAnimation(transit, enter, nextAnim)
+        } else {
+            AnimationUtils.loadAnimation(requireActivity(), nextAnim).apply {
+                setAnimationListener(object : Animation.AnimationListener {
 
-        arguments?.getString(Util.KEY_TRACK)?.also {
-           track = viewModel.getTrack(it)
+                    override fun onAnimationStart(animation: Animation) {}
+
+                    override fun onAnimationEnd(animation: Animation) {
+                        setupUI()
+                        setListeners()
+                    }
+
+                    override fun onAnimationRepeat(animation: Animation) {}
+                })
+            }
         }
-        setupUI()
-        setListeners()
     }
 
     private fun setListeners() {
         viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
-        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+
+            override fun handleOnBackPressed() {
+                findNavController().navigateUp()
+            }
+        })
     }
 
     private fun setupUI() {
+        track = viewModel.getTrack(args.trackJson)
+
+        track?.also {
+            viewModel.init(it)
+        }
+
+
         binding.shimmerPlaceholder.shimmer.startShimmer()
-
-        binding.albumCover.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-
-            override fun onGlobalLayout() {
-                binding.albumCover.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                adjustLayout(binding.albumCover.width)
-            }
-        })
-
         updatePlayBtnState(false)
-        viewModel.searchTrackDescription(track.artistViewUrl)
+        viewModel.searchTrackDescription(track?.artistViewUrl)
 
         with (binding) {
-            playerTrackTitle.text = track.trackName
-            playerArtistName.text = track.artistName
-            playerDurationText.text = track.duration
-            yearText.text = track.releaseDate ?: ""
-            genreText.text = track.genre
-            albumTitleText.text = track.albumName
+            playerTrackTitle.text = track?.trackName
+            playerArtistName.text = track?.artistName
+            playerDurationText.text = track?.duration
+            yearText.text = track?.releaseDate ?: ""
+            genreText.text = track?.genre
+            albumTitleText.text = track?.albumName
         }
 
         Glide.with(this)
-            .load(track.getPlayerAlbumCover())
+            .load(track?.getPlayerAlbumCover())
             .placeholder(R.drawable.player_album_cover_stub)
+            .centerCrop()
             .transform(RoundedCorners(8.dpToPx(requireActivity())))
             .into(binding.albumCover)
-    }
-
-    private fun adjustLayout(coverWidth: Int) {
-        val wm =  requireActivity().windowManager
-        val screenWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            wm.currentWindowMetrics.bounds.width()
-        } else {
-            @Suppress("DEPRECATION")
-            DisplayMetrics().let { displayMetrics ->
-                wm.defaultDisplay.getMetrics(displayMetrics)
-                displayMetrics.widthPixels
-            }
-        }
-
-        if (coverWidth < screenWidth * Util.PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER) {
-            val scrollView = NestedScrollView(requireActivity()).apply {
-                id = View.generateViewId()
-                overScrollMode = View.OVER_SCROLL_NEVER
-                layoutParams = binding.expandedContainer.layoutParams
-            }
-
-            binding.expandedContainer.apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                )
-            }
-
-            binding.contentLayout.removeView(binding.expandedContainer)
-            scrollView.addView(binding.expandedContainer)
-            binding.contentLayout.addView(scrollView)
-
-            ConstraintSet().apply {
-                clone(binding.expandedContainer)
-                clear(binding.albumCover.id, ConstraintSet.BOTTOM)
-                clear(binding.albumTitle.id, ConstraintSet.BOTTOM)
-                clear(binding.playerArtistName.id, ConstraintSet.BOTTOM)
-                applyTo(binding.expandedContainer)
-            }
-        }
     }
 
     private fun updatePlayBtnState(isActive: Boolean) {
@@ -197,7 +174,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.init(track)
+        track?.also {
+            viewModel.init(it)
+        }
     }
 
     override fun onPause() {

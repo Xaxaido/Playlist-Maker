@@ -32,6 +32,7 @@ material3Android = "1.3.0"
 jsoup = "1.13.1"
 
 [libraries]
+navigation-safe-args = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationUiKtx" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }

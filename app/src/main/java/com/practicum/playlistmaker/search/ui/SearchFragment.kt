@@ -186,10 +186,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     private fun sendToPlayer(json: String) {
         findNavController().navigate(
-            R.id.send_to_player,
-            Bundle().apply {
-                putString(Util.KEY_TRACK, json)
-            }
+            SearchFragmentDirections.sendToPlayer(json),
         )
     }
 

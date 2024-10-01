@@ -8,7 +8,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.InternetState
@@ -22,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainActivityModel by viewModels()
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,15 +39,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupUI() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
         binding.bottomNav.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.player_fragment-> binding.bottomNav.isVisible = false
-                else -> binding.bottomNav.isVisible = true
+                R.id.player_fragment -> {
+                    startAnimation(binding.bottomNav, 0f, binding.bottomNav.height.toFloat())
+                }
+                else -> {
+                    if (binding.bottomNav.translationY != 0f) {
+                        startAnimation(binding.bottomNav, binding.bottomNav.height.toFloat(), 0f)
+                    }
+                }
             }
         }
+
+        setSupportActionBar(binding.toolbar)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.search_fragment, R.id.media_library_fragment, R.id.settings_fragment, R.id.player_fragment)
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
     private  fun setListeners() {
@@ -51,8 +67,8 @@ class MainActivity : AppCompatActivity() {
         binding.btnCloseNoInternetMsg.setOnClickListener { hideErrorMsg() }
     }
 
-    private fun updateErrorMessage(from: Float, to: Float, onAnimationEnd: () -> Unit = {}) {
-        ObjectAnimator.ofFloat(binding.noInternetMsg, "translationY", from, to).apply {
+    private fun startAnimation(view: View, from: Float, to: Float, onAnimationEnd: () -> Unit = {}) {
+        ObjectAnimator.ofFloat(view, "translationY", from, to).apply {
             duration = Util.ANIMATION_SHORT
             doOnEnd { onAnimationEnd() }
             start()
@@ -62,14 +78,14 @@ class MainActivity : AppCompatActivity() {
     private fun hideErrorMsg() {
         if (!binding.noInternetMsg.isVisible ) return
 
-        updateErrorMessage(0f, -binding.noInternetMsg.height.toFloat()) {
+        startAnimation(binding.noInternetMsg, 0f, -binding.noInternetMsg.height.toFloat()) {
             binding.noInternetMsg.visibility = View.INVISIBLE
         }
     }
 
     private fun showErrorMsg() {
         binding.noInternetMsg.isVisible = true
-        updateErrorMessage(-binding.noInternetMsg.height.toFloat(), 0f)
+        startAnimation(binding.noInternetMsg, -binding.noInternetMsg.height.toFloat(), 0f)
     }
 
     private fun renderState(state: InternetState) {
@@ -77,5 +93,9 @@ class MainActivity : AppCompatActivity() {
             is InternetState.Connected -> hideErrorMsg()
             is InternetState.ConnectionLost -> showErrorMsg()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
