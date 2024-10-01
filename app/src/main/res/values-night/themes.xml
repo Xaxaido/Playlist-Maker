@@ -30,7 +30,6 @@
     <style name="Theme.PlaylistMaker.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/toolbar_height</item>
-        <item name="navigationIconTint">@color/white</item>
     </style>
 
 </resources>

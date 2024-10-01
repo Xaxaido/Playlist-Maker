@@ -1,9 +1,10 @@
-
 package com.practicum.playlistmaker.main.ui
 
 import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
@@ -17,11 +18,12 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.InternetState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
+import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.main.ui.view_model.MainActivityModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BackButtonState {
 
     private val viewModel: MainActivityModel by viewModels()
     private lateinit var binding: ActivityMainBinding
@@ -45,11 +47,11 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.player_fragment -> {
-                    startAnimation(binding.bottomNav, 0f, binding.bottomNav.height.toFloat())
+                    updateBottomNav(false)
                 }
                 else -> {
-                    if (binding.bottomNav.translationY != 0f) {
-                        startAnimation(binding.bottomNav, binding.bottomNav.height.toFloat(), 0f)
+                    if (!binding.bottomNav.isVisible ) {
+                        updateBottomNav(true)
                     }
                 }
             }
@@ -62,13 +64,32 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
-    private  fun setListeners() {
+    private fun setListeners() {
         viewModel.liveData.observe(this, ::renderState)
         binding.btnCloseNoInternetMsg.setOnClickListener { hideErrorMsg() }
     }
 
-    private fun startAnimation(view: View, from: Float, to: Float, onAnimationEnd: () -> Unit = {}) {
-        ObjectAnimator.ofFloat(view, "translationY", from, to).apply {
+    private fun updateBottomNav(isVisible: Boolean) {
+        AnimationUtils.loadAnimation(
+            this,
+            if (isVisible) R.anim.fade_in else R.anim.fade_out
+        ).apply {
+            setAnimationListener(object : Animation.AnimationListener {
+
+                override fun onAnimationStart(animation: Animation) {}
+
+                override fun onAnimationEnd(animation: Animation) {
+                    binding.bottomNav.isVisible = isVisible
+                }
+
+                override fun onAnimationRepeat(animation: Animation) {}
+            })
+            binding.bottomNav.startAnimation(this)
+        }
+    }
+
+    private fun updateErrorMsg(target: Float, onAnimationEnd: () -> Unit = {}) {
+        ObjectAnimator.ofFloat(binding.noInternetMsg, "translationY", target).apply {
             duration = Util.ANIMATION_SHORT
             doOnEnd { onAnimationEnd() }
             start()
@@ -78,14 +99,14 @@ class MainActivity : AppCompatActivity() {
     private fun hideErrorMsg() {
         if (!binding.noInternetMsg.isVisible ) return
 
-        startAnimation(binding.noInternetMsg, 0f, -binding.noInternetMsg.height.toFloat()) {
+        updateErrorMsg(-binding.noInternetMsg.height.toFloat()) {
             binding.noInternetMsg.visibility = View.INVISIBLE
         }
     }
 
     private fun showErrorMsg() {
         binding.noInternetMsg.isVisible = true
-        startAnimation(binding.noInternetMsg, -binding.noInternetMsg.height.toFloat(), 0f)
+        updateErrorMsg(0f)
     }
 
     private fun renderState(state: InternetState) {
@@ -93,6 +114,10 @@ class MainActivity : AppCompatActivity() {
             is InternetState.Connected -> hideErrorMsg()
             is InternetState.ConnectionLost -> showErrorMsg()
         }
+    }
+
+    override fun updateBackBtn(enabled: Boolean) {
+        supportActionBar?.apply { setDisplayHomeAsUpEnabled(enabled) }
     }
 
     override fun onSupportNavigateUp(): Boolean {

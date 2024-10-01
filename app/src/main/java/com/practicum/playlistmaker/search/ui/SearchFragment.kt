@@ -37,6 +37,7 @@ import com.practicum.playlistmaker.common.widgets.recycler.StickyFooterDecoratio
 import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
 import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
+import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
@@ -74,6 +75,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         super.onViewCreated(view, savedInstanceState)
         setupUI()
         setListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as? BackButtonState)?.updateBackBtn(false)
     }
 
     override fun onStop() {

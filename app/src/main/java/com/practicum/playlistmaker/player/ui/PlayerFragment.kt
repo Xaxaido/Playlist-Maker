@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -19,6 +18,7 @@ import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
+import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -61,10 +61,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     private fun setListeners() {
         viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
-
-        (activity as? AppCompatActivity)?.supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
 
@@ -172,8 +168,14 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as? BackButtonState)?.updateBackBtn(false)
+    }
+
     override fun onResume() {
         super.onResume()
+        (activity as? BackButtonState)?.updateBackBtn(true)
         track?.also {
             viewModel.init(it)
         }

@@ -10,8 +10,8 @@
 <scale
     android:duration="250"
     android:interpolator="@android:anim/decelerate_interpolator"
-    android:fromXScale="75%"
-    android:fromYScale="75%"
+    android:fromXScale="90%"
+    android:fromYScale="90%"
     android:toXScale="100%"
     android:toYScale="100%"
     android:pivotX="50%"
