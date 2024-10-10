@@ -4,31 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/LayoutFullScreen"
     android:orientation="vertical"
-    tools:context=".medialibrary.ui.MediaLibraryActivity">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        style="@style/Theme.PlaylistMaker.AppBarOverlay" >
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Theme.PlaylistMaker.PopupOverlay"
-            app:title="@string/media_library" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+    tools:context=".medialibrary.ui.MediaLibraryFragment">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/padding_small_8x"
-        android:fontFamily="@font/ys_500"
-        android:textSize="@dimen/text_regular"
+        android:layout_marginTop="@dimen/toolbar_height"
         android:background="@null"
         app:tabMode="fixed"
+        app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicatorHeight="2dp"
         app:tabIndicatorColor="@color/textButton_TextColor"
         app:tabIndicatorFullWidth="true"
-        app:tabTextColor="@color/textButton_TextColor"
+        app:tabTextAppearance="@style/tabLayoutText"
         app:tabRippleColor="@null" />
 
     <androidx.viewpager2.widget.ViewPager2

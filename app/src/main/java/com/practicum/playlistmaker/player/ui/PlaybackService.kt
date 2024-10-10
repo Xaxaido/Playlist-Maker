@@ -17,7 +17,7 @@ class PlaybackService : MediaSessionService() {
     private fun getSingleTopActivity(): PendingIntent = PendingIntent.getActivity(
         this,
         0,
-        Intent(this, PlayerActivity::class.java),
+        Intent(this, PlayerFragment::class.java),
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
 

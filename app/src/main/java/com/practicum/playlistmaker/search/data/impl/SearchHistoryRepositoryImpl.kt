@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.search.data.impl
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.R
@@ -48,6 +49,8 @@ class SearchHistoryRepositoryImpl @Inject constructor(
     }
 
     private fun saveHistory() {
-        prefs.edit().putString(key, gson.toJson(_history)).apply()
+        prefs.edit {
+            putString(key, gson.toJson(_history))
+        }
     }
 }

@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 
-abstract class BindingFragment<T : ViewBinding> : Fragment() {
+abstract class BaseFragment<T : ViewBinding> : Fragment() {
 
     private var _binding: T? = null
     protected val binding get() = requireNotNull(_binding) {
-        "Value cannot be null"
+        "ViewBinding cannot be null"
     }
 
     abstract fun createBinding(inflater: LayoutInflater, container: ViewGroup?): T
@@ -26,7 +26,7 @@ abstract class BindingFragment<T : ViewBinding> : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 }

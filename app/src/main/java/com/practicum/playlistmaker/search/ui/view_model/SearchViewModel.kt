@@ -12,10 +12,8 @@ import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksConsumer
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-@HiltViewModel
 class SearchViewModel @Inject constructor(
     private val tracksInteractor: TracksInteractor,
     private val searchHistoryInteractor: SearchHistoryInteractor,
@@ -26,7 +24,9 @@ class SearchViewModel @Inject constructor(
 
         override fun consume(tracks: List<Track>?, error: Int?) {
             when {
-                !tracks.isNullOrEmpty() -> setState(SearchState.TrackSearchResults(results = tracks))
+                !tracks.isNullOrEmpty() -> {
+                    setState(SearchState.TrackSearchResults(results = tracks))
+                }
                 else -> {
                     if (error != null) setState(SearchState.ConnectionError(error = error))
                     else setState(SearchState.NothingFound)
@@ -39,17 +39,14 @@ class SearchViewModel @Inject constructor(
     private val timer: Debounce by lazy {
         Debounce(delay = Util.USER_INPUT_DELAY) { doSearch(searchQuery) }
     }
-    private val _liveData = MutableLiveData<SearchState>()
+    private val _liveData = MutableLiveData<SearchState>(SearchState.NoData)
     val liveData: LiveData<SearchState> = _liveData
 
     init {
         internetConnectionInteractor.addOnInternetConnectListener(this)
     }
 
-    fun sendToPlayer(track: Track) {
-        val json = tracksInteractor.trackToJson(track)
-        setState(SearchState.SendTrackToPlayer(json))
-    }
+    fun trackToJson(track: Track) = tracksInteractor.trackToJson(track)
 
     fun search(term: String) {
         searchQuery = term
@@ -81,8 +78,10 @@ class SearchViewModel @Inject constructor(
             return
         }
 
-        setState(SearchState.Loading)
-        tracksInteractor.searchTracks(term, consumer)
+        if (term.isNotEmpty()) {
+            setState(SearchState.Loading)
+            tracksInteractor.searchTracks(term, consumer = consumer)
+        }
     }
 
     override fun onConnectionStatusUpdate(hasInternet: Boolean) {

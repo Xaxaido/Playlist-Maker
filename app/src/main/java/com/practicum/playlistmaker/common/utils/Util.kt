@@ -10,13 +10,11 @@ import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
 
 object Util {
 
-    const val KEY_TRACK = "KEY_TRACK"
     const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
     const val ANIMATION_SHORT= 250L
     const val BUTTON_ENABLED_DELAY = 1000L
     const val USER_INPUT_DELAY = 2000L
     const val PARTICLE_DURATION = 2000L
-    const val PLAYER_ALBUM_COVER_WIDTH_MULTIPLIER = 1
     const val HISTORY_MAX_COUNT = 10
     const val NO_CONNECTION = -1
     const val HTTP_OK = 200

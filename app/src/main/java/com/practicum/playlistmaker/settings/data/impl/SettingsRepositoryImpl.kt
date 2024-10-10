@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.settings.data.impl
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.utils.DtoConverter.toThemeSettings
 import com.practicum.playlistmaker.settings.data.dto.ThemeSettingsDto
@@ -25,8 +26,8 @@ class SettingsRepositoryImpl @Inject constructor(
     override fun getThemeSwitchState() = getThemeSettings().themeName == AppTheme.SYSTEM.value
 
     override fun updateThemeSetting(isChecked: Boolean) {
-        prefs.edit()
-            .putBoolean(key, isChecked)
-            .apply()
+        prefs.edit {
+            putBoolean(key, isChecked)
+        }
     }
 }

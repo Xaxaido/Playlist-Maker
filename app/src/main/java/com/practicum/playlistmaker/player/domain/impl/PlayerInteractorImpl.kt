@@ -10,9 +10,9 @@ class PlayerInteractorImpl @Inject constructor(
     private val playerRepository: PlayerRepository,
 ): PlayerInteractor {
 
-    override val isPlaying: Boolean get() = playerRepository.isPlaying
-    override val currentPosition: Long get() = playerRepository.currentPosition
-    override val bufferedProgress: Int get() = playerRepository.bufferedProgress
+    override val isPlaying get() = playerRepository.isPlaying
+    override val currentPosition get() = playerRepository.currentPosition
+    override val bufferedProgress get() = playerRepository.bufferedProgress
 
     override fun jsonToTrack(json: String) = playerRepository.jsonToTrack(json)
 

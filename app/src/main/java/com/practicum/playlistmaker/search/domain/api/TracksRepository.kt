@@ -5,6 +5,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 
 interface TracksRepository {
     fun trackToJson(track: Track): String
-    fun searchTracks(term: String): TracksSearchState
+    fun searchTracks(term: String, page: Int): TracksSearchState
     fun cancelRequest()
 }

@@ -20,8 +20,8 @@
         <Button
             android:id="@+id/new_playlist"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_small_9x"
+            android:layout_height="@dimen/dark_button_size"
+            android:layout_marginTop="@dimen/padding_small_12x"
             style="@style/DarkButton"
             android:text="@string/new_playlist" />
 
