@@ -13,10 +13,8 @@ import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.player.domain.api.TracksDescriptionConsumer
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-@HiltViewModel
 class PlayerViewModel @Inject constructor(
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
     private val playerInteractor: PlayerInteractor,
@@ -29,7 +27,9 @@ class PlayerViewModel @Inject constructor(
         }
     }
     private val timers: Map<String, Debounce> = mapOf(
-        UPDATE_PLAYBACK_PROGRESS to Debounce { updateProgress() },
+        UPDATE_PLAYBACK_PROGRESS to Debounce {
+            setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
+        },
         UPDATE_BUFFERED_PROGRESS to Debounce(100) {
             setState(PlayerState.BufferedProgress(playerInteractor.bufferedProgress))
         },
@@ -40,24 +40,21 @@ class PlayerViewModel @Inject constructor(
     fun getTrack(json: String) = playerInteractor.jsonToTrack(json)
 
     fun init(track: Track) {
-        setState(PlayerState.Stop)
         playerInteractor.init(this, track)
     }
 
     fun controlPlayback() {
-        var isPaused: Boolean
         playerInteractor.apply {
             if (isPlaying) {
-                isPaused = true
+                setState(PlayerState.Paused)
                 pause()
             } else {
-                isPaused = false
+                setState(PlayerState.Playing)
                 play()
             }
         }
 
         updatePlaybackProgressTimerState()
-        setState(if (isPaused) PlayerState.Paused else PlayerState.Playing)
     }
 
     private fun setState(state: PlayerState) {
@@ -76,14 +73,6 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    private fun updateProgress() {
-        if (playerInteractor.isPlaying) {
-            setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
-        } else {
-            setState(PlayerState.Stop)
-        }
-    }
-
     fun release() {
         timers.forEach {
             if (it.value.isRunning) it.value.stop()
@@ -91,16 +80,25 @@ class PlayerViewModel @Inject constructor(
         playerInteractor.release()
     }
 
+    private fun ready() {
+        setState(PlayerState.Ready)
+        (timers[UPDATE_BUFFERED_PROGRESS] as Debounce).stop()
+    }
+
+    private fun stop() {
+        setState(PlayerState.Stop)
+        updatePlaybackProgressTimerState()
+    }
+
+    private fun loadTrack() {
+        (timers[UPDATE_BUFFERED_PROGRESS] as Debounce).start(true)
+    }
+
     override fun onPlaybackStateChanged(playbackState: Int) {
         when (playbackState) {
-            Player.STATE_READY -> {
-                (timers[UPDATE_BUFFERED_PROGRESS] as Debounce).stop()
-                setState(PlayerState.Ready)
-            }
-            Player.STATE_ENDED -> setState(PlayerState.Stop)
-            Player.STATE_BUFFERING -> {
-                (timers[UPDATE_BUFFERED_PROGRESS] as Debounce).start(true)
-            }
+            Player.STATE_READY -> ready()
+            Player.STATE_ENDED -> stop()
+            Player.STATE_BUFFERING -> loadTrack()
             else -> {}
         }
     }

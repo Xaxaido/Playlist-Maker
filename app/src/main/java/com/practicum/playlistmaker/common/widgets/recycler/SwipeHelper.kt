@@ -30,6 +30,7 @@ abstract class SwipeHelper(
     private val buttonsBuffer: MutableMap<Int, MutableList<UnderlayButton>>
     private lateinit var recoverQueue: Queue<Int>
     private var isRecoveringSwipedItem = false
+    private var isAnimationPlaying = false
 
     private val gestureListener: SimpleOnGestureListener = object : SimpleOnGestureListener() {
 
@@ -44,7 +45,7 @@ abstract class SwipeHelper(
     }
     private val onTouchListener = OnTouchListener { _, e ->
         val swipedViewHolder = recyclerView.findViewHolderForAdapterPosition(swipedPos)
-        if (swipedPos < 0 || swipedViewHolder == null || isRecoveringSwipedItem) {
+        if (swipedPos < 0 || swipedViewHolder == null || isRecoveringSwipedItem || isAnimationPlaying) {
             return@OnTouchListener false
         }
 
@@ -67,7 +68,7 @@ abstract class SwipeHelper(
     private val onItemTouchListener = object : RecyclerView.OnItemTouchListener {
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-            if (isRecoveringSwipedItem) return true
+            if (isRecoveringSwipedItem || isAnimationPlaying) return true
 
             if (e.action == MotionEvent.ACTION_UP) {
                 val childView = recyclerView.findChildViewUnder(e.x, e.y)
@@ -109,6 +110,9 @@ abstract class SwipeHelper(
 
         attachSwipe()
     }
+
+    fun disableClick() { isAnimationPlaying = true }
+    fun enableClick() { isAnimationPlaying = false }
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -217,7 +221,6 @@ abstract class SwipeHelper(
         pos: Int,
         dX: Float,
     ) {
-
         val rightAbs = itemView.right.toFloat()
         val dButtonWidth = -1 * dX / buffer.size
 
@@ -239,9 +242,9 @@ abstract class SwipeHelper(
         }
     }
 
-    fun attachSwipe(recycler: RecyclerView? = recyclerView) {
+    private fun attachSwipe() {
         ItemTouchHelper(this).apply {
-            attachToRecyclerView(recycler)
+            attachToRecyclerView(recyclerView)
         }
     }
 

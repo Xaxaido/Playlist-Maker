@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="BlurredImageView">
-        <attr name="parentView" format="reference" />
+    <declare-styleable name="SlidingTime">
+        <attr name="textColor" format="reference|color" />
+        <attr name="textSize" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="AutoScrollTextView">
+        <attr name="gradientWidth" format="dimension" />
     </declare-styleable>
 </resources>

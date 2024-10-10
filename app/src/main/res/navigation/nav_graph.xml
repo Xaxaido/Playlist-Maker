@@ -12,11 +12,11 @@
         tools:layout="@layout/fragment_search" >
 
         <action
-            android:id="@+id/send_to_player"
+            android:id="@+id/action_send_to_player"
             app:destination="@id/player_fragment"
             app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
 
     </fragment>
@@ -26,10 +26,6 @@
         android:name="com.practicum.playlistmaker.player.ui.PlayerFragment"
         android:label=""
         tools:layout="@layout/fragment_player">
-
-        <argument
-            android:name="trackJson"
-            app:argType="string" />
 
     </fragment>
 

@@ -45,6 +45,6 @@
     <string name="user_agreement_content" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
     <string name="itunes_base_url" translatable="false">https://itunes.apple.com</string>
     <string name="db_file_name" translatable="false">database</string>
-    <string name="no_internet_connection">Отсутствуе подключение к сети</string>
+    <string name="no_internet_connection">Отсутствует подключение к сети</string>
     <string name="close">Убрать</string>
 </resources>

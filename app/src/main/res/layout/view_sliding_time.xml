@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:ignore="HardcodedText" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/newMinuteTens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/newMinuteOnes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/delimiter_old"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" : "
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/newSecondTens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/newSecondOnes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/oldMinuteTens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/oldMinuteOnes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/delimiter_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" : " />
+
+        <TextView
+            android:id="@+id/oldSecondTens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/oldSecondOnes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+    </LinearLayout>
+
+</FrameLayout>

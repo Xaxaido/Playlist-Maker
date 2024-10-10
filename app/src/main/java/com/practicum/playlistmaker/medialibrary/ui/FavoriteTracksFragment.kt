@@ -2,21 +2,26 @@ package com.practicum.playlistmaker.medialibrary.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
+import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentFavoriteTracksBinding
+import com.practicum.playlistmaker.di.api.DaggerViewModelFactory
 import com.practicum.playlistmaker.medialibrary.view_model.FavoriteTracksViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-@AndroidEntryPoint
 class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
 
-    private val viewModel: FavoriteTracksViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModelFactory: DaggerViewModelFactory
+    private lateinit var viewModel: FavoriteTracksViewModel
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentFavoriteTracksBinding {
+        (requireActivity().applicationContext as App).appComponent.inject(this)
+        viewModel = ViewModelProvider(this, viewModelFactory)[FavoriteTracksViewModel::class.java]
         return FragmentFavoriteTracksBinding.inflate(inflater, container, false)
     }
 

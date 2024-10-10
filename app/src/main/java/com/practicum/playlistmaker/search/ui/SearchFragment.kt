@@ -14,9 +14,10 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.resources.VisibilityState.Error
@@ -33,41 +34,43 @@ import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
 import com.practicum.playlistmaker.common.widgets.recycler.ParticleAnimator
-import com.practicum.playlistmaker.common.widgets.recycler.StickyFooterDecoration
 import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
 import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
+import com.practicum.playlistmaker.di.api.DaggerViewModelFactory
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
+import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-@AndroidEntryPoint
 class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
-    private val viewModel: SearchViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModelFactory: DaggerViewModelFactory
+    private lateinit var viewModel: SearchViewModel
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var stickyFooterDecoration: StickyFooterDecoration
     private lateinit var swipeHelper: SwipeHelper
     private var searchRequest = ""
-    private var isHistoryShown = false
+    private var isHistoryVisible = false
     private var isClickEnabled = true
     private var isKeyboardVisible = false
     private lateinit var alisa: ViewsList
     private val keyboardStateListener = ViewTreeObserver.OnGlobalLayoutListener {
-        Rect().also {
-            binding.contentLayout.getWindowVisibleDisplayFrame(it)
-            val screenHeight = binding.contentLayout.rootView.height
-            val keyboardHeight = screenHeight - it.bottom
-            isKeyboardVisible = keyboardHeight > screenHeight * 0.15
+        view?.also { screen ->
+            val r = Rect().apply { screen.getWindowVisibleDisplayFrame(this) }
+            val keyboardHeight = screen.height - r.bottom
+            isKeyboardVisible = keyboardHeight > screen.height * 0.1
         }
     }
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentSearchBinding {
+        (requireActivity().applicationContext as App).appComponent.inject(this)
+        viewModel = ViewModelProvider(this, viewModelFactory)[SearchViewModel::class.java]
         return FragmentSearchBinding.inflate(inflater, container, false)
     }
 
@@ -84,7 +87,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     override fun onStop() {
         super.onStop()
-        binding.contentLayout.viewTreeObserver.removeOnGlobalLayoutListener(keyboardStateListener)
+        view?.viewTreeObserver?.removeOnGlobalLayoutListener(keyboardStateListener)
     }
 
     private fun setupUI() {
@@ -93,23 +96,26 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 VisibilityItem(binding.networkFailure, listOf(Error)),
                 VisibilityItem(binding.nothingFound, listOf(NothingFound)),
                 VisibilityItem(binding.progressBar, listOf(Loading)),
-                VisibilityItem(binding.stickyContainer, listOf(History)),
+                VisibilityItem(binding.stickyContainer.clearHistory, listOf(History)),
                 VisibilityItem(binding.recycler, listOf(History, SearchResults)),
             )
         )
-        trackAdapter = TrackAdapter()
+        trackAdapter = TrackAdapter(binding.recycler)
         binding.recycler.adapter = trackAdapter
         binding.recycler.itemAnimator = ItemAnimator()
-        stickyFooterDecoration = StickyFooterDecoration()
         swipeHelper = initSwipeHelper()
-        val padding = resources.getDimensionPixelSize(R.dimen.bottom_menu_height)
-        binding.recycler.addItemDecoration(PaddingItemDecoration(padding))
+        binding.recycler.addItemDecoration(PaddingItemDecoration(
+            intArrayOf(
+                resources.getDimensionPixelSize(R.dimen.search_actionbar_height),
+                resources.getDimensionPixelSize(R.dimen.toolbar_height),
+            )
+        ))
     }
 
     private fun initSwipeHelper() = object : SwipeHelper(requireActivity(), binding.recycler) {
 
         override fun instantiateUnderlayButton() =
-            if (isHistoryShown) {
+            if (isHistoryVisible) {
                 mutableListOf(btnDelete(), btnAddToFav())
             } else {
                 mutableListOf(btnAddToFav())
@@ -125,7 +131,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0 && isKeyboardVisible) hideKeyboard()
+                if (isKeyboardVisible) hideKeyboard()
             }
         })
 
@@ -146,7 +152,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
         binding.searchLayout.buttonClear.setOnClickListener {
             hideKeyboard()
-            isHistoryShown = true
+            isHistoryVisible = true
             binding.searchLayout.searchText.setText("")
             viewModel.getHistory(true)
         }
@@ -154,7 +160,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         binding.searchLayout.searchText.also { editText ->
 
             editText.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus && searchRequest.isEmpty() && !isHistoryShown) viewModel.getHistory(true)
+                if (hasFocus && searchRequest.isEmpty() && !isHistoryVisible) viewModel.getHistory(true)
             }
 
             editText.doOnTextChanged { text, _, _, _ ->
@@ -163,9 +169,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 searchRequest = text.toString()
                 updateClearBtnVisibility(searchRequest.isNotEmpty())
 
-                if (hasFocus && isHistoryShown) showNoData()
-                if (searchRequest.isNotEmpty() && hasFocus) searchTracks()
-                else viewModel.stopSearch()
+                if (hasFocus) searchTracks()
+                if (searchRequest.isEmpty() && hasFocus) {
+                    viewModel.getHistory(true)
+                }
             }
         }
     }
@@ -176,11 +183,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     private fun isKeyboardVisible() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            binding.contentLayout.windowInsetsController?.addOnControllableInsetsChangedListener { _, insets ->
+            view?.windowInsetsController?.addOnControllableInsetsChangedListener { _, insets ->
                 isKeyboardVisible = (insets and WindowInsetsCompat.Type.ime()) != 0
             }
         } else {
-            binding.contentLayout.viewTreeObserver.addOnGlobalLayoutListener(keyboardStateListener)
+            view?.viewTreeObserver?.addOnGlobalLayoutListener(keyboardStateListener)
         }
     }
 
@@ -192,14 +199,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     private fun sendToPlayer(json: String) {
         findNavController().navigate(
-            SearchFragmentDirections.sendToPlayer(json),
+            R.id.action_send_to_player,
+            PlayerFragment.createArgs(json),
         )
     }
 
     private fun searchTracks() {viewModel.search(searchRequest) }
 
     private fun showNoData() {
-        updateData(false, emptyList()) {
+        trackAdapter.submitTracksList(false, emptyList()) {
             alisa show NoData
         }
     }
@@ -211,45 +219,31 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun showHistory(list: List<Track>, isDataSetChanged: Boolean = true) {
-        isHistoryShown = true
-        list.also {
-            if (it.isNotEmpty()) {
-                updateData(true, it, isDataSetChanged) {
-                    alisa show History
-                }
-            } else {
-                showNoData()
+    private fun showSearchHistory(list: List<Track>, isDataSetChanged: Boolean = true) {
+        isHistoryVisible = true
+        if (list.isNotEmpty()) {
+            trackAdapter.submitTracksList(true, list, isDataSetChanged) { isButtonVisible ->
+                alisa show History
+                binding.stickyContainer.clearHistory.isVisible = isButtonVisible
+                binding.recycler.post { binding.recycler.invalidateItemDecorations() }
             }
+        } else {
+            showNoData()
         }
     }
 
-    private fun showContent(list: List<Track>) {
-        isHistoryShown = false
-        updateData(false, list) {
+    private fun showSearchResults(list: List<Track>) {
+        isHistoryVisible = false
+        trackAdapter.submitTracksList(false, list)  {
             alisa show SearchResults
-        }
-    }
-
-    private fun updateData(
-        isDecorationNeeded: Boolean,
-        list: List<Track>,
-        isDataSetChanged: Boolean = true,
-        doOnEnd: () -> Unit
-    ) {
-        if (!isDecorationNeeded) stickyFooterDecoration.detach()
-        else stickyFooterDecoration.attachRecyclerView(binding.recycler, trackAdapter)
-
-        trackAdapter.submitTracksList(isDecorationNeeded, list, isDataSetChanged) {
-            doOnEnd()
         }
     }
 
     private fun renderState(state: SearchState) {
         when (state) {
             is SearchState.NoData -> showNoData()
-            is SearchState.TrackSearchResults -> showContent(state.results)
-            is SearchState.TrackSearchHistory -> showHistory(state.history, state.isDataSetChanged)
+            is SearchState.TrackSearchResults -> showSearchResults(state.results)
+            is SearchState.TrackSearchHistory -> showSearchHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)
             is SearchState.NothingFound -> alisa show NothingFound
             is SearchState.Loading -> alisa show Loading
@@ -267,7 +261,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             binding.particleView,
             bitmap,
             0f,
-            viewToRemove.top.toFloat()
+            viewToRemove.top.toFloat() + binding.recycler.top
         )
         binding.particleView.startAnimation { onAnimationEnd() }
     }
@@ -277,14 +271,16 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             requireActivity(),
             getString(R.string.history_delete_item),
             R.drawable.ic_delete,
-            requireActivity().getColor(R.color.red),
-            requireActivity().getColor(R.color.white)
+            bgColor = requireActivity().getColor(R.color.red),
+            textColor = requireActivity().getColor(R.color.white),
         ) { pos ->
+            swipeHelper.disableClick()
             trackAdapter.notifyItemChanged(pos)
             viewModel.removeFromHistory(pos - 1)
             Debounce(Util.ANIMATION_SHORT) {
                 startParticleAnimation(pos) {
                     viewModel.getHistory(false)
+                    swipeHelper.enableClick()
                 }
             }.start()
         }
@@ -295,8 +291,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             requireActivity(),
             getString(R.string.history_add_to_fav),
             R.drawable.ic_add_to_fav,
-            requireActivity().getColor(R.color.greyLight),
-            requireActivity().getColor(R.color.black)
+            bgColor = requireActivity().getColor(R.color.greyLight),
+            textColor = requireActivity().getColor(R.color.black),
         ) { pos ->
             trackAdapter.notifyItemChanged(pos)
         }

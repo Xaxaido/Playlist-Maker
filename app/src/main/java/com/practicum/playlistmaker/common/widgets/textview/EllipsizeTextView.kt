@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.common.widgets
+package com.practicum.playlistmaker.common.widgets.textview
 
 import android.content.Context
 import android.graphics.Canvas
@@ -12,10 +12,6 @@ import android.text.style.ImageSpan
 import android.text.style.ReplacementSpan
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
-
-private const val DRAWABLE_SIZE = 3
-private const val SIDE_MARGIN = 5
-private const val ELLIPSIZE_SYMBOL = "..."
 
 class EllipsizeTextView @JvmOverloads constructor(
     context: Context,
@@ -86,5 +82,11 @@ class EllipsizeTextView @JvmOverloads constructor(
 
         override fun getSize(paint: Paint, text: CharSequence?, start: Int, end: Int, fm: Paint.FontMetricsInt?) = margin
         override fun draw(canvas: Canvas, text: CharSequence?, start: Int, end: Int, x: Float, top: Int, y: Int, bottom: Int, paint: Paint) {}
+    }
+
+    private companion object {
+        const val DRAWABLE_SIZE = 3
+        const val SIDE_MARGIN = 5
+        const val ELLIPSIZE_SYMBOL = "..."
     }
 }

@@ -8,16 +8,14 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentMediaLibraryBinding
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class MediaLibraryFragment : BaseFragment<FragmentMediaLibraryBinding>() {
 
     private lateinit var tabMediator: TabLayoutMediator
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentMediaLibraryBinding {
         return FragmentMediaLibraryBinding.inflate(inflater, container, false)
     }

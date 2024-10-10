@@ -7,10 +7,18 @@
     android:background="?attr/android:colorBackground"
     tools:context=".main.ui.MainActivity">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:navGraph="@navigation/nav_graph"
+        app:defaultNavHost="true"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         style="@style/Theme.PlaylistMaker.AppBarOverlay"
-        android:backgroundTint="@color/activityMainBgColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -19,32 +27,39 @@
             style="@style/Theme.PlaylistMaker.PopupOverlay"
             app:navigationIcon="@null"
             app:title="@string/app_name"
-            app:titleTextColor="@color/white" />
+            app:titleTextColor="?attr/colorPrimary" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <LinearLayout
+        android:id="@+id/bottom_nav_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:navGraph="@navigation/nav_graph"
-        app:defaultNavHost="true"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_menu_height"
-        android:background="@android:color/transparent"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@drawable/nav_color"
-        app:itemTextColor="@drawable/nav_color"
-        app:itemActiveIndicatorStyle="@android:color/transparent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <View
+            android:id="@+id/bottom_nav_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/greyLight" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+            android:id="@+id/bottom_nav"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@android:color/transparent"
+            app:menu="@menu/bottom_nav_menu"
+            app:elevation="0dp"
+            app:itemTextAppearanceActive="@style/BottomNavText_Active"
+            app:itemTextAppearanceInactive="@style/BottomNavText"
+            app:itemIconTint="@drawable/nav_color"
+            app:itemTextColor="@drawable/nav_color"
+            app:itemActiveIndicatorStyle="@android:color/transparent" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/no_internet_msg"

@@ -2,21 +2,26 @@ package com.practicum.playlistmaker.medialibrary.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
+import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.practicum.playlistmaker.di.api.DaggerViewModelFactory
 import com.practicum.playlistmaker.medialibrary.view_model.PlaylistsViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-@AndroidEntryPoint
 class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
 
-    private val viewModel: PlaylistsViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModelFactory: DaggerViewModelFactory
+    private lateinit var viewModel: PlaylistsViewModel
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentPlaylistsBinding {
+        (requireActivity().applicationContext as App).appComponent.inject(this)
+        viewModel = ViewModelProvider(this, viewModelFactory)[PlaylistsViewModel::class.java]
         return FragmentPlaylistsBinding.inflate(inflater, container, false)
     }
 

@@ -5,27 +5,30 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.InternetState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
+import com.practicum.playlistmaker.di.api.DaggerViewModelFactory
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
-import com.practicum.playlistmaker.main.ui.view_model.MainActivityModel
-import dagger.hilt.android.AndroidEntryPoint
+import com.practicum.playlistmaker.main.ui.view_model.MainActivityViewModel
+import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), BackButtonState {
 
-    private val viewModel: MainActivityModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: DaggerViewModelFactory
+    private lateinit var viewModel: MainActivityViewModel
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
@@ -34,6 +37,9 @@ class MainActivity : AppCompatActivity(), BackButtonState {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        (applicationContext as App).appComponent.inject(this)
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainActivityViewModel::class.java]
 
         setupUI()
         setListeners()
@@ -50,7 +56,7 @@ class MainActivity : AppCompatActivity(), BackButtonState {
                     updateBottomNav(false)
                 }
                 else -> {
-                    if (!binding.bottomNav.isVisible ) {
+                    if (!binding.bottomNavContainer.isVisible) {
                         updateBottomNav(true)
                     }
                 }
@@ -72,19 +78,18 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     private fun updateBottomNav(isVisible: Boolean) {
         AnimationUtils.loadAnimation(
             this,
-            if (isVisible) R.anim.fade_in else R.anim.fade_out
+            if (isVisible) R.anim.slide_in_left else R.anim.slide_out_left,
         ).apply {
             setAnimationListener(object : Animation.AnimationListener {
 
                 override fun onAnimationStart(animation: Animation) {}
+                override fun onAnimationRepeat(animation: Animation) {}
 
                 override fun onAnimationEnd(animation: Animation) {
-                    binding.bottomNav.isVisible = isVisible
+                    binding.bottomNavContainer.isVisible = isVisible
                 }
-
-                override fun onAnimationRepeat(animation: Animation) {}
             })
-            binding.bottomNav.startAnimation(this)
+            binding.bottomNavContainer.startAnimation(this)
         }
     }
 
@@ -97,7 +102,7 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     }
 
     private fun hideErrorMsg() {
-        if (!binding.noInternetMsg.isVisible ) return
+        if (!binding.noInternetMsg.isVisible) return
 
         updateErrorMsg(-binding.noInternetMsg.height.toFloat()) {
             binding.noInternetMsg.visibility = View.INVISIBLE

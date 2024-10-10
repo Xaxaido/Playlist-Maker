@@ -12,10 +12,8 @@ import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksConsumer
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-@HiltViewModel
 class SearchViewModel @Inject constructor(
     private val tracksInteractor: TracksInteractor,
     private val searchHistoryInteractor: SearchHistoryInteractor,
@@ -80,8 +78,10 @@ class SearchViewModel @Inject constructor(
             return
         }
 
-        setState(SearchState.Loading)
-        tracksInteractor.searchTracks(term, consumer)
+        if (term.isNotEmpty()) {
+            setState(SearchState.Loading)
+            tracksInteractor.searchTracks(term, consumer = consumer)
+        }
     }
 
     override fun onConnectionStatusUpdate(hasInternet: Boolean) {

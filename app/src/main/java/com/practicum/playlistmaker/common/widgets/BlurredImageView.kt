@@ -2,14 +2,11 @@ package com.practicum.playlistmaker.common.widgets
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewTreeObserver
-import androidx.annotation.IdRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
 import com.practicum.playlistmaker.R
@@ -18,7 +15,7 @@ import com.practicum.playlistmaker.common.utils.Blur
 class BlurredImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
     private val animator: ValueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
@@ -28,40 +25,7 @@ class BlurredImageView @JvmOverloads constructor(
             updateBlur()
         }
     }
-    @IdRes
-    private var parentViewId: Int = NO_ID
-    private lateinit var targetView: View
     private lateinit var contentView: View
-    private var padding = 0
-    private var targetHeight = 0
-
-    init {
-        val a: TypedArray = context.theme.obtainStyledAttributes(
-            attrs, R.styleable.BlurredImageView, 0, 0
-        )
-        try {
-            parentViewId = a.getResourceId(R.styleable.BlurredImageView_parentView, NO_ID)
-        } finally {
-            a.recycle()
-        }
-    }
-
-    private fun setSize() {
-        targetView.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-
-            override fun onGlobalLayout() {
-                targetHeight = targetView.height
-                if (targetHeight == 0) return
-
-                targetView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val lp = layoutParams
-                lp.height = height
-                layoutParams = lp
-                post { animator.start() }
-            }
-        })
-    }
 
     private fun updateBlur() {
         captureContent().let {
@@ -70,26 +34,24 @@ class BlurredImageView @JvmOverloads constructor(
     }
 
     private fun captureContent(): Bitmap? {
+        val contentTop = top - contentView.top
         val contentHeight = contentView.height
-        val startY = when(top + targetHeight) {
-            in 0..contentHeight -> top
-            in contentHeight + 1..contentHeight + targetHeight -> top - targetHeight
+        val startY = when(contentTop + measuredHeight) {
+            in 0..contentHeight -> contentTop
+            in contentHeight + 1..contentHeight + measuredHeight -> contentTop - measuredHeight
             else -> -1
         }
 
-        if (startY == -1) {
-            return null
-        }
+        if (startY == -1 || contentHeight == 0) return null
 
         val bitmap = Bitmap.createBitmap(width, contentHeight, Bitmap.Config.ARGB_8888)
-
         Canvas(bitmap).apply {
             translate(0f, (-contentView.scrollY).toFloat())
             if (contentView.isVisible) contentView.draw(this)
             else drawColor(Color.TRANSPARENT)
         }
 
-        return Bitmap.createBitmap(bitmap, 0, startY, width, targetHeight)
+        return Bitmap.createBitmap(bitmap, 0, startY, width, measuredHeight)
     }
 
     override fun onDetachedFromWindow() {
@@ -100,9 +62,7 @@ class BlurredImageView @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        targetView = rootView.findViewById(parentViewId)
         contentView = rootView.findViewById(R.id.recycler)
-        padding = contentView.paddingBottom
-        setSize()
+        post { animator.start() }
     }
 }

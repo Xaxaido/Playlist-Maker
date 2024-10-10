@@ -16,12 +16,9 @@ import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
 abstract class InteractorModule {
 
     @Binds

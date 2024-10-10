@@ -2,8 +2,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKsp)
-    alias(libs.plugins.daggerHilt)
-    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -13,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.practicum.playlistmaker"
         minSdk = 29
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         renderscriptTargetApi = 31
@@ -46,8 +44,6 @@ android {
 dependencies {
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
