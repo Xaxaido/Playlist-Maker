@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -7,6 +8,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -15,7 +17,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.resources.VisibilityState.Error
@@ -115,18 +116,18 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setListeners() {
         isKeyboardVisible()
         viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.buttonRefresh.setOnClickListener { searchTracks() }
 
-        binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
+        binding.recycler.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_MOVE) {
                 if (isKeyboardVisible) hideKeyboard()
             }
-        })
+            false
+        }
 
         trackAdapter.setOnTrackClickListener { track ->
             if (!isClickEnabled) return@setOnTrackClickListener
@@ -225,7 +226,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     private fun showSearchResults(list: List<Track>) {
         isHistoryVisible = false
-        trackAdapter.submitTracksList(false, list)  {
+        trackAdapter.submitTracksList(false, list, true)  {
             alisa show SearchResults
         }
     }
