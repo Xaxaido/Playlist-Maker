@@ -20,7 +20,7 @@ class SettingsViewModel @Inject constructor(
     val sharingLiveData: LiveData<IntentAction> get() = _sharingLiveData
 
     init {
-        if (getCurrentTheme().isNotBlank()) _settingsLiveData.value = settingsIteractor.getThemeSwitchState()
+        _settingsLiveData.value = settingsIteractor.getThemeSwitchState()
     }
 
     fun toggleSystemTheme(isChecked: Boolean) { _settingsLiveData.postValue(isChecked) }
