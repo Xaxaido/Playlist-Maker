@@ -4,9 +4,8 @@ import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.api.PlayerRepository
 import com.practicum.playlistmaker.search.domain.model.Track
-import javax.inject.Inject
 
-class PlayerInteractorImpl @Inject constructor(
+class PlayerInteractorImpl(
     private val playerRepository: PlayerRepository,
 ): PlayerInteractor {
 

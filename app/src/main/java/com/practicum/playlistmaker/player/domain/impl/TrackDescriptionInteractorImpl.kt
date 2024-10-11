@@ -4,9 +4,8 @@ import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionRepository
 import com.practicum.playlistmaker.player.domain.api.TracksDescriptionConsumer
 import java.util.concurrent.Executors
-import javax.inject.Inject
 
-class TrackDescriptionInteractorImpl @Inject constructor(
+class TrackDescriptionInteractorImpl(
     private val repository: TrackDescriptionRepository,
 ) : TrackDescriptionInteractor {
 

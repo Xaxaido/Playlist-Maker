@@ -5,9 +5,8 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.sharing.data.api.SharingRepository
 import com.practicum.playlistmaker.sharing.domain.model.ActionType
 import com.practicum.playlistmaker.sharing.domain.model.IntentAction
-import javax.inject.Inject
 
-class SharingRepositoryImpl @Inject constructor(
+class SharingRepositoryImpl(
     private val context: Context,
 ) : SharingRepository {
 

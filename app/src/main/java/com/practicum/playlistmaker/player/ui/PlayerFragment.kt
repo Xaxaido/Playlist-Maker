@@ -12,22 +12,19 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.animation.doOnEnd
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
-import com.practicum.playlistmaker.di.api.DaggerViewModelFactory
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
@@ -38,17 +35,13 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             bundleOf(ARGS_TRACK to track)
     }
 
-    @Inject
-    lateinit var viewModelFactory: DaggerViewModelFactory
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel by viewModel<PlayerViewModel>()
     private var track: Track? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentPlayerBinding {
-        (requireActivity().applicationContext as App).appComponent.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[PlayerViewModel::class.java]
         return FragmentPlayerBinding.inflate(inflater, container, false)
     }
 

@@ -8,27 +8,22 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.InternetState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
-import com.practicum.playlistmaker.di.api.DaggerViewModelFactory
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.main.ui.view_model.MainActivityViewModel
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), BackButtonState {
 
-    @Inject
-    lateinit var viewModelFactory: DaggerViewModelFactory
-    private lateinit var viewModel: MainActivityViewModel
+    private val viewModel by viewModel<MainActivityViewModel>()
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
@@ -37,9 +32,6 @@ class MainActivity : AppCompatActivity(), BackButtonState {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        (applicationContext as App).appComponent.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[MainActivityViewModel::class.java]
 
         setupUI()
         setListeners()

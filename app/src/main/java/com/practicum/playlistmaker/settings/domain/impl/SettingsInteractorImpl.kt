@@ -2,9 +2,8 @@ package com.practicum.playlistmaker.settings.domain.impl
 
 import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
 import com.practicum.playlistmaker.settings.data.api.SettingsRepository
-import javax.inject.Inject
 
-class SettingsInteractorImpl @Inject constructor(
+class SettingsInteractorImpl(
     private val settingsRepository: SettingsRepository,
 ): SettingsInteractor {
 

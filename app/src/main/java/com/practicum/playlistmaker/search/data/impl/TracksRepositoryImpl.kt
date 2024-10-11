@@ -9,9 +9,8 @@ import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.data.dto.RetrofitSearchRequest
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
 import com.practicum.playlistmaker.search.domain.model.Track
-import javax.inject.Inject
 
-class TracksRepositoryImpl @Inject constructor(
+class TracksRepositoryImpl(
     private val networkClient: RetrofitNetworkClient,
     private val gson: Gson,
 ) : TracksRepository {

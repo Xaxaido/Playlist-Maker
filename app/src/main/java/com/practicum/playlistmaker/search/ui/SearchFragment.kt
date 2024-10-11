@@ -14,10 +14,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.resources.VisibilityState.Error
@@ -37,19 +35,16 @@ import com.practicum.playlistmaker.common.widgets.recycler.ParticleAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
 import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
-import com.practicum.playlistmaker.di.api.DaggerViewModelFactory
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
-    @Inject
-    lateinit var viewModelFactory: DaggerViewModelFactory
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModel<SearchViewModel>()
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var swipeHelper: SwipeHelper
     private var searchRequest = ""
@@ -69,8 +64,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         inflater: LayoutInflater,
         container: ViewGroup?,
     ): FragmentSearchBinding {
-        (requireActivity().applicationContext as App).appComponent.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[SearchViewModel::class.java]
         return FragmentSearchBinding.inflate(inflater, container, false)
     }
 

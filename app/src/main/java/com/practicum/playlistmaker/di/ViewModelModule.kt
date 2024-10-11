@@ -1,47 +1,27 @@
 package com.practicum.playlistmaker.di
 
-import androidx.lifecycle.ViewModel
-import com.practicum.playlistmaker.di.api.ViewModelKey
 import com.practicum.playlistmaker.main.ui.view_model.MainActivityViewModel
-import com.practicum.playlistmaker.medialibrary.view_model.FavoriteTracksViewModel
-import com.practicum.playlistmaker.medialibrary.view_model.PlaylistsViewModel
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
 
-@Module
-abstract class ViewModelModule {
+val viewModelModule = module {
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(MainActivityViewModel::class)
-    abstract fun bindMainActivityViewModel(myViewModel: MainActivityViewModel): ViewModel
+    viewModel {
+        MainActivityViewModel(get())
+    }
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(SettingsViewModel::class)
-    abstract fun bindSettingsViewModel(myViewModel: SettingsViewModel): ViewModel
+    viewModel {
+        SearchViewModel(get(), get(), get())
+    }
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(FavoriteTracksViewModel::class)
-    abstract fun bindFavoriteTracksViewModel(myViewModel: FavoriteTracksViewModel): ViewModel
+    viewModel {
+        PlayerViewModel(get(), get())
+    }
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(PlaylistsViewModel::class)
-    abstract fun bindPlaylistsViewModel(myViewModel: PlaylistsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SearchViewModel::class)
-    abstract fun bindSearchViewModel(myViewModel: SearchViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(PlayerViewModel::class)
-    abstract fun bindPlayerViewModel(myViewModel: PlayerViewModel): ViewModel
+    viewModel {
+        SettingsViewModel(get(), get())
+    }
 }

@@ -6,9 +6,8 @@ import com.practicum.playlistmaker.search.data.source.SearchTrackDescriptionData
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionRepository
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.search.data.network.JsoupNetworkClient
-import javax.inject.Inject
 
-class TrackDescriptionRepositoryImpl @Inject constructor(
+class TrackDescriptionRepositoryImpl(
     private val networkClient: JsoupNetworkClient,
     private val jsoup: SearchTrackDescriptionData,
 ) : TrackDescriptionRepository {

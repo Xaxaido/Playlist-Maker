@@ -42,9 +42,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.dagger)
-    ksp(libs.dagger.compiler)
-
+    implementation (libs.koinAndroid)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

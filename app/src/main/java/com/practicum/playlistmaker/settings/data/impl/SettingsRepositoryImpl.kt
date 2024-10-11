@@ -8,9 +8,8 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.AppTheme
 import com.practicum.playlistmaker.settings.data.api.SettingsRepository
 import com.practicum.playlistmaker.settings.domain.model.ThemeSettings
-import javax.inject.Inject
 
-class SettingsRepositoryImpl @Inject constructor(
+class SettingsRepositoryImpl(
     private val context: Context,
     private val prefs: SharedPreferences,
 ) : SettingsRepository {

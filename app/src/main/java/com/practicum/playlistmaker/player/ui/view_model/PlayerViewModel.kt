@@ -13,9 +13,8 @@ import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.player.domain.api.TracksDescriptionConsumer
-import javax.inject.Inject
 
-class PlayerViewModel @Inject constructor(
+class PlayerViewModel(
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
     private val playerInteractor: PlayerInteractor,
 ) : ViewModel(), MediaPlayerListener {

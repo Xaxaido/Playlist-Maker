@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.di
 
 import android.content.ComponentName
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.media3.session.SessionToken
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
@@ -14,69 +13,44 @@ import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.data.network.JsoupNetworkClient
 import com.practicum.playlistmaker.search.data.impl.RetrofitNetworkClientImpl
 import com.practicum.playlistmaker.search.data.source.SearchTrackDescriptionData
-import dagger.Module
-import dagger.Provides
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Singleton
 
-@Module
-class DataModule {
+val dataModule = module {
 
-    @Provides
-    @Singleton
-    fun provideSharedPreferences(
-        context: Context,
-    ): SharedPreferences {
-        return context.getSharedPreferences(context.getString(R.string.prefs_file_name), Context.MODE_PRIVATE)
-    }
-
-    @Provides
-    fun provideGson(): Gson {
-        return Gson()
-    }
-
-    @Provides
-    fun provideInternetConnection(): InternetConnection {
-        return InternetConnection()
-    }
-
-    @Provides
-    fun provideSessionToken(
-        context: Context,
-    ): SessionToken {
-        return SessionToken(context, ComponentName(context, PlaybackService::class.java))
-    }
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(
-        context: Context,
-    ): ITunesService {
-        return Retrofit.Builder()
-            .baseUrl(context.getString(R.string.itunes_base_url))
+    single<ITunesService> {
+        Retrofit.Builder()
+            .baseUrl(androidContext().getString(R.string.itunes_base_url))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ITunesService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideNetworkClient(itunesService: ITunesService): RetrofitNetworkClient {
-        return RetrofitNetworkClientImpl(itunesService)
+    single<RetrofitNetworkClient> {
+        RetrofitNetworkClientImpl(get())
     }
 
-    @Provides
-    @Singleton
-    fun provideNetworkClientBase(): JsoupNetworkClient {
-        return JsoupNetworkClientImpl()
+    single {
+        androidContext().getSharedPreferences(androidContext()
+            .getString(R.string.prefs_file_name), Context.MODE_PRIVATE)
     }
 
-    @Provides
-    @Singleton
-    fun provideSearchTrackDescriptionData(
-        context: Context,
-    ): SearchTrackDescriptionData {
-        return SearchTrackDescriptionData(context)
+    factory { Gson() }
+
+    single<JsoupNetworkClient> {
+        JsoupNetworkClientImpl()
     }
+
+    single<SearchTrackDescriptionData> {
+        SearchTrackDescriptionData(get())
+    }
+
+    factory { SessionToken(
+        androidContext(),
+        ComponentName(androidContext(), PlaybackService::class.java)
+    )}
+
+    factory { InternetConnection() }
 }

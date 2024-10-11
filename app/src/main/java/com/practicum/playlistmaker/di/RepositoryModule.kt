@@ -14,52 +14,35 @@ import com.practicum.playlistmaker.settings.data.api.SettingsRepository
 import com.practicum.playlistmaker.settings.data.impl.SettingsRepositoryImpl
 import com.practicum.playlistmaker.sharing.data.api.SharingRepository
 import com.practicum.playlistmaker.sharing.data.impl.SharingRepositoryImpl
-import dagger.Binds
-import dagger.Module
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-abstract class RepositoryModule {
+val repositoryModule = module {
 
-    @Binds
-    @Singleton
-    abstract fun bindInternetConnectionRepository(
-        repository: InternetConnectionRepositoryImpl
-    ): InternetConnectionRepository
+    single<TracksRepository> {
+        TracksRepositoryImpl(get(), get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindSearchHistoryRepository(
-        repository: SearchHistoryRepositoryImpl
-    ): SearchHistoryRepository
+    single<SearchHistoryRepository> {
+        SearchHistoryRepositoryImpl(get(), get(), get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindTracksRepository(
-        repository: TracksRepositoryImpl
-    ): TracksRepository
+    single<TrackDescriptionRepository> {
+        TrackDescriptionRepositoryImpl(get(), get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindPlayerRepository(
-        repository: PlayerRepositoryImpl
-    ): PlayerRepository
+    single<PlayerRepository> {
+        PlayerRepositoryImpl(get(), get(), get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindTrackDescriptionRepository(
-        repository: TrackDescriptionRepositoryImpl
-    ): TrackDescriptionRepository
+    single<SettingsRepository> {
+        SettingsRepositoryImpl(get(), get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindSettingsRepository(
-        repository: SettingsRepositoryImpl
-    ): SettingsRepository
+    single<SharingRepository> {
+        SharingRepositoryImpl(get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindSharingRepository(
-        repository: SharingRepositoryImpl
-    ): SharingRepository
+    single<InternetConnectionRepository> {
+        InternetConnectionRepositoryImpl(get(), get())
+    }
 }

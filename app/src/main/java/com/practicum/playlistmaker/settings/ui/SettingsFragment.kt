@@ -6,29 +6,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
-import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentSettingsBinding
-import com.practicum.playlistmaker.di.api.DaggerViewModelFactory
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 import com.practicum.playlistmaker.sharing.domain.model.ActionType
 import com.practicum.playlistmaker.sharing.domain.model.IntentAction
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
-    @Inject
-    lateinit var viewModelFactory: DaggerViewModelFactory
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by viewModel<SettingsViewModel>()
 
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentSettingsBinding {
-        (requireActivity().applicationContext as App).appComponent.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[SettingsViewModel::class.java]
         return FragmentSettingsBinding.inflate(inflater, container, false)
     }
 

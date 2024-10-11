@@ -11,9 +11,8 @@ import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class InternetConnectionRepositoryImpl @Inject constructor(
+class InternetConnectionRepositoryImpl(
     context: Context,
     private val internetConnection: InternetConnection,
 ) : InternetConnectionRepository {

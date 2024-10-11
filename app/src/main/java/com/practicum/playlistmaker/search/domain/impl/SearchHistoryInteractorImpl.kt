@@ -3,9 +3,8 @@ package com.practicum.playlistmaker.search.domain.impl
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
-import javax.inject.Inject
 
-class SearchHistoryInteractorImpl @Inject constructor(
+class SearchHistoryInteractorImpl(
     private val searchHistoryRepository: SearchHistoryRepository,
 ) : SearchHistoryInteractor {
 

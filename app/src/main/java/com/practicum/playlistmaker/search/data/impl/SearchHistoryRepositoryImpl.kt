@@ -9,9 +9,8 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
-import javax.inject.Inject
 
-class SearchHistoryRepositoryImpl @Inject constructor(
+class SearchHistoryRepositoryImpl(
     context: Context,
     private val prefs: SharedPreferences,
     private val gson: Gson,
