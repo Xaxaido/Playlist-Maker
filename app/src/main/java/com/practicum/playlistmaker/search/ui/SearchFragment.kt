@@ -170,7 +170,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 updateClearBtnVisibility(searchRequest.isNotEmpty())
 
                 if (hasFocus) searchTracks()
-                if (searchRequest.isEmpty() && hasFocus) {
+                if (hasFocus && searchRequest.isEmpty()) {
+                    viewModel.stopSearch()
                     viewModel.getHistory(true)
                 }
             }
@@ -213,10 +214,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun showError(error: Int) {
-        when (error) {
-            Util.REQUEST_CANCELLED -> viewModel.getHistory(false)
-            else -> alisa show Error
-        }
+        alisa show Error
     }
 
     private fun showSearchHistory(list: List<Track>, isDataSetChanged: Boolean = true) {

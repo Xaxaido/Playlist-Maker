@@ -73,15 +73,14 @@ class SearchViewModel @Inject constructor(
     private fun setState(state: SearchState) { _liveData.postValue(state) }
 
     private fun doSearch(term: String) {
+        if (term.isEmpty()) return
         if (!hasInternet) {
             setState(SearchState.ConnectionError(error = Util.NO_CONNECTION))
             return
         }
 
-        if (term.isNotEmpty()) {
-            setState(SearchState.Loading)
-            tracksInteractor.searchTracks(term, consumer = consumer)
-        }
+        setState(SearchState.Loading)
+        tracksInteractor.searchTracks(term, consumer = consumer)
     }
 
     override fun onConnectionStatusUpdate(hasInternet: Boolean) {
