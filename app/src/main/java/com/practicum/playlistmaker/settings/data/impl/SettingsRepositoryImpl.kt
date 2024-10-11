@@ -14,7 +14,7 @@ class SettingsRepositoryImpl(
     private val prefs: SharedPreferences,
 ) : SettingsRepository {
 
-    private val key = context.getString(R.string.theme_dark)
+    private val key = context.getString(R.string.theme_save_key)
 
     private fun getThemeName(isDarkThemeEnabled: Boolean) =
         if (isDarkThemeEnabled) {

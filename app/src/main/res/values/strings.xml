@@ -34,7 +34,7 @@
     <string name="media_library_search_hint">Введите название песни</string>
     <string name="settings">Настройки</string>
     <string name="theme">Тема приложения</string>
-    <string name="theme_auto">Системная тема</string>
+    <string name="theme_save_key" translatable="false">theme name</string>
     <string name="theme_dark">Тёмная тема</string>
     <string name="share_app">Поделиться приложением</string>
     <string name="share_app_content" translatable="false">https://practicum.yandex.ru/android-developer/?from=catalog</string>
