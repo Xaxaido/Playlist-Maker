@@ -51,7 +51,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private lateinit var stickyFooterDecoration: StickyFooterDecoration
     private lateinit var swipeHelper: SwipeHelper
     private var searchRequest = ""
-    private var isHistoryShown = false
+    private var isHistoryVisible = false
     private var isClickEnabled = true
     private var isKeyboardVisible = false
     private lateinit var alisa: ViewsList
@@ -109,7 +109,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private fun initSwipeHelper() = object : SwipeHelper(requireActivity(), binding.recycler) {
 
         override fun instantiateUnderlayButton() =
-            if (isHistoryShown) {
+            if (isHistoryVisible) {
                 mutableListOf(btnDelete(), btnAddToFav())
             } else {
                 mutableListOf(btnAddToFav())
@@ -146,7 +146,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
         binding.searchLayout.buttonClear.setOnClickListener {
             hideKeyboard()
-            isHistoryShown = true
+            isHistoryVisible = true
             binding.searchLayout.searchText.setText("")
             viewModel.getHistory(true)
         }
@@ -154,7 +154,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         binding.searchLayout.searchText.also { editText ->
 
             editText.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus && searchRequest.isEmpty() && !isHistoryShown) viewModel.getHistory(true)
+                if (hasFocus && searchRequest.isEmpty() && !isHistoryVisible) viewModel.getHistory(true)
             }
 
             editText.doOnTextChanged { text, _, _, _ ->
@@ -163,9 +163,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 searchRequest = text.toString()
                 updateClearBtnVisibility(searchRequest.isNotEmpty())
 
-                if (hasFocus && isHistoryShown) showNoData()
-                if (searchRequest.isNotEmpty() && hasFocus) searchTracks()
-                else viewModel.stopSearch()
+                if (hasFocus) searchTracks()
+                if (hasFocus && searchRequest.isEmpty()) {
+                    viewModel.stopSearch()
+                    viewModel.getHistory(true)
+                }
             }
         }
     }
@@ -212,7 +214,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun showHistory(list: List<Track>, isDataSetChanged: Boolean = true) {
-        isHistoryShown = true
+        isHistoryVisible = true
         list.also {
             if (it.isNotEmpty()) {
                 updateData(true, it, isDataSetChanged) {
@@ -225,7 +227,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun showContent(list: List<Track>) {
-        isHistoryShown = false
+        isHistoryVisible = false
         updateData(false, list) {
             alisa show SearchResults
         }

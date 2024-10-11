@@ -9,7 +9,7 @@
         android:id="@+id/theme_text"
         style="@style/TextButton"
         android:layout_width="wrap_content"
-        android:text="@string/theme_auto"
+        android:text="@string/theme_dark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

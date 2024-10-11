@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), BackButtonState {
                     updateBottomNav(false)
                 }
                 else -> {
-                    if (!binding.bottomNav.isVisible ) {
+                    if (!binding.bottomNavContainer.isVisible) {
                         updateBottomNav(true)
                     }
                 }
@@ -72,21 +72,21 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     private fun updateBottomNav(isVisible: Boolean) {
         AnimationUtils.loadAnimation(
             this,
-            if (isVisible) R.anim.fade_in else R.anim.fade_out
+            if (isVisible) R.anim.slide_in_left else R.anim.slide_out_left,
         ).apply {
             setAnimationListener(object : Animation.AnimationListener {
 
                 override fun onAnimationStart(animation: Animation) {}
+                override fun onAnimationRepeat(animation: Animation) {}
 
                 override fun onAnimationEnd(animation: Animation) {
-                    binding.bottomNav.isVisible = isVisible
+                    binding.bottomNavContainer.isVisible = isVisible
                 }
-
-                override fun onAnimationRepeat(animation: Animation) {}
             })
-            binding.bottomNav.startAnimation(this)
+            binding.bottomNavContainer.startAnimation(this)
         }
     }
+
 
     private fun updateErrorMsg(target: Float, onAnimationEnd: () -> Unit = {}) {
         ObjectAnimator.ofFloat(binding.noInternetMsg, "translationY", target).apply {
