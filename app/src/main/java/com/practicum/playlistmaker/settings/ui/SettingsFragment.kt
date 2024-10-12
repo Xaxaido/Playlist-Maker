@@ -3,34 +3,36 @@ package com.practicum.playlistmaker.settings.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
+import com.practicum.playlistmaker.common.widgets.BaseFragment
+import com.practicum.playlistmaker.databinding.FragmentSettingsBinding
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 import com.practicum.playlistmaker.sharing.domain.model.ActionType
 import com.practicum.playlistmaker.sharing.domain.model.IntentAction
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
-    private val viewModel: SettingsViewModel by viewModels()
-    private lateinit var binding: ActivitySettingsBinding
+    private val viewModel by viewModel<SettingsViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSettingsBinding {
+        return FragmentSettingsBinding.inflate(inflater, container, false)
+    }
 
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setListeners()
     }
 
     private fun setListeners() {
-        viewModel.settingsLiveData.observe(this, ::setTheme)
-        viewModel.sharingLiveData.observe(this, ::startIntent)
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        viewModel.settingsLiveData.observe(viewLifecycleOwner, ::setTheme)
+        viewModel.sharingLiveData.observe(viewLifecycleOwner, ::startIntent)
 
         binding.themeSwitch.setOnClickListener {
             viewModel.toggleSystemTheme(binding.themeSwitch.isChecked)

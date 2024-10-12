@@ -1,3 +1,3 @@
 package com.practicum.playlistmaker.search.data.dto
 
-data class SearchRequest(val term: String)
+data class JsoupSearchRequest(val term: String)

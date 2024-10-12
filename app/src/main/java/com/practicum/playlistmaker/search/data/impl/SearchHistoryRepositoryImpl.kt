@@ -2,15 +2,15 @@ package com.practicum.playlistmaker.search.data.impl
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
-import javax.inject.Inject
 
-class SearchHistoryRepositoryImpl @Inject constructor(
+class SearchHistoryRepositoryImpl(
     context: Context,
     private val prefs: SharedPreferences,
     private val gson: Gson,
@@ -48,6 +48,8 @@ class SearchHistoryRepositoryImpl @Inject constructor(
     }
 
     private fun saveHistory() {
-        prefs.edit().putString(key, gson.toJson(_history)).apply()
+        prefs.edit {
+            putString(key, gson.toJson(_history))
+        }
     }
 }

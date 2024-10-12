@@ -1,20 +1,19 @@
 package com.practicum.playlistmaker.player.data.impl
 
-import com.practicum.playlistmaker.search.data.dto.SearchRequest
+import com.practicum.playlistmaker.search.data.dto.JsoupSearchRequest
 import com.practicum.playlistmaker.search.data.dto.TrackDescriptionSearchResponse
 import com.practicum.playlistmaker.search.data.source.SearchTrackDescriptionData
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionRepository
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
-import com.practicum.playlistmaker.search.data.network.NetworkClientBase
-import javax.inject.Inject
+import com.practicum.playlistmaker.search.data.network.JsoupNetworkClient
 
-class TrackDescriptionRepositoryImpl @Inject constructor(
-    private val networkClient: NetworkClientBase,
+class TrackDescriptionRepositoryImpl(
+    private val networkClient: JsoupNetworkClient,
     private val jsoup: SearchTrackDescriptionData,
 ) : TrackDescriptionRepository {
 
     override fun searchTrackDescription(term: String): TrackDescription {
-        val response = networkClient.doRequest(SearchRequest(term))
+        val response = networkClient.doRequest(JsoupSearchRequest(term))
         val result = if (response is TrackDescriptionSearchResponse) response.html else null
 
         return jsoup.parse(result)

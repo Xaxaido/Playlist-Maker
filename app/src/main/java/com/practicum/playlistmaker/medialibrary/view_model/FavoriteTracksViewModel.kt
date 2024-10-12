@@ -1,9 +1,6 @@
 package com.practicum.playlistmaker.medialibrary.view_model
 
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class FavoriteTracksViewModel @Inject constructor() : ViewModel() {
+class FavoriteTracksViewModel() : ViewModel() {
 }

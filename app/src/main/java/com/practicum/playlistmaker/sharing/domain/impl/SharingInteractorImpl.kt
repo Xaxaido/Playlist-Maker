@@ -2,9 +2,8 @@ package com.practicum.playlistmaker.sharing.domain.impl
 
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.sharing.data.api.SharingRepository
-import javax.inject.Inject
 
-class SharingInteractorImpl @Inject constructor(
+class SharingInteractorImpl(
     private val sharingRepository: SharingRepository
 ) : SharingInteractor {
 

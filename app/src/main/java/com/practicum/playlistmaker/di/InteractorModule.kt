@@ -14,55 +14,35 @@ import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
 import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class InteractorModule {
+val interactorModule = module {
 
-    @Binds
-    @Singleton
-    abstract fun bindInternetConnectionInteractor(
-        interactor: InternetConnectionInteractorImpl
-    ): InternetConnectionInteractor
+    single<TracksInteractor> {
+        TracksInteractorImpl(get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindSearchHistoryInteractor(
-        interactor: SearchHistoryInteractorImpl
-    ): SearchHistoryInteractor
+    single<SearchHistoryInteractor> {
+        SearchHistoryInteractorImpl(get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindTracksInteractor(
-        interactor: TracksInteractorImpl
-    ): TracksInteractor
+    single<TrackDescriptionInteractor> {
+        TrackDescriptionInteractorImpl(get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindPlayerInteractor(
-        interactor: PlayerInteractorImpl
-    ): PlayerInteractor
+    single<PlayerInteractor> {
+        PlayerInteractorImpl(get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindTrackDescriptionInteractor(
-        interactor: TrackDescriptionInteractorImpl
-    ): TrackDescriptionInteractor
+    single<SettingsInteractor> {
+        SettingsInteractorImpl(get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindSettingsInteractor(
-        interactor: SettingsInteractorImpl
-    ): SettingsInteractor
+    single<SharingInteractor> {
+        SharingInteractorImpl(get())
+    }
 
-    @Binds
-    @Singleton
-    abstract fun bindSharingInteractor(
-        interactor: SharingInteractorImpl
-    ): SharingInteractor
+    single<InternetConnectionInteractor> {
+        InternetConnectionInteractorImpl(get())
+    }
 }

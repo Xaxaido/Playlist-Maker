@@ -34,7 +34,8 @@
     <string name="media_library_search_hint">Введите название песни</string>
     <string name="settings">Настройки</string>
     <string name="theme">Тема приложения</string>
-    <string name="theme_auto">Системная тема</string>
+    <string name="theme_save_key" translatable="false">theme name</string>
+    <string name="theme_dark">Тёмная тема</string>
     <string name="share_app">Поделиться приложением</string>
     <string name="share_app_content" translatable="false">https://practicum.yandex.ru/android-developer/?from=catalog</string>
     <string name="contact_support">Написать в поддержку</string>
@@ -45,6 +46,6 @@
     <string name="user_agreement_content" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
     <string name="itunes_base_url" translatable="false">https://itunes.apple.com</string>
     <string name="db_file_name" translatable="false">database</string>
-    <string name="no_internet_connection">Отсутствуе подключение к сети</string>
+    <string name="no_internet_connection">Отсутствует подключение к сети</string>
     <string name="close">Убрать</string>
 </resources>

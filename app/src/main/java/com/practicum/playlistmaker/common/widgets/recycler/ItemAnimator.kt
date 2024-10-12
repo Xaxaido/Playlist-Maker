@@ -28,7 +28,7 @@ class ItemAnimator: SimpleItemAnimator() {
         var fromX: Int,
         var fromY: Int,
         var toX: Int,
-        var toY: Int
+        var toY: Int,
     )
 
     data class ChangeInfo(
