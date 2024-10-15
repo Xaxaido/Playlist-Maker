@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.media3.common.Player
+import com.google.gson.Gson
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -17,6 +18,8 @@ import com.practicum.playlistmaker.player.domain.api.TracksDescriptionConsumer
 class PlayerViewModel(
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
     private val playerInteractor: PlayerInteractor,
+    gson: Gson,
+    json: String,
 ) : ViewModel(), MediaPlayerListener {
 
     private val consumer = object : TracksDescriptionConsumer {
@@ -36,18 +39,18 @@ class PlayerViewModel(
     private val _liveData = MutableLiveData<PlayerState>()
     val liveData: LiveData<PlayerState> get() = _liveData
 
-    fun getTrack(json: String) = playerInteractor.jsonToTrack(json)
-
-    fun init(track: Track) {
+    init {
+        val track = gson.fromJson(json, Track::class.java)
         playerInteractor.init(this, track)
+        setState(PlayerState.TrackData(track))
     }
 
-    fun controlPlayback() {
+    fun controlPlayback(shouldPlay: Boolean = true) {
         playerInteractor.apply {
             if (isPlaying) {
                 setState(PlayerState.Paused)
                 pause()
-            } else {
+            } else if (shouldPlay) {
                 setState(PlayerState.Playing)
                 play()
             }
