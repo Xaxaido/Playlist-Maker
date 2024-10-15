@@ -31,7 +31,7 @@ val repositoryModule = module {
     }
 
     single<PlayerRepository> {
-        PlayerRepositoryImpl(get(), get(), get())
+        PlayerRepositoryImpl(get(), get())
     }
 
     single<SettingsRepository> {

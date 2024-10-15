@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_layout"
     style="@style/LayoutFullScreen"
-    android:background="?attr/android:colorBackground"
     tools:context=".main.ui.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
