@@ -23,6 +23,7 @@ import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
+import com.practicum.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -81,26 +82,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     private fun setupUI() {
         binding.shimmerPlaceholder.shimmer.startShimmer()
         updatePlayBtnState(false)
-
-        val track = viewModel.track
-        viewModel.searchTrackDescription(track.artistViewUrl)
-
-        with (binding) {
-            playerTrackTitle.setString(track.trackName)
-            playerArtistName.setString(track.artistName)
-            playerDurationText.text = track.duration
-            yearText.text = track.releaseDate ?: ""
-            genreText.text = track.genre
-            albumTitleText.text = track.albumName
-        }
-
-        Glide.with(this)
-            .load(track.getPlayerAlbumCover())
-            .placeholder(R.drawable.player_album_cover_stub)
-            .centerCrop()
-            .transform(RoundedCorners(8.dpToPx(requireActivity())))
-            .into(binding.albumCover)
-        syncScrollingText()
     }
 
     private fun syncScrollingText() {
@@ -181,6 +162,27 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
     }
 
+    private fun fillTrackData(track: Track) {
+        viewModel.searchTrackDescription(track.artistViewUrl)
+
+        with (binding) {
+            playerTrackTitle.setString(track.trackName)
+            playerArtistName.setString(track.artistName)
+            playerDurationText.text = track.duration
+            yearText.text = track.releaseDate ?: ""
+            genreText.text = track.genre
+            albumTitleText.text = track.albumName
+        }
+
+        Glide.with(this)
+            .load(track.getPlayerAlbumCover())
+            .placeholder(R.drawable.player_album_cover_stub)
+            .centerCrop()
+            .transform(RoundedCorners(8.dpToPx(requireActivity())))
+            .into(binding.albumCover)
+        syncScrollingText()
+    }
+
     private fun updateCurrentTime(currentPosition: String) {
         binding.currentTime.setTime(currentPosition)
     }
@@ -216,6 +218,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private fun renderState(state: PlayerState) {
         when (state) {
+            is PlayerState.TrackData -> fillTrackData(state.track)
             is PlayerState.CurrentTime -> updateCurrentTime(state.time)
             is PlayerState.Ready -> ready()
             is PlayerState.Playing -> updatePlayBtn(true)

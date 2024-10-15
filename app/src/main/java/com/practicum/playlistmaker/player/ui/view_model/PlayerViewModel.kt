@@ -38,10 +38,11 @@ class PlayerViewModel(
     )
     private val _liveData = MutableLiveData<PlayerState>()
     val liveData: LiveData<PlayerState> get() = _liveData
-    val track: Track = gson.fromJson(json, Track::class.java)
 
     init {
+        val track = gson.fromJson(json, Track::class.java)
         playerInteractor.init(this, track)
+        setState(PlayerState.TrackData(track))
     }
 
     fun controlPlayback(shouldPlay: Boolean = true) {
