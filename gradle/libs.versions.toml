@@ -1,4 +1,5 @@
 [versions]
+adapterdelegates4KotlinDsl = "4.3.2"
 ksp = "2.0.10-1.0.24"
 agp = "8.5.2"
 androidxPaletteKtx = "1.0.0"
@@ -31,6 +32,8 @@ jsoup = "1.13.1"
 koinAndroid = "4.0.0"
 
 [libraries]
+adapterdelegates4-kotlin-dsl = { module = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl", version.ref = "adapterdelegates4KotlinDsl" }
+hannesdorfmann-adapterdelegates4-kotlin-dsl-viewbinding = { module = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding", version.ref = "adapterdelegates4KotlinDsl" }
 koinAndroid= { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }

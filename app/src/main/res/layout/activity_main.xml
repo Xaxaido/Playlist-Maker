@@ -56,6 +56,7 @@
             app:itemTextAppearanceInactive="@style/BottomNavText"
             app:itemIconTint="@drawable/nav_color"
             app:itemTextColor="@drawable/nav_color"
+            app:itemRippleColor="@color/rippleColor"
             app:itemActiveIndicatorStyle="@android:color/transparent" />
 
     </LinearLayout>
