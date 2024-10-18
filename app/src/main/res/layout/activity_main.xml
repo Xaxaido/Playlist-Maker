@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_layout"
     style="@style/LayoutFullScreen"
-    android:background="?attr/android:colorBackground"
     tools:context=".main.ui.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
@@ -57,6 +56,7 @@
             app:itemTextAppearanceInactive="@style/BottomNavText"
             app:itemIconTint="@drawable/nav_color"
             app:itemTextColor="@drawable/nav_color"
+            app:itemRippleColor="@color/rippleColor"
             app:itemActiveIndicatorStyle="@android:color/transparent" />
 
     </LinearLayout>

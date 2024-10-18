@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.common.resources
 
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
+import com.practicum.playlistmaker.search.domain.model.Track
 
 interface PlayerState {
 
@@ -8,6 +9,9 @@ interface PlayerState {
     object Playing : PlayerState
     object Paused : PlayerState
     object Stop : PlayerState
+    class TrackData(
+        val track: Track
+    ) : PlayerState
     class CurrentTime(
         val time: String
     ) : PlayerState

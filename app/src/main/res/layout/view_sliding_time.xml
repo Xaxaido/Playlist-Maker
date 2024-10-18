@@ -28,7 +28,7 @@
             android:id="@+id/delimiter_old"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" : "
+            android:text=":"
             android:visibility="invisible" />
 
         <TextView
@@ -67,7 +67,7 @@
             android:id="@+id/delimiter_new"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" : " />
+            android:text=":" />
 
         <TextView
             android:id="@+id/oldSecondTens"

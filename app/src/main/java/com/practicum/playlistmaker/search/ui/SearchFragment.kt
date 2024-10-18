@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.SearchState
 import com.practicum.playlistmaker.common.resources.VisibilityState.Error
@@ -52,7 +53,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private var isHistoryVisible = false
     private var isClickEnabled = true
     private var isKeyboardVisible = false
-    private lateinit var alisa: ViewsList
+    private lateinit var visibility: ViewsList
     private val keyboardStateListener = ViewTreeObserver.OnGlobalLayoutListener {
         view?.also { screen ->
             val r = Rect().apply { screen.getWindowVisibleDisplayFrame(this) }
@@ -85,16 +86,28 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun setupUI() {
-        alisa = ViewsList(
+        visibility = ViewsList(
             listOf(
                 VisibilityItem(binding.networkFailure, listOf(Error)),
                 VisibilityItem(binding.nothingFound, listOf(NothingFound)),
                 VisibilityItem(binding.progressBar, listOf(Loading)),
-                VisibilityItem(binding.stickyContainer.clearHistory, listOf(History)),
                 VisibilityItem(binding.recycler, listOf(History, SearchResults)),
+                VisibilityItem(binding.stickyContainer.clearHistory, listOf(History)),
             )
         )
-        trackAdapter = TrackAdapter(binding.recycler)
+
+        trackAdapter = TrackAdapter(
+            { track ->
+                if (!isClickEnabled) return@TrackAdapter
+
+                isClickEnabled = false
+                viewModel.addToHistory(track)
+                sendToPlayer(viewModel.trackToJson(track))
+                Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
+            },
+            { clearHistory() }
+        )
+
         binding.recycler.adapter = trackAdapter
         binding.recycler.itemAnimator = ItemAnimator()
         swipeHelper = initSwipeHelper()
@@ -129,20 +142,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             false
         }
 
-        trackAdapter.setOnTrackClickListener { track ->
-            if (!isClickEnabled) return@setOnTrackClickListener
-
-            isClickEnabled = false
-            viewModel.addToHistory(track)
-            sendToPlayer(viewModel.trackToJson(track))
-            Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
-        }
-
-        trackAdapter.setOnClearHistoryClick {
-            viewModel.clearHistory()
-            binding.searchLayout.searchText.clearFocus()
-            showNoData()
-        }
+        binding.stickyContainer.btnClearHistory.setOnClickListener { clearHistory() }
 
         binding.searchLayout.buttonClear.setOnClickListener {
             hideKeyboard()
@@ -170,6 +170,21 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 }
             }
         }
+    }
+
+    private fun clearHistory() {
+        viewModel.clearHistory()
+        binding.searchLayout.searchText.clearFocus()
+        showNoData()
+    }
+
+    private fun updateClearHistoryBtnPosition() {
+        val layoutManager = binding.recycler.layoutManager as LinearLayoutManager
+        val firstVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+        val lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+        val isButtonVisible = trackAdapter.itemCount - 1 > lastVisibleItemPosition || firstVisibleItemPosition > 0
+        trackAdapter.updateFooterVisibility(!isButtonVisible)
+        binding.stickyContainer.clearHistory.isVisible = isButtonVisible
     }
 
     private fun updateClearBtnVisibility(isVisible: Boolean) {
@@ -203,21 +218,23 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     private fun showNoData() {
         trackAdapter.submitTracksList(false, emptyList()) {
-            alisa show NoData
+            visibility.show(NoData)
         }
     }
 
     private fun showError(error: Int) {
-        alisa show Error
+        visibility.show(Error)
     }
 
     private fun showSearchHistory(list: List<Track>, isDataSetChanged: Boolean = true) {
         isHistoryVisible = true
         if (list.isNotEmpty()) {
-            trackAdapter.submitTracksList(true, list, isDataSetChanged) { isButtonVisible ->
-                alisa show History
-                binding.stickyContainer.clearHistory.isVisible = isButtonVisible
-                binding.recycler.post { binding.recycler.invalidateItemDecorations() }
+            visibility.apply { show(History, views - views[views.lastIndex]) }
+            trackAdapter.submitTracksList(true, list, isDataSetChanged) {
+                binding.recycler.post {
+                    updateClearHistoryBtnPosition()
+                    binding.recycler.invalidateItemDecorations()
+                }
             }
         } else {
             showNoData()
@@ -227,7 +244,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private fun showSearchResults(list: List<Track>) {
         isHistoryVisible = false
         trackAdapter.submitTracksList(false, list, true)  {
-            alisa show SearchResults
+            visibility.show(SearchResults)
         }
     }
 
@@ -237,8 +254,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             is SearchState.TrackSearchResults -> showSearchResults(state.results)
             is SearchState.TrackSearchHistory -> showSearchHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)
-            is SearchState.NothingFound -> alisa show NothingFound
-            is SearchState.Loading -> alisa show Loading
+            is SearchState.NothingFound -> visibility.show(NothingFound)
+            is SearchState.Loading -> visibility.show(Loading)
         }
     }
 

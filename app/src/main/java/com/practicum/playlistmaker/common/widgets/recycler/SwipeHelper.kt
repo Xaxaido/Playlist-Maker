@@ -14,7 +14,8 @@ import android.view.View.OnTouchListener
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.search.ui.recycler.TrackViewHolder
+import com.practicum.playlistmaker.search.domain.model.TrackListItem
+import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import java.util.LinkedList
 import java.util.Queue
 
@@ -124,7 +125,10 @@ abstract class SwipeHelper(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return if (viewHolder is TrackViewHolder) {
+        val position = viewHolder.absoluteAdapterPosition
+        val item = (recyclerView.adapter as TrackAdapter).getItem(position)
+
+        return if (item is TrackListItem.TrackItem) {
             makeMovementFlags(0, ItemTouchHelper.START)
         } else 0
     }

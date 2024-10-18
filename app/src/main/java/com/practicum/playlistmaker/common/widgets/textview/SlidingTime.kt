@@ -5,6 +5,7 @@ import android.content.res.TypedArray
 import android.graphics.Color
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -20,6 +21,7 @@ class SlidingTime @JvmOverloads constructor(
 
     private val oldTimeDigits: List<TextView>
     private val newTimeDigits: List<TextView>
+    private val baseText: String
     private var textColor = 0
     private var textSize = 0
 
@@ -51,16 +53,27 @@ class SlidingTime @JvmOverloads constructor(
             }
         }
 
+        baseText = context.getString(R.string.default_duration_start)
         applyTextAppearance()
     }
 
     private fun applyTextAppearance() {
-        val allDigits = oldTimeDigits + newTimeDigits + listOf(findViewById(R.id.delimiter_old), findViewById(
-            R.id.delimiter_new
-        ))
+        val allDigits = oldTimeDigits + newTimeDigits + listOf(
+            findViewById(R.id.delimiter_old),
+            findViewById(R.id.delimiter_new),
+        )
+
         for (digit in allDigits) {
+            digit.gravity = Gravity.CENTER
             digit.setTextColor(textColor)
             digit.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
+        }
+
+        allDigits[0].post {
+            val viewWidth = allDigits[0].measuredWidth
+            for (digit in allDigits) {
+                digit.width = viewWidth
+            }
         }
     }
 
@@ -79,7 +92,7 @@ class SlidingTime @JvmOverloads constructor(
     }
 
     fun reset() {
-        val defaultTime = context.getString(R.string.default_duration_start).filter { it.isDigit() }
+        val defaultTime = baseText.filter { it.isDigit() }
 
         for (i in defaultTime.indices) {
             animateDigitChange(i, defaultTime[i])

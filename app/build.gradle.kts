@@ -42,6 +42,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.adapterdelegates4.kotlin.dsl)
+    implementation (libs.hannesdorfmann.adapterdelegates4.kotlin.dsl.viewbinding)
     implementation (libs.koinAndroid)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
