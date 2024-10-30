@@ -27,26 +27,25 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.themeSwitch.isChecked = viewModel.getThemeSwitchState()
         setListeners()
     }
 
     private fun setListeners() {
-        viewModel.settingsLiveData.observe(viewLifecycleOwner, ::setTheme)
-        viewModel.sharingLiveData.observe(viewLifecycleOwner, ::startIntent)
+        viewModel.sharingLiveData.observe(viewLifecycleOwner) { event ->
+            event.getState()?.let {
+                startIntent(it)
+            }
+        }
 
         binding.themeSwitch.setOnClickListener {
-            viewModel.toggleSystemTheme(binding.themeSwitch.isChecked)
+            viewModel.saveTheme(binding.themeSwitch.isChecked)
+            Util.applyTheme(viewModel.getCurrentTheme())
         }
 
         binding.btnSettingsShare.setOnClickListener { viewModel.shareApp() }
         binding.btnContactSupport.setOnClickListener { viewModel.contactSupport() }
         binding.btnSettingsUserAgreement.setOnClickListener { viewModel.openTerms() }
-    }
-
-    private fun setTheme(isChecked: Boolean) {
-        binding.themeSwitch.isChecked = isChecked
-        viewModel.saveTheme(isChecked)
-        Util.applyTheme(viewModel.getCurrentTheme())
     }
 
     private fun startIntent(action: IntentAction) {

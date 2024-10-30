@@ -7,7 +7,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
-import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ItemFooterBinding
 import com.practicum.playlistmaker.databinding.ItemHeaderBinding
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
@@ -48,11 +47,7 @@ fun footerItemDelegate(
     { layoutInflater, root -> ItemFooterBinding.inflate(layoutInflater, root, false) }
 ) {
     bind {
-        val isVisible = item.isVisible
-        itemView.postDelayed(
-            { binding.clearHistory.isVisible = isVisible },
-            if (isVisible) 0L else Util.ANIMATION_SHORT
-        )
+        binding.clearHistory.isVisible = item.isVisible
         binding.btnClearHistory.setOnClickListener { onClearHistoryBtnClick() }
     }
 }

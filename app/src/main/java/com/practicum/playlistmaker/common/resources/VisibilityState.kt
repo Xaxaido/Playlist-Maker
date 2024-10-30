@@ -15,11 +15,11 @@ sealed interface VisibilityState {
         val type: List<VisibilityState>,
     )
     class ViewsList(
-       val views: List<VisibilityItem>,
+        val items: List<VisibilityItem>,
     ) {
 
-        fun show(state: VisibilityState, views: List<VisibilityItem> = this.views) {
-            views.forEach {
+        fun show(state: VisibilityState, list: List<VisibilityItem> = items) {
+            list.forEach {
                 it.view.isVisible = it.type.contains(state)
             }
         }

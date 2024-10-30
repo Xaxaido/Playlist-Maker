@@ -91,8 +91,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 VisibilityItem(binding.networkFailure, listOf(Error)),
                 VisibilityItem(binding.nothingFound, listOf(NothingFound)),
                 VisibilityItem(binding.progressBar, listOf(Loading)),
-                VisibilityItem(binding.recycler, listOf(History, SearchResults)),
                 VisibilityItem(binding.stickyContainer.clearHistory, listOf(History)),
+                VisibilityItem(binding.recycler, listOf(History, SearchResults)),
             )
         )
 
@@ -223,13 +223,16 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun showError(error: Int) {
-        visibility.show(Error)
+        when (error) {
+            Util.REQUEST_CANCELLED -> viewModel.getHistory(true)
+            else -> visibility.show(Error)
+        }
     }
 
     private fun showSearchHistory(list: List<Track>, isDataSetChanged: Boolean = true) {
         isHistoryVisible = true
         if (list.isNotEmpty()) {
-            visibility.apply { show(History, views - views[views.lastIndex]) }
+            visibility.show(History, visibility.items.filter { it.view.id != binding.stickyContainer.clearHistory.id })
             trackAdapter.submitTracksList(true, list, isDataSetChanged) {
                 binding.recycler.post {
                     updateClearHistoryBtnPosition()
