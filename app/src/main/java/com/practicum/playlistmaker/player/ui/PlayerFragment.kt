@@ -25,6 +25,7 @@ import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
@@ -35,8 +36,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             bundleOf(ARGS_TRACK to track)
     }
 
-    private val viewModel by viewModel<PlayerViewModel>()
-    private var track: Track? = null
+    private val viewModel by viewModel<PlayerViewModel> {
+        parametersOf(requireArguments().getString(ARGS_TRACK).orEmpty())
+    }
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -47,7 +49,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return if (nextAnim == 0) {
-           super.onCreateAnimation(transit, enter, nextAnim)
+            super.onCreateAnimation(transit, enter, nextAnim)
         } else {
             AnimationUtils.loadAnimation(requireActivity(), nextAnim).apply {
                 setAnimationListener(object : Animation.AnimationListener {
@@ -78,33 +80,8 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun setupUI() {
-        requireArguments().getString(ARGS_TRACK).orEmpty().also {
-            track = viewModel.getTrack(it)
-        }
-        track?.also { viewModel.init(it) }
-
         binding.shimmerPlaceholder.shimmer.startShimmer()
         updatePlayBtnState(false)
-        viewModel.searchTrackDescription(track?.artistViewUrl)
-
-        with (binding) {
-            track?.also {
-                playerTrackTitle.setString(it.trackName)
-                playerArtistName.setString(it.artistName)
-                playerDurationText.text = it.duration
-                yearText.text = it.releaseDate ?: ""
-                genreText.text = it.genre
-                albumTitleText.text = it.albumName
-            }
-        }
-
-        Glide.with(this)
-            .load(track?.getPlayerAlbumCover())
-            .placeholder(R.drawable.player_album_cover_stub)
-            .centerCrop()
-            .transform(RoundedCorners(8.dpToPx(requireActivity())))
-            .into(binding.albumCover)
-        syncScrollingText()
     }
 
     private fun syncScrollingText() {
@@ -185,6 +162,27 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
     }
 
+    private fun fillTrackData(track: Track) {
+        viewModel.searchTrackDescription(track.artistViewUrl)
+
+        with (binding) {
+            playerTrackTitle.setString(track.trackName)
+            playerArtistName.setString(track.artistName)
+            playerDurationText.text = track.duration
+            yearText.text = track.releaseDate ?: ""
+            genreText.text = track.genre
+            albumTitleText.text = track.albumName
+        }
+
+        Glide.with(this)
+            .load(track.getPlayerAlbumCover())
+            .placeholder(R.drawable.player_album_cover_stub)
+            .centerCrop()
+            .transform(RoundedCorners(8.dpToPx(requireActivity())))
+            .into(binding.albumCover)
+        syncScrollingText()
+    }
+
     private fun updateCurrentTime(currentPosition: String) {
         binding.currentTime.setTime(currentPosition)
     }
@@ -220,6 +218,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private fun renderState(state: PlayerState) {
         when (state) {
+            is PlayerState.TrackData -> fillTrackData(state.track)
             is PlayerState.CurrentTime -> updateCurrentTime(state.time)
             is PlayerState.Ready -> ready()
             is PlayerState.Playing -> updatePlayBtn(true)
@@ -238,14 +237,11 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     override fun onResume() {
         super.onResume()
         (activity as? BackButtonState)?.updateBackBtn(true)
-        track?.also {
-            viewModel.init(it)
-        }
     }
 
     override fun onPause() {
-        viewModel.release()
         super.onPause()
+        viewModel.controlPlayback(false)
     }
 
     override fun onDestroy() {

@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.common.resources
 
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 
@@ -16,13 +15,12 @@ sealed interface VisibilityState {
         val type: List<VisibilityState>,
     )
     class ViewsList(
-        private var views: List<VisibilityItem>,
+        val items: List<VisibilityItem>,
     ) {
-        
-        infix fun show(state: VisibilityState) {
-            views.forEach {
+
+        fun show(state: VisibilityState, list: List<VisibilityItem> = items) {
+            list.forEach {
                 it.view.isVisible = it.type.contains(state)
-                Log.d("", "${it.type} isVisible = ${it.view.isVisible} ")
             }
         }
     }

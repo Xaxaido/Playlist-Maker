@@ -17,8 +17,8 @@ val viewModelModule = module {
         SearchViewModel(get(), get(), get())
     }
 
-    viewModel {
-        PlayerViewModel(get(), get())
+    viewModel { (json: String) ->
+        PlayerViewModel(get(), get(), get(), json)
     }
 
     viewModel {
