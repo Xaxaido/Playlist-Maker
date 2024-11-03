@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.practicum.playlistmaker.R
@@ -103,7 +104,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 isClickEnabled = false
                 viewModel.addToHistory(track)
                 sendToPlayer(viewModel.trackToJson(track))
-                Debounce(delay = Util.BUTTON_ENABLED_DELAY) { isClickEnabled = true }.start()
+                Debounce(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             },
             { clearHistory() }
         )
@@ -165,7 +166,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
                 if (hasFocus) searchTracks()
                 if (hasFocus && searchRequest.isEmpty()) {
-                    viewModel.stopSearch()
                     viewModel.getHistory(true)
                 }
             }
@@ -289,7 +289,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             swipeHelper.disableClick()
             trackAdapter.notifyItemChanged(pos)
             viewModel.removeFromHistory(pos - 1)
-            Debounce(Util.ANIMATION_SHORT) {
+            Debounce(Util.ANIMATION_SHORT, lifecycleScope) {
                 startParticleAnimation(pos) {
                     viewModel.getHistory(false)
                     swipeHelper.enableClick()

@@ -12,6 +12,7 @@ object Util {
 
     const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
     const val ANIMATION_SHORT= 250L
+    const val UPDATE_PLAYBACK_PROGRESS_DELAY= 300L
     const val BUTTON_ENABLED_DELAY = 1000L
     const val USER_INPUT_DELAY = 2000L
     const val PARTICLE_DURATION = 2000L

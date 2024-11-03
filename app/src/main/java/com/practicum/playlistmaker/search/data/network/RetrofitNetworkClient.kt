@@ -4,6 +4,5 @@ import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.RetrofitSearchRequest
 
 interface RetrofitNetworkClient {
-    fun doRequest(dto: RetrofitSearchRequest): Response
-    fun cancelRequest()
+    suspend fun doRequest(dto: RetrofitSearchRequest): Response
 }
