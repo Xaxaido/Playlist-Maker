@@ -3,12 +3,14 @@ package com.practicum.playlistmaker.player.ui.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
 import com.google.gson.Gson
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
@@ -29,10 +31,10 @@ class PlayerViewModel(
         }
     }
     private val timers: Map<String, Debounce> = mapOf(
-        UPDATE_PLAYBACK_PROGRESS to Debounce {
+        UPDATE_PLAYBACK_PROGRESS to Debounce(Util.UPDATE_PLAYBACK_PROGRESS_DELAY, viewModelScope) {
             setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
         },
-        UPDATE_BUFFERED_PROGRESS to Debounce(100) {
+        UPDATE_BUFFERED_PROGRESS to Debounce(100, viewModelScope) {
             setState(PlayerState.BufferedProgress(playerInteractor.bufferedProgress))
         },
     )

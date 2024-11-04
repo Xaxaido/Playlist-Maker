@@ -1,13 +1,11 @@
 package com.practicum.playlistmaker.search.domain.impl
 
 import com.practicum.playlistmaker.common.resources.TracksSearchState
-import com.practicum.playlistmaker.search.domain.api.TracksConsumer
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
 import com.practicum.playlistmaker.search.domain.model.Track
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class TracksInteractorImpl(
     private val repository: TracksRepository,
@@ -15,14 +13,12 @@ class TracksInteractorImpl(
 
     override fun trackToJson(track: Track) = repository.trackToJson(track)
 
-    override fun searchTracks(term: String, page: Int, consumer: TracksConsumer) {
-        CoroutineScope(Dispatchers.IO).launch {
-            when(val result = repository.searchTracks(term, page)) {
-                is TracksSearchState.Success -> { consumer.consume(result.tracks, null) }
-                is TracksSearchState.Error -> { consumer.consume(null, result.error) }
+    override fun searchTracks(term: String, page: Int): Flow<Pair<List<Track>?, Int?>> {
+        return repository.searchTracks(term, page).map { result ->
+            when(result) {
+                is TracksSearchState.Success -> { Pair(result.tracks, null) }
+                is TracksSearchState.Error -> { Pair(null, result.error) }
             }
         }
     }
-
-    override fun cancelRequest() { repository.cancelRequest() }
 }
