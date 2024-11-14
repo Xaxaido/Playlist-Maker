@@ -4,5 +4,5 @@ import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.JsoupSearchRequest
 
 interface JsoupNetworkClient {
-    fun doRequest(dto: JsoupSearchRequest): Response
+    suspend fun doRequest(dto: JsoupSearchRequest): Response
 }

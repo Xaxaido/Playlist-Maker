@@ -15,7 +15,7 @@ import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
-import com.practicum.playlistmaker.player.domain.api.TracksDescriptionConsumer
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
@@ -24,12 +24,6 @@ class PlayerViewModel(
     json: String,
 ) : ViewModel(), MediaPlayerListener {
 
-    private val consumer = object : TracksDescriptionConsumer {
-
-        override fun consume(result: TrackDescription) {
-            setState(PlayerState.Description(result))
-        }
-    }
     private val timers: Map<String, Debounce> = mapOf(
         UPDATE_PLAYBACK_PROGRESS to Debounce(Util.UPDATE_PLAYBACK_PROGRESS_DELAY, viewModelScope) {
             setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
@@ -67,7 +61,12 @@ class PlayerViewModel(
 
     fun searchTrackDescription(url: String?) {
         url?.let{
-            trackDescriptionInteractor.searchTrackDescription(it, consumer)
+            viewModelScope.launch {
+                trackDescriptionInteractor.searchTrackDescription(it)
+                    .collect { result ->
+                        setState(PlayerState.Description(result))
+                    }
+            }
         } ?: setState(PlayerState.Description(TrackDescription(null)))
     }
 
@@ -77,7 +76,7 @@ class PlayerViewModel(
         }
     }
 
-    fun release() {
+    private fun release() {
         timers.forEach {
             if (it.value.isRunning) it.value.stop()
         }
@@ -105,6 +104,11 @@ class PlayerViewModel(
             Player.STATE_BUFFERING -> loadTrack()
             else -> {}
         }
+    }
+
+    override fun onCleared() {
+        release()
+        super.onCleared()
     }
 
     private companion object {

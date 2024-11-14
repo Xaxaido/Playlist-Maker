@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.search.data.dto
 
 class TracksSearchResponse(
-    val text: String,
+    var text: String,
     val results: List<TrackDto>,
 ) : Response()

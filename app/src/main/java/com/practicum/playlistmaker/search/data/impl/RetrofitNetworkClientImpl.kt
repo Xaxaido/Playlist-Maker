@@ -7,7 +7,6 @@ import com.practicum.playlistmaker.search.data.network.ITunesService
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 class RetrofitNetworkClientImpl(
     private val iTunesService: ITunesService,
@@ -20,12 +19,9 @@ class RetrofitNetworkClientImpl(
                 response.apply {
                     resultCode = Util.HTTP_OK
                 }
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 Response().apply {
-                    resultCode = when (e.message) {
-                        "Canceled" -> Util.REQUEST_CANCELLED
-                        else -> Util.REQUEST_TIMEOUT
-                    }
+                    resultCode = Util.INTERNAL_SERVER_ERROR
                 }
             }
         }
