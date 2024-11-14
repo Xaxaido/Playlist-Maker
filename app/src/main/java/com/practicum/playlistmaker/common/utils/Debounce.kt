@@ -19,9 +19,7 @@ class Debounce(
         job = scope.launch {
             do {
                 delay(delay)
-                if (isRunning) {
-                    action()
-                }
+                action()
             } while (isLoop)
         }
     }

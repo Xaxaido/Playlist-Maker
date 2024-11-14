@@ -252,13 +252,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun renderState(state: SearchState) {
+        if (state.term != null && searchRequest != state.term) return
+
         when (state) {
             is SearchState.NoData -> showNoData()
+            is SearchState.Loading -> visibility.show(Loading)
             is SearchState.TrackSearchResults -> showSearchResults(state.results)
             is SearchState.TrackSearchHistory -> showSearchHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)
             is SearchState.NothingFound -> visibility.show(NothingFound)
-            is SearchState.Loading -> visibility.show(Loading)
         }
     }
 
@@ -289,7 +291,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             swipeHelper.disableClick()
             trackAdapter.notifyItemChanged(pos)
             viewModel.removeFromHistory(pos - 1)
-            Debounce(Util.ANIMATION_SHORT, lifecycleScope) {
+            Debounce(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
                 startParticleAnimation(pos) {
                     viewModel.getHistory(false)
                     swipeHelper.enableClick()

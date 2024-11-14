@@ -241,11 +241,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.controlPlayback(false)
-    }
 
-    override fun onDestroy() {
-        viewModel.release()
-        super.onDestroy()
+        if (!requireActivity().isChangingConfigurations) {
+            viewModel.controlPlayback(false)
+        }
     }
 }

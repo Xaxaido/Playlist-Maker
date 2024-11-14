@@ -23,24 +23,24 @@ class TracksRepositoryImpl(
         val response = networkClient.doRequest(RetrofitSearchRequest(term, page))
 
         when (response.resultCode) {
-            Util.NO_CONNECTION -> {
-                emit(TracksSearchState.Error(error = Util.NO_CONNECTION))
+            Util.INTERNAL_SERVER_ERROR -> {
+                emit(TracksSearchState.Error(Util.INTERNAL_SERVER_ERROR, term))
             }
             Util.HTTP_OK -> {
                 val result = (response as TracksSearchResponse).results
 
                 emit(
                     if (result.isEmpty()) {
-                        TracksSearchState.Success(emptyList())
+                        TracksSearchState.Success(emptyList(), term)
                     } else {
                         result.filter { !it.previewUrl.isNullOrEmpty() }.let {
-                            TracksSearchState.Success(it.toTracksList())
+                            TracksSearchState.Success(it.toTracksList(), term)
                         }
                     }
                 )
             }
             else -> {
-                emit(TracksSearchState.Error(error = response.resultCode))
+                emit(TracksSearchState.Error(response.resultCode, term))
             }
         }
     }

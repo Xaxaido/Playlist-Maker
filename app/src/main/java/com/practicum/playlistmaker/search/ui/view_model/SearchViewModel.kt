@@ -50,7 +50,7 @@ class SearchViewModel(
 
     fun clearHistory() {
         searchHistoryInteractor.clearHistory()
-        setState(SearchState.TrackSearchResults(emptyList()))
+        setState(SearchState.TrackSearchHistory(emptyList(), false))
     }
 
     fun addToHistory(track: Track) { searchHistoryInteractor.addTrack(track) }
@@ -60,27 +60,27 @@ class SearchViewModel(
     private fun doSearch(term: String) {
         if (term.isEmpty()) return
         if (!hasInternet) {
-            setState(SearchState.ConnectionError(error = Util.NO_CONNECTION))
+            setState(SearchState.ConnectionError(Util.NO_CONNECTION, term))
             return
         }
 
         setState(SearchState.Loading)
         viewModelScope.launch {
             tracksInteractor.searchTracks(term)
-                .collect { pair ->
-                    processResult(pair.first, pair.second)
+                .collect { result ->
+                    processResult(result.tracks, result.error, result.term)
                 }
         }
     }
 
-    private fun processResult(tracks: List<Track>?, error: Int?) {
+    private fun processResult(tracks: List<Track>?, error: Int?, term: String) {
         when {
             !tracks.isNullOrEmpty() -> {
-                setState(SearchState.TrackSearchResults(results = tracks))
+                setState(SearchState.TrackSearchResults(tracks, term))
             }
             else -> {
-                if (error != null) setState(SearchState.ConnectionError(error = error))
-                else setState(SearchState.NothingFound)
+                if (error != null) setState(SearchState.ConnectionError(error, term))
+                else setState(SearchState.NothingFound(term))
             }
         }
     }
