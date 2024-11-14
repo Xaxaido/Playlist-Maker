@@ -42,7 +42,7 @@ class BlurredImageView @JvmOverloads constructor(
             else -> -1
         }
 
-        if (startY == -1 || contentHeight == 0) return null
+        if (startY < 0 || contentHeight == 0) return null
 
         val bitmap = Bitmap.createBitmap(width, contentHeight, Bitmap.Config.ARGB_8888)
         Canvas(bitmap).apply {

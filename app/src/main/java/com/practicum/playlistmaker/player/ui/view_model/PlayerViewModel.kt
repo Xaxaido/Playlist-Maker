@@ -5,12 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
-import com.google.gson.Gson
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
+import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackEntity
 import com.practicum.playlistmaker.common.utils.Util
+import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
@@ -18,12 +19,14 @@ import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
     private val playerInteractor: PlayerInteractor,
-    gson: Gson,
     json: String,
 ) : ViewModel(), MediaPlayerListener {
 
+    private var isFavorite: Boolean = false
+    private val track: Track = Util.jsonToTrack(json)
     private val timers: Map<String, Debounce> = mapOf(
         UPDATE_PLAYBACK_PROGRESS to Debounce(Util.UPDATE_PLAYBACK_PROGRESS_DELAY, viewModelScope) {
             setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
@@ -36,9 +39,35 @@ class PlayerViewModel(
     val liveData: LiveData<PlayerState> get() = _liveData
 
     init {
-        val track = gson.fromJson(json, Track::class.java)
         playerInteractor.init(this, track)
         setState(PlayerState.TrackData(track))
+        isFavorite()
+    }
+
+    private fun isFavorite() {
+        viewModelScope.launch {
+            favoriteTracksInteractor
+                .isFavorite(track.id)
+                .collect {
+                    isFavorite = it
+                    setState(PlayerState.IsFavorite(it))
+                }
+        }
+    }
+
+    fun addToFavorites() {
+        viewModelScope.launch {
+            favoriteTracksInteractor.also {
+                isFavorite = !isFavorite
+                val entity = track.toTrackEntity()
+                if (isFavorite) {
+                    it.add(entity)
+                } else {
+                    it.remove(entity)
+                }
+            }
+            setState(PlayerState.IsFavorite(isFavorite))
+        }
     }
 
     fun controlPlayback(shouldPlay: Boolean = true) {

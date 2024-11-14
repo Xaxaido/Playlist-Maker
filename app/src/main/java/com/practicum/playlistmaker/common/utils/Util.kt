@@ -5,11 +5,15 @@ import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
+import com.google.gson.Gson
 import com.practicum.playlistmaker.common.resources.AppTheme
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
+import com.practicum.playlistmaker.search.domain.model.Track
 
 object Util {
 
+    const val IS_FAVORITE = "IS_FAVORITE"
+    const val PLAYER_FRAGMENT_IS_FAVORITE = "PLAYER_FRAGMENT_IS_FAVORITE"
     const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
     const val ANIMATION_SHORT= 250L
     const val UPDATE_PLAYBACK_PROGRESS_DELAY= 300L
@@ -29,6 +33,9 @@ object Util {
     const val PARTICLE_SIZE = 1.5f
     const val UNDERLAY_BUTTON_TEXT_SIZE = 30f
     const val UNDERLAY_BUTTON_WIDTH = 200
+
+    fun jsonToTrack(json: String): Track = Gson().fromJson(json, Track::class.java)
+    fun trackToJson(track: Track): String = Gson().toJson(track)
 
     fun applyTheme(theme: String) {
         AppCompatDelegate.setDefaultNightMode(

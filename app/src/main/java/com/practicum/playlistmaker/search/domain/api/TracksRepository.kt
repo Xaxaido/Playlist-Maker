@@ -5,6 +5,5 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 interface TracksRepository {
-    fun trackToJson(track: Track): String
     fun searchTracks(term: String, page: Int): Flow<TracksSearchState>
 }

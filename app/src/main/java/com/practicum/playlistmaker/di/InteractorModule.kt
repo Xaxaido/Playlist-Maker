@@ -2,6 +2,8 @@ package com.practicum.playlistmaker.di
 
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.main.domain.impl.InternetConnectionInteractorImpl
+import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
+import com.practicum.playlistmaker.medialibrary.domain.impl.FavoriteTracksInteractorImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
 import com.practicum.playlistmaker.player.domain.impl.PlayerInteractorImpl
@@ -17,6 +19,10 @@ import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import org.koin.dsl.module
 
 val interactorModule = module {
+
+    single<FavoriteTracksInteractor> {
+        FavoriteTracksInteractorImpl(get())
+    }
 
     single<TracksInteractor> {
         TracksInteractorImpl(get())

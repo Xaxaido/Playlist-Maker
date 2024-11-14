@@ -3,9 +3,11 @@ package com.practicum.playlistmaker.di
 import android.content.ComponentName
 import android.content.Context
 import androidx.media3.session.SessionToken
+import androidx.room.Room
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.main.data.network.InternetConnection
+import com.practicum.playlistmaker.medialibrary.data.AppDataBase
 import com.practicum.playlistmaker.player.ui.PlaybackService
 import com.practicum.playlistmaker.search.data.network.ITunesService
 import com.practicum.playlistmaker.search.data.impl.JsoupNetworkClientImpl
@@ -19,6 +21,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDataBase::class.java, androidContext().getString(R.string.database_file_name))
+            .build()
+    }
 
     single<ITunesService> {
         Retrofit.Builder()

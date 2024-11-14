@@ -8,7 +8,7 @@ sealed interface VisibilityState {
     data object NothingFound : VisibilityState
     data object NoData : VisibilityState
     data object History : VisibilityState
-    data object SearchResults : VisibilityState
+    data object Results : VisibilityState
     data object Loading : VisibilityState
     class VisibilityItem(
         val view: View,

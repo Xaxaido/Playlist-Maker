@@ -2,6 +2,8 @@ package com.practicum.playlistmaker.di
 
 import com.practicum.playlistmaker.main.data.impl.InternetConnectionRepositoryImpl
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionRepository
+import com.practicum.playlistmaker.medialibrary.data.db.impl.FavoriteTracksRepositoryImpl
+import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksRepository
 import com.practicum.playlistmaker.player.data.impl.PlayerRepositoryImpl
 import com.practicum.playlistmaker.player.data.impl.TrackDescriptionRepositoryImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerRepository
@@ -18,8 +20,12 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
 
+    single<FavoriteTracksRepository> {
+        FavoriteTracksRepositoryImpl(get())
+    }
+
     single<TracksRepository> {
-        TracksRepositoryImpl(get(), get())
+        TracksRepositoryImpl(get())
     }
 
     single<SearchHistoryRepository> {

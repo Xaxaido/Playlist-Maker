@@ -70,6 +70,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     private fun setListeners() {
         viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
+        binding.addToFavoriteButton.setOnClickListener { viewModel.addToFavorites() }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
 
@@ -216,6 +217,13 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
     }
 
+    private fun updateFavoriteIcon(isFavorite: Boolean) {
+       binding.addToFavoriteButton.setImageResource(
+           if (isFavorite) R.drawable.favorite_true_icon
+           else R.drawable.favorite_false_icon
+       )
+    }
+
     private fun renderState(state: PlayerState) {
         when (state) {
             is PlayerState.TrackData -> fillTrackData(state.track)
@@ -226,6 +234,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             is PlayerState.Stop -> stop()
             is PlayerState.BufferedProgress -> updateBufferedProgress(state.progress)
             is PlayerState.Description -> showTrackDescription(state.result)
+            is PlayerState.IsFavorite -> updateFavoriteIcon(state.isFavorite)
         }
     }
 
