@@ -26,7 +26,7 @@ import com.practicum.playlistmaker.common.resources.VisibilityState.History
 import com.practicum.playlistmaker.common.resources.VisibilityState.Loading
 import com.practicum.playlistmaker.common.resources.VisibilityState.NoData
 import com.practicum.playlistmaker.common.resources.VisibilityState.NothingFound
-import com.practicum.playlistmaker.common.resources.VisibilityState.SearchResults
+import com.practicum.playlistmaker.common.resources.VisibilityState.Results
 import com.practicum.playlistmaker.common.resources.VisibilityState.ViewsList
 import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityItem
 import com.practicum.playlistmaker.common.utils.Debounce
@@ -93,7 +93,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 VisibilityItem(binding.nothingFound, listOf(NothingFound)),
                 VisibilityItem(binding.progressBar, listOf(Loading)),
                 VisibilityItem(binding.stickyContainer.clearHistory, listOf(History)),
-                VisibilityItem(binding.recycler, listOf(History, SearchResults)),
+                VisibilityItem(binding.recycler, listOf(History, Results)),
             )
         )
 
@@ -247,7 +247,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private fun showSearchResults(list: List<Track>) {
         isHistoryVisible = false
         trackAdapter.submitTracksList(false, list, true)  {
-            visibility.show(SearchResults)
+            visibility.show(Results)
         }
     }
 

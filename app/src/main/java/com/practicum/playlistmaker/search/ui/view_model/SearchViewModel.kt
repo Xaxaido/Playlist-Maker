@@ -10,11 +10,13 @@ import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
+import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
     private val tracksInteractor: TracksInteractor,
     private val searchHistoryInteractor: SearchHistoryInteractor,
     private val internetConnectionInteractor: InternetConnectionInteractor,
@@ -32,7 +34,7 @@ class SearchViewModel(
         internetConnectionInteractor.addOnInternetConnectListener(this)
     }
 
-    fun trackToJson(track: Track) = tracksInteractor.trackToJson(track)
+    fun trackToJson(track: Track) = Util.trackToJson(track)
 
     fun search(term: String) {
         searchQuery = term

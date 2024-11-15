@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name" translatable="false">Playlist maker</string>
     <string name="prefs_file_name" translatable="false">Main preferences</string>
+    <string name="database_file_name" translatable="false">database.db</string>
     <string name="app_theme" translatable="false">appTheme</string>
     <string name="search_history" translatable="false">searchHistory</string>
     <string name="player_layout" translatable="false">playerLayout</string>

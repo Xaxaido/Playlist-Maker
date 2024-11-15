@@ -10,8 +10,6 @@ class TracksInteractorImpl(
     private val repository: TracksRepository,
 ) : TracksInteractor {
 
-    override fun trackToJson(track: Track) = repository.trackToJson(track)
-
     override fun searchTracks(term: String, page: Int): Flow<TracksSearchState> {
         return repository.searchTracks(term, page)
     }

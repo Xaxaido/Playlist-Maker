@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
-import com.practicum.playlistmaker.medialibrary.view_model.PlaylistsViewModel
+import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
