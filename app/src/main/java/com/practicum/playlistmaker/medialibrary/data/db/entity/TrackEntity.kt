@@ -17,5 +17,6 @@ data class TrackEntity(
     val country: String?,
     val previewUrl: String,
     val artistViewUrl: String?,
+    val isFavorite: Boolean,
     val dateAdded: Long,
 )

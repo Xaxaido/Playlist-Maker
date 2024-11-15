@@ -1,5 +1,7 @@
 package com.practicum.playlistmaker.player.ui.view_model
 
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +11,6 @@ import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackEntity
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
@@ -25,7 +26,6 @@ class PlayerViewModel(
     json: String,
 ) : ViewModel(), MediaPlayerListener {
 
-    private var isFavorite: Boolean = false
     private val track: Track = Util.jsonToTrack(json)
     private val timers: Map<String, Debounce> = mapOf(
         UPDATE_PLAYBACK_PROGRESS to Debounce(Util.UPDATE_PLAYBACK_PROGRESS_DELAY, viewModelScope) {
@@ -41,32 +41,14 @@ class PlayerViewModel(
     init {
         playerInteractor.init(this, track)
         setState(PlayerState.TrackData(track))
-        isFavorite()
-    }
-
-    private fun isFavorite() {
-        viewModelScope.launch {
-            favoriteTracksInteractor
-                .isFavorite(track.id)
-                .collect {
-                    isFavorite = it
-                    setState(PlayerState.IsFavorite(it))
-                }
-        }
+        Handler(Looper.getMainLooper()).postDelayed({
+            setState(PlayerState.IsFavorite(track.isFavorite, false))
+        }, 100)
     }
 
     fun addToFavorites() {
-        viewModelScope.launch {
-            favoriteTracksInteractor.also {
-                isFavorite = !isFavorite
-                val entity = track.toTrackEntity()
-                if (isFavorite) {
-                    it.add(entity)
-                } else {
-                    it.remove(entity)
-                }
-            }
-            setState(PlayerState.IsFavorite(isFavorite))
+        favoriteTracksInteractor.addToFavorites(viewModelScope, track) {
+            setState(PlayerState.IsFavorite(track.isFavorite))
         }
     }
 

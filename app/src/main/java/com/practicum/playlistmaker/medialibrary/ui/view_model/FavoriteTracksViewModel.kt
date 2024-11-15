@@ -17,6 +17,7 @@ class FavoriteTracksViewModel(
     val liveData: LiveData<FavoriteTracksState> get() = _liveData
 
     fun showFavoriteTracks() {
+        setState(FavoriteTracksState.Loading)
         viewModelScope.launch {
             favoriteTracksInteractor
                 .getAll()

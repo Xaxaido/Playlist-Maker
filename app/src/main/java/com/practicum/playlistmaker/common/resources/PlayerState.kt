@@ -22,6 +22,7 @@ interface PlayerState {
         val result: TrackDescription
     ) : PlayerState
     class IsFavorite(
-        val isFavorite: Boolean
+        val isFavorite: Boolean,
+        val shouldPlayAnimation: Boolean = true
     ) : PlayerState
 }

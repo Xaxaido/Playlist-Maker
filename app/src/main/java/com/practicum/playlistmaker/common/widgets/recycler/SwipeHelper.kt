@@ -191,7 +191,7 @@ abstract class SwipeHelper(
                 val buffer: MutableList<UnderlayButton>
 
                 if (!buttonsBuffer.containsKey(pos)) {
-                    buffer = instantiateUnderlayButton()
+                    buffer = instantiateUnderlayButton(pos)
                     buttonsBuffer[pos] = buffer
                 } else {
                     buffer = buttonsBuffer[pos]!!
@@ -252,5 +252,5 @@ abstract class SwipeHelper(
         }
     }
 
-    abstract fun instantiateUnderlayButton(): MutableList<UnderlayButton>
+    abstract fun instantiateUnderlayButton(pos: Int): MutableList<UnderlayButton>
 }

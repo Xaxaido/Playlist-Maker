@@ -16,7 +16,7 @@ class TrackAdapter(
             .addDelegate(footerItemDelegate(onClearHistoryClick))
     }
 
-    fun getItem(pos: Int): TrackListItem = differ.currentList[pos]
+    fun getItem(pos: Int): TrackListItem.TrackItem = differ.currentList[pos] as TrackListItem.TrackItem
 
     fun submitTracksList(
         isDecorationNeeded: Boolean = false,
@@ -50,6 +50,20 @@ class TrackAdapter(
             if (isDecorationNeeded) this += TrackListItem.Header
             this += list.map { TrackListItem.TrackItem(it) }
             if (isDecorationNeeded) this += TrackListItem.Footer()
+        }
+    }
+
+    fun updateFavorites(favorites: List<Long>) {
+        differ.currentList.mapIndexed { index, item ->
+            if (item is TrackListItem.TrackItem) {
+                item.track.apply {
+                    val isItemFavorite = favorites.contains(id)
+                    if (isFavorite != isItemFavorite) {
+                        isFavorite = isItemFavorite
+                        notifyItemChanged(index)
+                    }
+                }
+            }
         }
     }
 }

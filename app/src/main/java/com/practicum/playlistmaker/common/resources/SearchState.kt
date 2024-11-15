@@ -8,6 +8,7 @@ sealed class SearchState(
 
     data object NoData: SearchState(null)
     data object Loading: SearchState(null)
+    data object IsFavorite: SearchState(null)
     class NothingFound(
         term: String,
     ): SearchState(term)
@@ -16,11 +17,11 @@ sealed class SearchState(
         term: String,
     ) : SearchState(term)
     class TrackSearchResults(
-        val results: List<Track>,
+        var results: List<Track>,
         term: String,
     ) : SearchState(term)
     class TrackSearchHistory(
-        val history: List<Track>,
+        var history: List<Track>,
         val isDataSetChanged: Boolean,
     ) : SearchState(null)
 }

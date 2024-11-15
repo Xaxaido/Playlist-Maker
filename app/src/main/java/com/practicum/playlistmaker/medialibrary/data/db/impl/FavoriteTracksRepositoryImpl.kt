@@ -25,6 +25,11 @@ class FavoriteTracksRepositoryImpl(
         emit(tracks.toTrack())
     }
 
+    override fun getIds(): Flow<List<Long>> = flow {
+        val ids = dataBase.trackDao().getIds()
+        emit(ids)
+    }
+
     override fun isFavorite(id: Long): Flow<Boolean> = flow {
         val isInFavorite = dataBase.trackDao().isFavorite(id)
         emit(isInFavorite)

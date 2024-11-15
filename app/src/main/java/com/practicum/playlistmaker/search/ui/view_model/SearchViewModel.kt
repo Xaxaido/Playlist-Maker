@@ -34,7 +34,21 @@ class SearchViewModel(
         internetConnectionInteractor.addOnInternetConnectListener(this)
     }
 
-    fun trackToJson(track: Track) = Util.trackToJson(track)
+    fun addToFavorites(track: Track) {
+        favoriteTracksInteractor.addToFavorites(viewModelScope, track) {
+            setState(SearchState.IsFavorite)
+        }
+    }
+
+    fun getFavorites(action: (List<Long>) -> Unit) {
+        viewModelScope.launch {
+            favoriteTracksInteractor
+                .getIds()
+                .collect {
+                    action(it)
+                }
+        }
+    }
 
     fun search(term: String) {
         searchQuery = term
@@ -42,12 +56,10 @@ class SearchViewModel(
     }
 
     fun getHistory(isDatasetChanged: Boolean) {
-        setState(
-            SearchState.TrackSearchHistory(
-                searchHistoryInteractor.history,
-                isDatasetChanged,
-            )
-        )
+        markFavorites(searchHistoryInteractor.history,  SearchState.TrackSearchHistory(
+            searchHistoryInteractor.history,
+            isDatasetChanged,
+        ))
     }
 
     fun clearHistory() {
@@ -78,12 +90,23 @@ class SearchViewModel(
     private fun processResult(tracks: List<Track>?, error: Int?, term: String) {
         when {
             !tracks.isNullOrEmpty() -> {
-                setState(SearchState.TrackSearchResults(tracks, term))
+                markFavorites(tracks, SearchState.TrackSearchResults(tracks, term))
             }
             else -> {
                 if (error != null) setState(SearchState.ConnectionError(error, term))
                 else setState(SearchState.NothingFound(term))
             }
+        }
+    }
+
+    private fun markFavorites(tracks: List<Track>, state: SearchState) {
+        favoriteTracksInteractor.markFavorites(viewModelScope, tracks) { list ->
+            when (state) {
+                is SearchState.TrackSearchHistory -> state.history = list
+                is SearchState.TrackSearchResults -> state.results = list
+                else -> {}
+            }
+            setState(state)
         }
     }
 

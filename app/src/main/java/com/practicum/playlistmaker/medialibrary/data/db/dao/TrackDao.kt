@@ -19,6 +19,9 @@ interface TrackDao {
     @Query("SELECT * FROM favorite_tracks ORDER BY dateAdded DESC")
     suspend fun getAll(): List<TrackEntity>
 
+    @Query("SELECT id FROM favorite_tracks")
+    suspend fun getIds(): List<Long>
+
     @Query("SELECT EXISTS (SELECT 1 FROM favorite_tracks WHERE id = :id)")
     suspend fun isFavorite(id: Long): Boolean
 }

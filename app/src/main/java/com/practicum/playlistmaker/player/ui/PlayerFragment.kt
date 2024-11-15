@@ -181,6 +181,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             .centerCrop()
             .transform(RoundedCorners(8.dpToPx(requireActivity())))
             .into(binding.albumCover)
+
         syncScrollingText()
     }
 
@@ -217,11 +218,19 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
     }
 
-    private fun updateFavoriteIcon(isFavorite: Boolean) {
-       binding.addToFavoriteButton.setImageResource(
-           if (isFavorite) R.drawable.favorite_true_icon
-           else R.drawable.favorite_false_icon
-       )
+    private fun updateFavoritesBtn(isFavorite: Boolean, shouldPlayAnimation: Boolean) {
+        if (shouldPlayAnimation) {
+            startAnimation(binding.addToFavoriteButton) { updateFavoritesBtnIcon(isFavorite) }
+        } else {
+            updateFavoritesBtnIcon(isFavorite)
+        }
+    }
+
+    private fun updateFavoritesBtnIcon(isFavorite: Boolean) {
+        binding.addToFavoriteButton.setImageResource(
+            if (isFavorite) R.drawable.favorite_true_icon
+            else R.drawable.favorite_false_icon
+        )
     }
 
     private fun renderState(state: PlayerState) {
@@ -234,7 +243,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             is PlayerState.Stop -> stop()
             is PlayerState.BufferedProgress -> updateBufferedProgress(state.progress)
             is PlayerState.Description -> showTrackDescription(state.result)
-            is PlayerState.IsFavorite -> updateFavoriteIcon(state.isFavorite)
+            is PlayerState.IsFavorite -> updateFavoritesBtn(state.isFavorite, state.shouldPlayAnimation)
         }
     }
 

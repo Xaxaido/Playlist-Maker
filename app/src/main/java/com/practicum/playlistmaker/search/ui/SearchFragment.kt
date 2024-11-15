@@ -79,6 +79,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     override fun onResume() {
         super.onResume()
         (activity as? BackButtonState)?.updateBackBtn(false)
+        if (trackAdapter.itemCount > 0) {
+            updateFavorites()
+        }
     }
 
     override fun onStop() {
@@ -103,7 +106,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
                 isClickEnabled = false
                 viewModel.addToHistory(track)
-                sendToPlayer(viewModel.trackToJson(track))
+                sendToPlayer(Util.trackToJson(track))
                 Debounce(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             },
             { clearHistory() }
@@ -122,11 +125,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     private fun initSwipeHelper() = object : SwipeHelper(requireActivity(), binding.recycler) {
 
-        override fun instantiateUnderlayButton() =
+        override fun instantiateUnderlayButton(pos: Int) =
             if (isHistoryVisible) {
-                mutableListOf(btnDelete(), btnAddToFav())
+                mutableListOf(btnDelete(), btnAddToFav(pos))
             } else {
-                mutableListOf(btnAddToFav())
+                mutableListOf(btnAddToFav(pos))
             }
     }
 
@@ -169,6 +172,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                     viewModel.getHistory(true)
                 }
             }
+        }
+    }
+
+    private fun updateFavorites() {
+        viewModel.getFavorites { favorites ->
+            trackAdapter.updateFavorites(favorites)
         }
     }
 
@@ -261,6 +270,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             is SearchState.TrackSearchHistory -> showSearchHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)
             is SearchState.NothingFound -> visibility.show(NothingFound)
+            is SearchState.IsFavorite -> updateFavorites()
         }
     }
 
@@ -300,15 +310,17 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
-    private val btnAddToFav: () -> UnderlayButton = {
+    private val btnAddToFav: (Int) -> UnderlayButton = {
+        val icon = if (trackAdapter.getItem(it).track.isFavorite) R.drawable.favorite else R.drawable.ic_add_to_fav
         UnderlayButton(
             requireActivity(),
             getString(R.string.history_add_to_fav),
-            R.drawable.ic_add_to_fav,
+            icon,
             bgColor = requireActivity().getColor(R.color.greyLight),
             textColor = requireActivity().getColor(R.color.black),
         ) { pos ->
             trackAdapter.notifyItemChanged(pos)
+            viewModel.addToFavorites(trackAdapter.getItem(pos).track)
         }
     }
 }
