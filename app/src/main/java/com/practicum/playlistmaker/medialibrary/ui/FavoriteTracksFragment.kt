@@ -81,6 +81,8 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
                 resources.getDimensionPixelSize(R.dimen.toolbar_height),
             )
         ))
+
+        binding.blurImageViewBottomMenu.setContentView(binding.recycler)
     }
 
     private fun sendToPlayer(json: String) {

@@ -34,7 +34,7 @@ fun trackItemDelegate(
             .transform(RoundedCorners(2.dpToPx(itemView.context)))
             .into(binding.cover)
 
-        binding.favorite.isVisible = track.isFavorite
+        //binding.favorite.isVisible = track.isFavorite
         binding.trackTitle.text = track.trackName
         binding.artistName.setText(track.artistName, track.duration)
         itemView.setOnClickListener { onTrackClick(track) }

@@ -121,6 +121,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 resources.getDimensionPixelSize(R.dimen.toolbar_height),
             )
         ))
+
+        binding.blurImageViewActionbar.setContentView(binding.recycler)
+        binding.blurImageViewBottomMenu.setContentView(binding.recycler)
     }
 
     private fun initSwipeHelper() = object : SwipeHelper(requireActivity(), binding.recycler) {
