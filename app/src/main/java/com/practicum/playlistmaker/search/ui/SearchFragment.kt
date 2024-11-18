@@ -126,7 +126,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         binding.blurImageViewBottomMenu.setContentView(binding.recycler)
     }
 
-    private fun initSwipeHelper() = object : SwipeHelper(requireActivity(), binding.recycler) {
+    private fun initSwipeHelper() = object : SwipeHelper(binding.recycler) {
 
         override fun instantiateUnderlayButton(pos: Int) =
             if (isHistoryVisible) {
@@ -322,8 +322,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             bgColor = requireActivity().getColor(R.color.greyLight),
             textColor = requireActivity().getColor(R.color.black),
         ) { pos ->
-            trackAdapter.notifyItemChanged(pos)
             viewModel.addToFavorites(trackAdapter.getItem(pos).track)
+            trackAdapter.notifyItemChanged(pos)
         }
     }
 }

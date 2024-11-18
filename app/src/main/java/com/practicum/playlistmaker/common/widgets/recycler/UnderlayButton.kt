@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import android.view.MotionEvent
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
@@ -21,7 +22,7 @@ class UnderlayButton(
     @DrawableRes iconId: Int,
     private val bgColor: Int,
     private val textColor: Int,
-    private val clickListener: (Int) -> Unit ={},
+    private val onClick: (Int) -> Unit = {},
 ) {
 
     private var pos = 0
@@ -34,12 +35,12 @@ class UnderlayButton(
         }
     }
 
-    fun onClick(x: Float, y: Float): Boolean {
-        if (clickRegion != null && clickRegion!!.contains(x, y)) {
-            clickListener(pos)
-            return true
+    fun handleClick(event: MotionEvent) {
+        clickRegion?.let {
+            if (it.contains(event.x, event.y)) {
+                onClick(pos)
+            }
         }
-        return false
     }
 
     fun onDraw(c: Canvas, rectF: RectF, pos: Int) {
