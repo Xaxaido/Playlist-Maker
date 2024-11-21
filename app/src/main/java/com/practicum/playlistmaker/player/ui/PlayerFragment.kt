@@ -12,6 +12,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.animation.doOnEnd
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -24,6 +27,7 @@ import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -68,9 +72,16 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun setListeners() {
-        viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
         binding.addToFavoriteButton.setOnClickListener { viewModel.addToFavorites() }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stateFlow.collect { state ->
+                    renderState(state)
+                }
+            }
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
 

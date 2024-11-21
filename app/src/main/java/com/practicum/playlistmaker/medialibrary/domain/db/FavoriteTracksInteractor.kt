@@ -12,11 +12,7 @@ interface FavoriteTracksInteractor {
     fun getAll(): Flow<List<Track>>
     fun getIds(): Flow<List<Long>>
     fun isFavorite(id: Long): Flow<Boolean>
-    fun markFavorites(
-        scope: CoroutineScope,
-        tracks: List<Track>,
-        action: (List<Track>) -> Unit,
-    )
+    fun markFavorites(tracks: List<Track>): Flow<List<Track>>
     fun addToFavorites(
         scope: CoroutineScope,
         track: Track,

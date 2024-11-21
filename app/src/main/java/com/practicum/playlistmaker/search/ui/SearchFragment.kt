@@ -16,7 +16,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.practicum.playlistmaker.R
@@ -43,6 +45,7 @@ import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>() {
@@ -139,8 +142,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setListeners() {
         isKeyboardVisible()
-        viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.buttonRefresh.setOnClickListener { searchTracks() }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stateFlow.collect { state ->
+                    renderState(state)
+                }
+            }
+        }
 
         binding.recycler.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_MOVE) {

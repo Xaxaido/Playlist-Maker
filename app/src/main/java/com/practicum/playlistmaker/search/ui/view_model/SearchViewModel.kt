@@ -1,10 +1,9 @@
 package com.practicum.playlistmaker.search.ui.view_model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.common.resources.SearchState
+import com.practicum.playlistmaker.common.resources.TracksSearchState
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
@@ -13,6 +12,12 @@ import com.practicum.playlistmaker.main.domain.api.InternetConnectionInteractor
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -27,8 +32,9 @@ class SearchViewModel(
     private val timer: Debounce by lazy {
         Debounce(Util.USER_INPUT_DELAY, viewModelScope) { doSearch(searchQuery) }
     }
-    private val _liveData = MutableLiveData<SearchState>(SearchState.NoData)
-    val liveData: LiveData<SearchState> = _liveData
+
+    private val _stateFlow = MutableStateFlow<SearchState>(SearchState.NoData)
+    val stateFlow: StateFlow<SearchState> = _stateFlow.asStateFlow()
 
     init {
         internetConnectionInteractor.addOnInternetConnectListener(this)
@@ -56,10 +62,13 @@ class SearchViewModel(
     }
 
     fun getHistory(isDatasetChanged: Boolean) {
-        markFavorites(searchHistoryInteractor.history,  SearchState.TrackSearchHistory(
-            searchHistoryInteractor.history,
-            isDatasetChanged,
-        ))
+        viewModelScope.launch {
+            favoriteTracksInteractor
+                .markFavorites(searchHistoryInteractor.history)
+                .collect { updatedTracks ->
+                    setState(SearchState.TrackSearchHistory(updatedTracks, isDatasetChanged))
+            }
+        }
     }
 
     fun clearHistory() {
@@ -69,8 +78,9 @@ class SearchViewModel(
 
     fun addToHistory(track: Track) { searchHistoryInteractor.addTrack(track) }
     fun removeFromHistory(pos: Int) { searchHistoryInteractor.removeTrack(pos) }
-    private fun setState(state: SearchState) { _liveData.postValue(state) }
+    private fun setState(state: SearchState) { _stateFlow.value = state }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun doSearch(term: String) {
         if (term.isEmpty()) return
         if (!hasInternet) {
@@ -81,33 +91,28 @@ class SearchViewModel(
         setState(SearchState.Loading)
         viewModelScope.launch {
             tracksInteractor.searchTracks(term)
-                .collect { result ->
-                    processResult(result.tracks, result.error, result.term)
+                .flatMapLatest { result ->
+                    favoriteTracksInteractor.markFavorites(result.tracks).map { updatedTracks ->
+                        when(result) {
+                            is TracksSearchState.Success -> TracksSearchState.Success(updatedTracks, result.term)
+                            else -> result
+                        }
+                    }
+                }
+                .collect { updatedResult ->
+                    processResult(updatedResult.tracks, updatedResult.error, updatedResult.term)
                 }
         }
     }
 
-    private fun processResult(tracks: List<Track>?, error: Int?, term: String) {
-        when {
-            !tracks.isNullOrEmpty() -> {
-                markFavorites(tracks, SearchState.TrackSearchResults(tracks, term))
+    private fun processResult(tracks: List<Track>, error: Int?, term: String) {
+        setState(
+            when {
+                tracks.isNotEmpty() -> SearchState.TrackSearchResults(tracks, term)
+                error != null -> SearchState.ConnectionError(error, term)
+                else -> SearchState.NothingFound(term)
             }
-            else -> {
-                if (error != null) setState(SearchState.ConnectionError(error, term))
-                else setState(SearchState.NothingFound(term))
-            }
-        }
-    }
-
-    private fun markFavorites(tracks: List<Track>, state: SearchState) {
-        favoriteTracksInteractor.markFavorites(viewModelScope, tracks) { list ->
-            when (state) {
-                is SearchState.TrackSearchHistory -> state.history = list
-                is SearchState.TrackSearchResults -> state.results = list
-                else -> {}
-            }
-            setState(state)
-        }
+        )
     }
 
     override fun onConnectionStatusUpdate(hasInternet: Boolean) {

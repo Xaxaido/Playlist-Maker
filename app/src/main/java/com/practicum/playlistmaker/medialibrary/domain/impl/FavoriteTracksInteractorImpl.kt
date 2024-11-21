@@ -7,6 +7,7 @@ import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksReposito
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class FavoriteTracksInteractorImpl(
@@ -33,20 +34,14 @@ class FavoriteTracksInteractorImpl(
         return repository.isFavorite(id)
     }
 
-    override fun markFavorites(
-        scope: CoroutineScope,
-        tracks: List<Track>,
-        action: (List<Track>) -> Unit,
-    ) {
-        scope.launch {
-            getIds()
+    override fun markFavorites(tracks: List<Track>): Flow<List<Track>> = flow {
+        getIds()
             .collect { favorites ->
-                tracks.map {
-                    it.isFavorite = favorites.contains(it.id)
+                val updatedTracks = tracks.map { track ->
+                    track.apply { isFavorite = favorites.contains(id) }
                 }
-                action(tracks)
+                emit(updatedTracks)
             }
-        }
     }
 
     override fun addToFavorites(

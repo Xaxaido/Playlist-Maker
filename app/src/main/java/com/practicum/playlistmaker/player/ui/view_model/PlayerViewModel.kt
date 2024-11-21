@@ -2,8 +2,6 @@ package com.practicum.playlistmaker.player.ui.view_model
 
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
@@ -17,6 +15,9 @@ import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
@@ -35,8 +36,9 @@ class PlayerViewModel(
             setState(PlayerState.BufferedProgress(playerInteractor.bufferedProgress))
         },
     )
-    private val _liveData = MutableLiveData<PlayerState>()
-    val liveData: LiveData<PlayerState> get() = _liveData
+
+    private val _stateFlow = MutableStateFlow<PlayerState>(PlayerState.Default)
+    val stateFlow: StateFlow<PlayerState> = _stateFlow.asStateFlow()
 
     init {
         playerInteractor.init(this, track)
@@ -66,9 +68,7 @@ class PlayerViewModel(
         updatePlaybackProgressTimerState()
     }
 
-    private fun setState(state: PlayerState) {
-        _liveData.postValue(state)
-    }
+    private fun setState(state: PlayerState) { _stateFlow.value = state }
 
     fun searchTrackDescription(url: String?) {
         url?.let{

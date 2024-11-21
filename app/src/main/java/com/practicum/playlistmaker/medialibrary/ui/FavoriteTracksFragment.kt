@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.FavoriteTracksState
@@ -23,6 +25,7 @@ import com.practicum.playlistmaker.medialibrary.ui.view_model.FavoriteTracksView
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
@@ -93,7 +96,13 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
     }
 
     private fun setListeners() {
-        viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stateFlow.collect { state ->
+                    renderState(state)
+                }
+            }
+        }
     }
 
     private fun showFavoriteTracks(list: List<Track>) {

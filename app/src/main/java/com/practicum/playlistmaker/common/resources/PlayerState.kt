@@ -5,6 +5,7 @@ import com.practicum.playlistmaker.search.domain.model.Track
 
 interface PlayerState {
 
+    object Default : PlayerState
     object Ready : PlayerState
     object Playing : PlayerState
     object Paused : PlayerState
