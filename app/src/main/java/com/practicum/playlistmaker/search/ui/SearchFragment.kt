@@ -2,8 +2,6 @@ package com.practicum.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -16,7 +14,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.practicum.playlistmaker.R
@@ -34,7 +34,6 @@ import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
-import com.practicum.playlistmaker.common.widgets.recycler.ParticleAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
 import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
@@ -43,6 +42,7 @@ import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>() {
@@ -79,6 +79,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     override fun onResume() {
         super.onResume()
         (activity as? BackButtonState)?.updateBackBtn(false)
+        if (trackAdapter.itemCount > 0) {
+            updateFavorites()
+        }
     }
 
     override fun onStop() {
@@ -103,7 +106,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
                 isClickEnabled = false
                 viewModel.addToHistory(track)
-                sendToPlayer(viewModel.trackToJson(track))
+                sendToPlayer(Util.trackToJson(track))
                 Debounce(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             },
             { clearHistory() }
@@ -118,23 +121,33 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 resources.getDimensionPixelSize(R.dimen.toolbar_height),
             )
         ))
+
+        binding.blurImageViewActionbar.setContentView(binding.recycler)
+        binding.blurImageViewBottomMenu.setContentView(binding.recycler)
     }
 
-    private fun initSwipeHelper() = object : SwipeHelper(requireActivity(), binding.recycler) {
+    private fun initSwipeHelper() = object : SwipeHelper(binding.recycler) {
 
-        override fun instantiateUnderlayButton() =
+        override fun instantiateUnderlayButton(pos: Int) =
             if (isHistoryVisible) {
-                mutableListOf(btnDelete(), btnAddToFav())
+                mutableListOf(btnDelete(), btnAddToFav(pos))
             } else {
-                mutableListOf(btnAddToFav())
+                mutableListOf(btnAddToFav(pos))
             }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setListeners() {
         isKeyboardVisible()
-        viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
         binding.buttonRefresh.setOnClickListener { searchTracks() }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stateFlow.collect { state ->
+                    renderState(state)
+                }
+            }
+        }
 
         binding.recycler.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_MOVE) {
@@ -169,6 +182,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                     viewModel.getHistory(true)
                 }
             }
+        }
+    }
+
+    private fun updateFavorites() {
+        viewModel.getFavorites { favorites ->
+            trackAdapter.updateFavorites(favorites)
         }
     }
 
@@ -261,23 +280,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             is SearchState.TrackSearchHistory -> showSearchHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)
             is SearchState.NothingFound -> visibility.show(NothingFound)
+            is SearchState.IsFavorite -> updateFavorites()
         }
-    }
-
-    private fun startParticleAnimation(pos: Int, onAnimationEnd: () -> Unit) {
-        val viewToRemove = binding.recycler.findViewHolderForAdapterPosition(pos)?.itemView ?: return
-        val bitmap = Bitmap.createBitmap(viewToRemove.width, viewToRemove.height, Bitmap.Config.ARGB_8888)
-
-        Canvas(bitmap).also { viewToRemove.draw(it) }
-        viewToRemove.isVisible = false
-        binding.particleView.animator = ParticleAnimator(
-            requireActivity(),
-            binding.particleView,
-            bitmap,
-            0f,
-            viewToRemove.top.toFloat() + binding.recycler.top
-        )
-        binding.particleView.startAnimation { onAnimationEnd() }
     }
 
     private val btnDelete: () -> UnderlayButton = {
@@ -292,7 +296,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             trackAdapter.notifyItemChanged(pos)
             viewModel.removeFromHistory(pos - 1)
             Debounce(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
-                startParticleAnimation(pos) {
+                swipeHelper.startParticleAnimation(binding.particleView, pos) {
                     viewModel.getHistory(false)
                     swipeHelper.enableClick()
                 }
@@ -300,14 +304,17 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
-    private val btnAddToFav: () -> UnderlayButton = {
+    private val btnAddToFav: (Int) -> UnderlayButton = {
+        val track = trackAdapter.getItem(it)!!
+        val icon = if (track.isFavorite) R.drawable.favorite else R.drawable.ic_add_to_fav
         UnderlayButton(
             requireActivity(),
             getString(R.string.history_add_to_fav),
-            R.drawable.ic_add_to_fav,
+            icon,
             bgColor = requireActivity().getColor(R.color.greyLight),
             textColor = requireActivity().getColor(R.color.black),
         ) { pos ->
+            viewModel.addToFavorites(track)
             trackAdapter.notifyItemChanged(pos)
         }
     }

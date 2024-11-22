@@ -4,20 +4,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.FavoriteTracksState
+import com.practicum.playlistmaker.common.resources.VisibilityState.Loading
 import com.practicum.playlistmaker.common.resources.VisibilityState.NoData
 import com.practicum.playlistmaker.common.resources.VisibilityState.Results
 import com.practicum.playlistmaker.common.resources.VisibilityState.ViewsList
 import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityItem
+import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
+import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
+import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
+import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
+import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.practicum.playlistmaker.medialibrary.ui.view_model.FavoriteTracksViewModel
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
@@ -29,6 +39,8 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
     private val viewModel by viewModel<FavoriteTracksViewModel>()
     private lateinit var adapter: TrackAdapter
     private lateinit var visibility: ViewsList
+    private lateinit var swipeHelper: SwipeHelper
+    private var isClickEnabled = true
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -51,6 +63,7 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
     private fun setupUI() {
         visibility = ViewsList(
             listOf(
+                VisibilityItem(binding.progressBar, listOf(Loading)),
                 VisibilityItem(binding.emptyMedialibrary, listOf(NoData)),
                 VisibilityItem(binding.recycler, listOf(Results)),
             )
@@ -58,12 +71,31 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
 
         adapter = TrackAdapter(
             { track ->
+                if (!isClickEnabled) return@TrackAdapter
+
+                isClickEnabled = false
                 sendToPlayer(Util.trackToJson(track))
+                Debounce(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             }
         )
 
         binding.recycler.adapter = adapter
-        binding.recycler.itemAnimator = null
+        binding.recycler.itemAnimator = ItemAnimator()
+        binding.recycler.addItemDecoration(PaddingItemDecoration(
+            intArrayOf(
+                0,
+                resources.getDimensionPixelSize(R.dimen.toolbar_height),
+            )
+        ))
+
+        swipeHelper = initSwipeHelper()
+        binding.blurImageViewBottomMenu.setContentView(binding.recycler)
+    }
+
+    private fun initSwipeHelper() = object : SwipeHelper(binding.recycler) {
+
+        override fun instantiateUnderlayButton(pos: Int) =
+            mutableListOf(btnDelete())
     }
 
     private fun sendToPlayer(json: String) {
@@ -74,11 +106,17 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
     }
 
     private fun setListeners() {
-        viewModel.liveData.observe(viewLifecycleOwner, ::renderState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stateFlow.collect { state ->
+                    renderState(state)
+                }
+            }
+        }
     }
 
     private fun showFavoriteTracks(list: List<Track>) {
-        adapter.submitTracksList(false, list, true)  {
+        adapter.submitTracksList(false, list, false)  {
             visibility.show(Results)
         }
     }
@@ -87,6 +125,25 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
         when (state) {
             is FavoriteTracksState.Empty -> visibility.show(NoData)
             is FavoriteTracksState.Content -> showFavoriteTracks(state.tracks)
+        }
+    }
+
+    private val btnDelete: () -> UnderlayButton = {
+        UnderlayButton(
+            requireActivity(),
+            getString(R.string.history_delete_item),
+            R.drawable.ic_delete,
+            bgColor = requireActivity().getColor(R.color.red),
+            textColor = requireActivity().getColor(R.color.white),
+        ) { pos ->
+            swipeHelper.disableClick()
+            adapter.notifyItemChanged(pos)
+            Debounce(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
+                swipeHelper.startParticleAnimation(binding.particleView, pos) {
+                    viewModel.addToFavorites(adapter.getItem(pos)!!)
+                    swipeHelper.enableClick()
+                }
+            }.start()
         }
     }
 }

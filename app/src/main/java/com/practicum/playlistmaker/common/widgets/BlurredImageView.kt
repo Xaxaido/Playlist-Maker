@@ -9,7 +9,6 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
-import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.utils.Blur
 
 class BlurredImageView @JvmOverloads constructor(
@@ -25,18 +24,25 @@ class BlurredImageView @JvmOverloads constructor(
             updateBlur()
         }
     }
-    private lateinit var contentView: View
+    private var contentView: View? = null
+
+    fun setContentView(view: View) {
+        contentView = view
+    }
 
     private fun updateBlur() {
-        captureContent().let {
-            if (it != null) Blur.blur(context, this, it)
+        captureContent()?.let {
+            Blur.blur(context, this, it)
         }
     }
 
     private fun captureContent(): Bitmap? {
+        val contentView = contentView ?: return null
+
         val contentTop = top - contentView.top
         val contentHeight = contentView.height
-        val startY = when(contentTop + measuredHeight) {
+
+        val startY = when (contentTop + measuredHeight) {
             in 0..contentHeight -> contentTop
             in contentHeight + 1..contentHeight + measuredHeight -> contentTop - measuredHeight
             else -> -1
@@ -61,8 +67,6 @@ class BlurredImageView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-
-        contentView = rootView.findViewById(R.id.recycler)
         post { animator.start() }
     }
 }

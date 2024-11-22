@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.player.ui.view_model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
@@ -9,13 +9,15 @@ import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackEntity
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
@@ -25,7 +27,6 @@ class PlayerViewModel(
     json: String,
 ) : ViewModel(), MediaPlayerListener {
 
-    private var isFavorite: Boolean = false
     private val track: Track = Util.jsonToTrack(json)
     private val timers: Map<String, Debounce> = mapOf(
         UPDATE_PLAYBACK_PROGRESS to Debounce(Util.UPDATE_PLAYBACK_PROGRESS_DELAY, viewModelScope) {
@@ -35,48 +36,35 @@ class PlayerViewModel(
             setState(PlayerState.BufferedProgress(playerInteractor.bufferedProgress))
         },
     )
-    private val _liveData = MutableLiveData<PlayerState>()
-    val liveData: LiveData<PlayerState> get() = _liveData
+
+    private val _stateFlow = MutableStateFlow<PlayerState>(PlayerState.Default)
+    val stateFlow: StateFlow<PlayerState> = _stateFlow.asStateFlow()
 
     init {
         playerInteractor.init(this, track)
         setState(PlayerState.TrackData(track))
-        isFavorite()
+        Handler(Looper.getMainLooper()).postDelayed({
+            setState(PlayerState.IsFavorite(track.isFavorite, false))
+        }, 100)
     }
 
-    private fun isFavorite() {
-        viewModelScope.launch {
-            favoriteTracksInteractor
-                .isFavorite(track.id)
-                .collect {
-                    isFavorite = it
-                    setState(PlayerState.IsFavorite(it))
-                }
-        }
+    fun addToPlaylist() {
+        setState(PlayerState.IsPlayListed(track.isFavorite))
     }
 
     fun addToFavorites() {
-        viewModelScope.launch {
-            favoriteTracksInteractor.also {
-                isFavorite = !isFavorite
-                val entity = track.toTrackEntity()
-                if (isFavorite) {
-                    it.add(entity)
-                } else {
-                    it.remove(entity)
-                }
-            }
-            setState(PlayerState.IsFavorite(isFavorite))
+        favoriteTracksInteractor.addToFavorites(viewModelScope, track) {
+            setState(PlayerState.IsFavorite(track.isFavorite))
         }
     }
 
     fun controlPlayback(shouldPlay: Boolean = true) {
         playerInteractor.apply {
             if (isPlaying) {
-                setState(PlayerState.Paused)
+                setState(PlayerState.IsPlaying(false))
                 pause()
             } else if (shouldPlay) {
-                setState(PlayerState.Playing)
+                setState(PlayerState.IsPlaying(true))
                 play()
             }
         }
@@ -84,9 +72,7 @@ class PlayerViewModel(
         updatePlaybackProgressTimerState()
     }
 
-    private fun setState(state: PlayerState) {
-        _liveData.postValue(state)
-    }
+    private fun setState(state: PlayerState) { _stateFlow.value = state }
 
     fun searchTrackDescription(url: String?) {
         url?.let{

@@ -1,95 +1,58 @@
 package com.practicum.playlistmaker.common.widgets.recycler
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Point
-import android.graphics.Rect
 import android.graphics.RectF
-import android.view.GestureDetector
-import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.search.domain.model.TrackListItem
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import java.util.LinkedList
 import java.util.Queue
 
 @SuppressLint("ClickableViewAccessibility")
 abstract class SwipeHelper(
-    context: Context,
     private val recyclerView: RecyclerView,
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
-    lateinit var buttons: MutableList<UnderlayButton>
-    private lateinit var gestureDetector: GestureDetector
     private var swipedPos = -1
-    private val buttonsBuffer: MutableMap<Int, MutableList<UnderlayButton>>
+    private val buttonsBuffer: MutableMap<Int, MutableList<UnderlayButton>> = mutableMapOf()
     private lateinit var recoverQueue: Queue<Int>
     private var isRecoveringSwipedItem = false
     private var isAnimationPlaying = false
-
-    private val gestureListener: SimpleOnGestureListener = object : SimpleOnGestureListener() {
-
-        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            for (button in buttons) {
-                if (button.onClick(e.x, e.y)) break
-            }
-
-            return true
-        }
-
-    }
-    private val onTouchListener = OnTouchListener { _, e ->
-        val swipedViewHolder = recyclerView.findViewHolderForAdapterPosition(swipedPos)
-        if (swipedPos < 0 || swipedViewHolder == null || isRecoveringSwipedItem || isAnimationPlaying) {
-            return@OnTouchListener false
-        }
-
-        val point = Point(e.rawX.toInt(), e.rawY.toInt())
-        val swipedItem = swipedViewHolder.itemView
-        val rect = Rect()
-
-        swipedItem.getGlobalVisibleRect(rect)
-        if (e.action == MotionEvent.ACTION_DOWN || e.action == MotionEvent.ACTION_UP || e.action == MotionEvent.ACTION_MOVE) {
-            if (rect.top < point.y && rect.bottom > point.y) {
-                gestureDetector.onTouchEvent(e)
-            } else {
-                recoverQueue.add(swipedPos)
-                swipedPos = -1
-                recoverSwipedItem()
-            }
-        }
-        false
-    }
     private val onItemTouchListener = object : RecyclerView.OnItemTouchListener {
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
             if (isRecoveringSwipedItem || isAnimationPlaying) return true
 
             if (e.action == MotionEvent.ACTION_UP) {
+                if (swipedPos < 0) return false
+
                 val childView = recyclerView.findChildViewUnder(e.x, e.y)
                 if (childView != null) {
                     val clickedPosition = recyclerView.getChildAdapterPosition(childView)
 
                     if (swipedPos >= 0 && swipedPos != clickedPosition) {
                         isRecoveringSwipedItem = true
-                        recoverQueue.add(swipedPos)
-                        swipedPos = -1
-                        recoverSwipedItem()
                         recyclerView.postDelayed({
                             isRecoveringSwipedItem = false
                         }, Util.ANIMATION_SHORT)
-                        return true
                     }
+                } else {
+                    buttonsBuffer[swipedPos]?.forEach { it.handleClick(e) }
                 }
+
+                buttonsBuffer.clear()
+                recoverQueue.add(swipedPos)
+                swipedPos = -1
+                recoverSwipedItem()
+                return true
             }
 
-            gestureDetector.onTouchEvent(e)
             return false
         }
 
@@ -99,11 +62,7 @@ abstract class SwipeHelper(
     }
 
     init {
-        buttons = ArrayList()
-        gestureDetector = GestureDetector(context, gestureListener)
-        recyclerView.setOnTouchListener(onTouchListener)
         recyclerView.addOnItemTouchListener(onItemTouchListener)
-        buttonsBuffer = HashMap()
         recoverQueue = object : LinkedList<Int>() {
 
             override fun add(element: Int) = if (contains(element)) false else super.add(element)
@@ -114,6 +73,22 @@ abstract class SwipeHelper(
 
     fun disableClick() { isAnimationPlaying = true }
     fun enableClick() { isAnimationPlaying = false }
+
+    fun startParticleAnimation(particleView: ParticleView, pos: Int, onAnimationEnd: () -> Unit) {
+        val viewToRemove = recyclerView.findViewHolderForAdapterPosition(pos)?.itemView ?: return
+        val bitmap = Bitmap.createBitmap(viewToRemove.width, viewToRemove.height, Bitmap.Config.ARGB_8888)
+
+        Canvas(bitmap).also { viewToRemove.draw(it) }
+        viewToRemove.isVisible = false
+        particleView.animator = ParticleAnimator(
+            recyclerView.context,
+            particleView,
+            bitmap,
+            0f,
+            viewToRemove.top.toFloat() + recyclerView.top
+        )
+        particleView.startAnimation { onAnimationEnd() }
+    }
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -128,7 +103,7 @@ abstract class SwipeHelper(
         val position = viewHolder.absoluteAdapterPosition
         val item = (recyclerView.adapter as TrackAdapter).getItem(position)
 
-        return if (item is TrackListItem.TrackItem) {
+        return if (item != null) {
             makeMovementFlags(0, ItemTouchHelper.START)
         } else 0
     }
@@ -141,12 +116,6 @@ abstract class SwipeHelper(
         }
 
         swipedPos = pos
-
-        if (buttonsBuffer.containsKey(swipedPos)) {
-            buttons = buttonsBuffer[swipedPos]!!
-        } else buttons.clear()
-
-        buttonsBuffer.clear()
         recoverSwipedItem()
     }
 
@@ -187,16 +156,13 @@ abstract class SwipeHelper(
         }
 
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            if (dX < 0) {ItemTouchHelper.ANIMATION_TYPE_SWIPE_CANCEL
-                val buffer: MutableList<UnderlayButton>
-
+            if (dX < 0) {
                 if (!buttonsBuffer.containsKey(pos)) {
-                    buffer = instantiateUnderlayButton()
-                    buttonsBuffer[pos] = buffer
-                } else {
-                    buffer = buttonsBuffer[pos]!!
+                    buttonsBuffer[pos] = instantiateUnderlayButton(pos)
                 }
 
+                val buffer = buttonsBuffer[pos] ?: return
+                if (buffer.isEmpty()) return
                 translationX = dX * buffer.size * Util.UNDERLAY_BUTTON_WIDTH / itemView.width
                 drawButtons(c, itemView, buffer, pos, translationX)
             }
@@ -252,5 +218,5 @@ abstract class SwipeHelper(
         }
     }
 
-    abstract fun instantiateUnderlayButton(): MutableList<UnderlayButton>
+    abstract fun instantiateUnderlayButton(pos: Int): MutableList<UnderlayButton>
 }

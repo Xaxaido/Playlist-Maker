@@ -37,6 +37,7 @@ object DtoConverter {
         country,
         previewUrl,
         artistViewUrl,
+        true,
         Instant.now().toEpochMilli(),
     )
 
@@ -53,6 +54,7 @@ object DtoConverter {
             it.country,
             it.previewUrl,
             it.artistViewUrl,
+            it.isFavorite,
         )
     }
 }

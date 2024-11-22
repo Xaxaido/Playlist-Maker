@@ -6,12 +6,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentSettingsBinding
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 import com.practicum.playlistmaker.sharing.domain.model.ActionType
 import com.practicum.playlistmaker.sharing.domain.model.IntentAction
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
@@ -32,9 +36,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     }
 
     private fun setListeners() {
-        viewModel.sharingLiveData.observe(viewLifecycleOwner) { event ->
-            event.getState()?.let {
-                startIntent(it)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sharedFlow.collect { action ->
+                    startIntent(action)
+                }
             }
         }
 
