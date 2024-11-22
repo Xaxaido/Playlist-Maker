@@ -2,8 +2,6 @@ package com.practicum.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -36,7 +34,6 @@ import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
-import com.practicum.playlistmaker.common.widgets.recycler.ParticleAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
 import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
@@ -287,22 +284,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun startParticleAnimation(pos: Int, onAnimationEnd: () -> Unit) {
-        val viewToRemove = binding.recycler.findViewHolderForAdapterPosition(pos)?.itemView ?: return
-        val bitmap = Bitmap.createBitmap(viewToRemove.width, viewToRemove.height, Bitmap.Config.ARGB_8888)
-
-        Canvas(bitmap).also { viewToRemove.draw(it) }
-        viewToRemove.isVisible = false
-        binding.particleView.animator = ParticleAnimator(
-            requireActivity(),
-            binding.particleView,
-            bitmap,
-            0f,
-            viewToRemove.top.toFloat() + binding.recycler.top
-        )
-        binding.particleView.startAnimation { onAnimationEnd() }
-    }
-
     private val btnDelete: () -> UnderlayButton = {
         UnderlayButton(
             requireActivity(),
@@ -315,7 +296,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             trackAdapter.notifyItemChanged(pos)
             viewModel.removeFromHistory(pos - 1)
             Debounce(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
-                startParticleAnimation(pos) {
+                swipeHelper.startParticleAnimation(binding.particleView, pos) {
                     viewModel.getHistory(false)
                     swipeHelper.enableClick()
                 }
@@ -324,7 +305,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private val btnAddToFav: (Int) -> UnderlayButton = {
-        val icon = if (trackAdapter.getItem(it).track.isFavorite) R.drawable.favorite else R.drawable.ic_add_to_fav
+        val track = trackAdapter.getItem(it)!!
+        val icon = if (track.isFavorite) R.drawable.favorite else R.drawable.ic_add_to_fav
         UnderlayButton(
             requireActivity(),
             getString(R.string.history_add_to_fav),
@@ -332,7 +314,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             bgColor = requireActivity().getColor(R.color.greyLight),
             textColor = requireActivity().getColor(R.color.black),
         ) { pos ->
-            viewModel.addToFavorites(trackAdapter.getItem(pos).track)
+            viewModel.addToFavorites(track)
             trackAdapter.notifyItemChanged(pos)
         }
     }

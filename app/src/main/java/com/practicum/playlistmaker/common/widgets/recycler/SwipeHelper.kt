@@ -1,14 +1,15 @@
 package com.practicum.playlistmaker.common.widgets.recycler
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.search.domain.model.TrackListItem
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import java.util.LinkedList
 import java.util.Queue
@@ -73,6 +74,22 @@ abstract class SwipeHelper(
     fun disableClick() { isAnimationPlaying = true }
     fun enableClick() { isAnimationPlaying = false }
 
+    fun startParticleAnimation(particleView: ParticleView, pos: Int, onAnimationEnd: () -> Unit) {
+        val viewToRemove = recyclerView.findViewHolderForAdapterPosition(pos)?.itemView ?: return
+        val bitmap = Bitmap.createBitmap(viewToRemove.width, viewToRemove.height, Bitmap.Config.ARGB_8888)
+
+        Canvas(bitmap).also { viewToRemove.draw(it) }
+        viewToRemove.isVisible = false
+        particleView.animator = ParticleAnimator(
+            recyclerView.context,
+            particleView,
+            bitmap,
+            0f,
+            viewToRemove.top.toFloat() + recyclerView.top
+        )
+        particleView.startAnimation { onAnimationEnd() }
+    }
+
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
@@ -86,7 +103,7 @@ abstract class SwipeHelper(
         val position = viewHolder.absoluteAdapterPosition
         val item = (recyclerView.adapter as TrackAdapter).getItem(position)
 
-        return if (item is TrackListItem.TrackItem) {
+        return if (item != null) {
             makeMovementFlags(0, ItemTouchHelper.START)
         } else 0
     }

@@ -239,8 +239,8 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private fun updateBtnIcon(button: ImageView, isInActiveState: Boolean, activeIcon: Int, inactiveIcon: Int) {
         button.setImageResource(
-            if (isInActiveState) inactiveIcon
-            else activeIcon
+            if (isInActiveState) activeIcon
+            else inactiveIcon
         )
     }
 
@@ -266,7 +266,8 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
                     state.isFavorite,
                     R.drawable.favorite_true_icon,
                     R.drawable.favorite_false_icon,
-                    state.shouldPlayAnimation)
+                    state.shouldPlayAnimation
+                )
             }
             is PlayerState.IsPlayListed -> {
                 updateBtnState(
@@ -274,7 +275,8 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
                     state.isPlayListed,
                     R.drawable.added_false_icon,
                     R.drawable.added_false_icon,
-                    state.shouldPlayAnimation)
+                    state.shouldPlayAnimation
+                )
             }
         }
     }

@@ -26,6 +26,7 @@ class MediaLibraryFragment : BaseFragment<FragmentMediaLibraryBinding>() {
     }
 
     private fun setupUI() {
+        binding.pager.isUserInputEnabled = false
         binding.pager.adapter = MediaLibraryPagerAdapter(childFragmentManager, lifecycle)
 
         tabMediator = TabLayoutMediator(binding.tab, binding.pager) { tab, position ->

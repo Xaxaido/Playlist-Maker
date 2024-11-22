@@ -67,6 +67,13 @@
 
     </FrameLayout>
 
+    <com.practicum.playlistmaker.common.widgets.recycler.ParticleView
+        android:id="@+id/particle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.practicum.playlistmaker.common.widgets.BlurredImageView
         android:id="@+id/blur_image_view_bottom_menu"
         android:layout_width="match_parent"

@@ -16,7 +16,7 @@ class TrackAdapter(
             .addDelegate(footerItemDelegate(onClearHistoryClick))
     }
 
-    fun getItem(pos: Int): TrackListItem.TrackItem = differ.currentList[pos] as TrackListItem.TrackItem
+    fun getItem(pos: Int): Track? = (differ.currentList[pos] as? TrackListItem.TrackItem)?.track
 
     fun submitTracksList(
         isDecorationNeeded: Boolean = false,

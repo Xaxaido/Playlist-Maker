@@ -20,6 +20,8 @@ import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
+import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
+import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.practicum.playlistmaker.medialibrary.ui.view_model.FavoriteTracksViewModel
 import com.practicum.playlistmaker.player.ui.PlayerFragment
@@ -37,6 +39,7 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
     private val viewModel by viewModel<FavoriteTracksViewModel>()
     private lateinit var adapter: TrackAdapter
     private lateinit var visibility: ViewsList
+    private lateinit var swipeHelper: SwipeHelper
     private var isClickEnabled = true
 
     override fun createBinding(
@@ -85,7 +88,14 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
             )
         ))
 
+        swipeHelper = initSwipeHelper()
         binding.blurImageViewBottomMenu.setContentView(binding.recycler)
+    }
+
+    private fun initSwipeHelper() = object : SwipeHelper(binding.recycler) {
+
+        override fun instantiateUnderlayButton(pos: Int) =
+            mutableListOf(btnDelete())
     }
 
     private fun sendToPlayer(json: String) {
@@ -115,6 +125,25 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
         when (state) {
             is FavoriteTracksState.Empty -> visibility.show(NoData)
             is FavoriteTracksState.Content -> showFavoriteTracks(state.tracks)
+        }
+    }
+
+    private val btnDelete: () -> UnderlayButton = {
+        UnderlayButton(
+            requireActivity(),
+            getString(R.string.history_delete_item),
+            R.drawable.ic_delete,
+            bgColor = requireActivity().getColor(R.color.red),
+            textColor = requireActivity().getColor(R.color.white),
+        ) { pos ->
+            swipeHelper.disableClick()
+            adapter.notifyItemChanged(pos)
+            Debounce(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
+                swipeHelper.startParticleAnimation(binding.particleView, pos) {
+                    viewModel.addToFavorites(adapter.getItem(pos)!!)
+                    swipeHelper.enableClick()
+                }
+            }.start()
         }
     }
 }

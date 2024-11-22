@@ -17,6 +17,12 @@ class FavoriteTracksViewModel(
     private val _stateFlow = MutableStateFlow<FavoriteTracksState>(FavoriteTracksState.Default)
     val stateFlow: StateFlow<FavoriteTracksState> = _stateFlow.asStateFlow()
 
+    fun addToFavorites(track: Track) {
+        favoriteTracksInteractor.addToFavorites(viewModelScope, track) {
+            showFavoriteTracks()
+        }
+    }
+
     fun showFavoriteTracks() {
         viewModelScope.launch {
             favoriteTracksInteractor
