@@ -48,6 +48,10 @@ class PlayerViewModel(
         }, 100)
     }
 
+    fun addToPlaylist() {
+        setState(PlayerState.IsPlayListed(track.isFavorite))
+    }
+
     fun addToFavorites() {
         favoriteTracksInteractor.addToFavorites(viewModelScope, track) {
             setState(PlayerState.IsFavorite(track.isFavorite))
@@ -57,10 +61,10 @@ class PlayerViewModel(
     fun controlPlayback(shouldPlay: Boolean = true) {
         playerInteractor.apply {
             if (isPlaying) {
-                setState(PlayerState.Paused)
+                setState(PlayerState.IsPlaying(false))
                 pause()
             } else if (shouldPlay) {
-                setState(PlayerState.Playing)
+                setState(PlayerState.IsPlaying(true))
                 play()
             }
         }

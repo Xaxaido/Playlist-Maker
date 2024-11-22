@@ -14,11 +14,10 @@ class FavoriteTracksViewModel(
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
 ) : ViewModel() {
 
-    private val _stateFlow = MutableStateFlow<FavoriteTracksState>(FavoriteTracksState.Loading)
+    private val _stateFlow = MutableStateFlow<FavoriteTracksState>(FavoriteTracksState.Default)
     val stateFlow: StateFlow<FavoriteTracksState> = _stateFlow.asStateFlow()
 
     fun showFavoriteTracks() {
-        setState(FavoriteTracksState.Loading)
         viewModelScope.launch {
             favoriteTracksInteractor
                 .getAll()

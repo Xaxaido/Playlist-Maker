@@ -7,9 +7,10 @@ interface PlayerState {
 
     object Default : PlayerState
     object Ready : PlayerState
-    object Playing : PlayerState
-    object Paused : PlayerState
     object Stop : PlayerState
+    class IsPlaying(
+        val isPlaying: Boolean,
+    ) : PlayerState
     class TrackData(
         val track: Track
     ) : PlayerState
@@ -24,6 +25,10 @@ interface PlayerState {
     ) : PlayerState
     class IsFavorite(
         val isFavorite: Boolean,
+        val shouldPlayAnimation: Boolean = true
+    ) : PlayerState
+    class IsPlayListed(
+        val isPlayListed: Boolean,
         val shouldPlayAnimation: Boolean = true
     ) : PlayerState
 }

@@ -114,7 +114,6 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
     private fun renderState(state: FavoriteTracksState) {
         when (state) {
             is FavoriteTracksState.Empty -> visibility.show(NoData)
-            is FavoriteTracksState.Loading -> visibility.show(Loading)
             is FavoriteTracksState.Content -> showFavoriteTracks(state.tracks)
         }
     }
