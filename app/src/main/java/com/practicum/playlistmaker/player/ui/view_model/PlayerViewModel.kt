@@ -1,7 +1,5 @@
 package com.practicum.playlistmaker.player.ui.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
@@ -27,8 +25,9 @@ class PlayerViewModel(
     json: String,
 ) : ViewModel(), MediaPlayerListener {
 
+    private var shouldPlayAnimation = false
     private val track: Track = Util.jsonToTrack(json)
-    private val timers: Map<String, Debounce> = mapOf(
+    private val timers: Map<String, Debounce<Any>> = mapOf(
         UPDATE_PLAYBACK_PROGRESS to Debounce(Util.UPDATE_PLAYBACK_PROGRESS_DELAY, viewModelScope) {
             setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
         },
@@ -43,9 +42,7 @@ class PlayerViewModel(
     init {
         playerInteractor.init(this, track)
         setState(PlayerState.TrackData(track))
-        Handler(Looper.getMainLooper()).postDelayed({
-            setState(PlayerState.IsFavorite(track.isFavorite, false))
-        }, 100)
+        observeFavoriteTracks()
     }
 
     fun addToPlaylist() {
@@ -53,9 +50,8 @@ class PlayerViewModel(
     }
 
     fun addToFavorites() {
-        favoriteTracksInteractor.addToFavorites(viewModelScope, track) {
-            setState(PlayerState.IsFavorite(track.isFavorite))
-        }
+        shouldPlayAnimation = true
+        favoriteTracksInteractor.addToFavorites(viewModelScope, track)
     }
 
     fun controlPlayback(shouldPlay: Boolean = true) {
@@ -72,8 +68,6 @@ class PlayerViewModel(
         updatePlaybackProgressTimerState()
     }
 
-    private fun setState(state: PlayerState) { _stateFlow.value = state }
-
     fun searchTrackDescription(url: String?) {
         url?.let{
             viewModelScope.launch {
@@ -83,6 +77,17 @@ class PlayerViewModel(
                     }
             }
         } ?: setState(PlayerState.Description(TrackDescription(null)))
+    }
+
+    private fun setState(state: PlayerState) { _stateFlow.value = state }
+
+    private fun observeFavoriteTracks() {
+        viewModelScope.launch {
+            favoriteTracksInteractor.getIds().collect { ids ->
+                val isFavorite = ids.contains(track.id)
+                setState(PlayerState.IsFavorite(isFavorite, shouldPlayAnimation))
+            }
+        }
     }
 
     private fun updatePlaybackProgressTimerState() {

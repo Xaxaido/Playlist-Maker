@@ -55,11 +55,6 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
         setListeners()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.showFavoriteTracks()
-    }
-
     private fun setupUI() {
         visibility = ViewsList(
             listOf(
@@ -75,7 +70,7 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
 
                 isClickEnabled = false
                 sendToPlayer(Util.trackToJson(track))
-                Debounce(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
+                Debounce<Any>(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             }
         )
 
@@ -94,8 +89,7 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
 
     private fun initSwipeHelper() = object : SwipeHelper(binding.recycler) {
 
-        override fun instantiateUnderlayButton(pos: Int) =
-            mutableListOf(btnDelete())
+        override fun instantiateUnderlayButton(pos: Int): MutableList<UnderlayButton> = mutableListOf(btnDelete())
     }
 
     private fun sendToPlayer(json: String) {
@@ -123,6 +117,7 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
 
     private fun renderState(state: FavoriteTracksState) {
         when (state) {
+            is FavoriteTracksState.Loading -> visibility.show(Loading)
             is FavoriteTracksState.Empty -> visibility.show(NoData)
             is FavoriteTracksState.Content -> showFavoriteTracks(state.tracks)
         }
@@ -138,7 +133,7 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
         ) { pos ->
             swipeHelper.disableClick()
             adapter.notifyItemChanged(pos)
-            Debounce(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
+            Debounce<Any>(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
                 swipeHelper.startParticleAnimation(binding.particleView, pos) {
                     viewModel.addToFavorites(adapter.getItem(pos)!!)
                     swipeHelper.enableClick()

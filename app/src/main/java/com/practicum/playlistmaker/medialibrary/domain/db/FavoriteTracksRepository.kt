@@ -10,5 +10,4 @@ interface FavoriteTracksRepository {
     suspend fun remove(track: TrackEntity)
     fun getAll(): Flow<List<Track>>
     fun getIds(): Flow<List<Long>>
-    fun isFavorite(id: Long): Flow<Boolean>
 }

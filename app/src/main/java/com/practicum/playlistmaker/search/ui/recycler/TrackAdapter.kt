@@ -52,18 +52,4 @@ class TrackAdapter(
             if (isDecorationNeeded) this += TrackListItem.Footer()
         }
     }
-
-    fun updateFavorites(favorites: List<Long>) {
-        differ.currentList.mapIndexed { index, item ->
-            if (item is TrackListItem.TrackItem) {
-                item.track.apply {
-                    val isItemFavorite = favorites.contains(id)
-                    if (isFavorite != isItemFavorite) {
-                        isFavorite = isItemFavorite
-                        notifyItemChanged(index)
-                    }
-                }
-            }
-        }
-    }
 }
