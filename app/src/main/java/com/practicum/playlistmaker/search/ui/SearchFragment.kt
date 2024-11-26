@@ -51,7 +51,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var swipeHelper: SwipeHelper
     private var searchRequest = ""
-    private var isHistoryVisible = false
     private var isClickEnabled = true
     private var isKeyboardVisible = false
     private lateinit var visibility: ViewsList
@@ -79,9 +78,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     override fun onResume() {
         super.onResume()
         (activity as? BackButtonState)?.updateBackBtn(false)
-        if (trackAdapter.itemCount > 0) {
-            updateFavorites()
-        }
     }
 
     override fun onStop() {
@@ -107,7 +103,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 isClickEnabled = false
                 viewModel.addToHistory(track)
                 sendToPlayer(Util.trackToJson(track))
-                Debounce(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
+                Debounce<Any>(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             },
             { clearHistory() }
         )
@@ -129,7 +125,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private fun initSwipeHelper() = object : SwipeHelper(binding.recycler) {
 
         override fun instantiateUnderlayButton(pos: Int) =
-            if (isHistoryVisible) {
+            if (viewModel.isHistoryVisible == true) {
                 mutableListOf(btnDelete(), btnAddToFav(pos))
             } else {
                 mutableListOf(btnAddToFav(pos))
@@ -160,7 +156,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
         binding.searchLayout.buttonClear.setOnClickListener {
             hideKeyboard()
-            isHistoryVisible = true
+            viewModel.isHistoryVisible = true
             binding.searchLayout.searchText.setText("")
             viewModel.getHistory(true)
         }
@@ -168,7 +164,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         binding.searchLayout.searchText.also { editText ->
 
             editText.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus && searchRequest.isEmpty() && !isHistoryVisible) viewModel.getHistory(true)
+                if (hasFocus && searchRequest.isEmpty() && viewModel.isHistoryVisible != true) viewModel.getHistory(true)
             }
 
             editText.doOnTextChanged { text, _, _, _ ->
@@ -182,12 +178,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                     viewModel.getHistory(true)
                 }
             }
-        }
-    }
-
-    private fun updateFavorites() {
-        viewModel.getFavorites { favorites ->
-            trackAdapter.updateFavorites(favorites)
         }
     }
 
@@ -249,7 +239,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun showSearchHistory(list: List<Track>, isDataSetChanged: Boolean = true) {
-        isHistoryVisible = true
+        viewModel.isHistoryVisible = true
         if (list.isNotEmpty()) {
             visibility.show(History, visibility.items.filter { it.view.id != binding.stickyContainer.clearHistory.id })
             trackAdapter.submitTracksList(true, list, isDataSetChanged) {
@@ -263,9 +253,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun showSearchResults(list: List<Track>) {
-        isHistoryVisible = false
-        trackAdapter.submitTracksList(false, list, true)  {
+    private fun showSearchResults(list: List<Track>, isDataSetChanged: Boolean = true) {
+        viewModel.isHistoryVisible = false
+        trackAdapter.submitTracksList(false, list, isDataSetChanged)  {
             visibility.show(Results)
         }
     }
@@ -276,11 +266,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         when (state) {
             is SearchState.NoData -> showNoData()
             is SearchState.Loading -> visibility.show(Loading)
-            is SearchState.TrackSearchResults -> showSearchResults(state.results)
+            is SearchState.TrackSearchResults -> showSearchResults(state.results, state.isDataSetChanged)
             is SearchState.TrackSearchHistory -> showSearchHistory(state.history, state.isDataSetChanged)
             is SearchState.ConnectionError -> showError(state.error)
             is SearchState.NothingFound -> visibility.show(NothingFound)
-            is SearchState.IsFavorite -> updateFavorites()
         }
     }
 
@@ -295,7 +284,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             swipeHelper.disableClick()
             trackAdapter.notifyItemChanged(pos)
             viewModel.removeFromHistory(pos - 1)
-            Debounce(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
+            Debounce<Any>(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
                 swipeHelper.startParticleAnimation(binding.particleView, pos) {
                     viewModel.getHistory(false)
                     swipeHelper.enableClick()

@@ -5,21 +5,21 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class Debounce(
+class Debounce<T>(
     private val delay: Long = 500L,
     private val scope: CoroutineScope,
-    private var action: () -> Unit = {},
+    private var action: (T?) -> Unit = {},
 ) {
 
     private var job: Job? = null
     val isRunning get() = job?.isActive ?: false
 
-    fun start(isLoop: Boolean = false) {
+    fun start(isLoop: Boolean = false, parameter: T? = null) {
         stop()
         job = scope.launch {
             do {
                 delay(delay)
-                action()
+                action(parameter)
             } while (isLoop)
         }
     }

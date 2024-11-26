@@ -8,7 +8,6 @@ sealed class SearchState(
 
     data object NoData: SearchState(null)
     data object Loading: SearchState(null)
-    data object IsFavorite: SearchState(null)
     class NothingFound(
         term: String,
     ): SearchState(term)
@@ -18,7 +17,8 @@ sealed class SearchState(
     ) : SearchState(term)
     class TrackSearchResults(
         var results: List<Track>,
-        term: String,
+        term: String?,
+        val isDataSetChanged: Boolean = true,
     ) : SearchState(term)
     class TrackSearchHistory(
         var history: List<Track>,

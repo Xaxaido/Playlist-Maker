@@ -4,7 +4,7 @@ import com.practicum.playlistmaker.search.domain.model.Track
 
 interface FavoriteTracksState {
 
-    object Default : FavoriteTracksState
+    object Loading : FavoriteTracksState
     object Empty : FavoriteTracksState
     class Content(
         val tracks: List<Track>

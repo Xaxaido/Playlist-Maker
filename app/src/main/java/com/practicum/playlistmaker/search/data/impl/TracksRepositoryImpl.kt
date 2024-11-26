@@ -11,7 +11,7 @@
     import kotlinx.coroutines.flow.flow
 
     class TracksRepositoryImpl(
-        private val networkClient: RetrofitNetworkClient,
+        private val networkClient: RetrofitNetworkClient
     ) : TracksRepository {
 
         override fun searchTracks(term: String, page: Int): Flow<TracksSearchState> = flow {
@@ -24,15 +24,15 @@
                 Util.HTTP_OK -> {
                     val result = (response as TracksSearchResponse).results
 
-                    emit(
-                        if (result.isEmpty()) {
-                            TracksSearchState.Success(emptyList(), term)
-                        } else {
-                            result.filter { !it.previewUrl.isNullOrEmpty() }.let {
-                                TracksSearchState.Success(it.toTracksList(), term)
-                            }
-                        }
-                    )
+                    if (result.isEmpty()) {
+                        emit(TracksSearchState.Success(emptyList(), term))
+                    } else {
+                        val tracks = result
+                            .filter { !it.previewUrl.isNullOrEmpty() }
+                            .toTracksList()
+
+                        emit(TracksSearchState.Success(tracks, term))
+                    }
                 }
                 else -> {
                     emit(TracksSearchState.Error(response.resultCode, term))

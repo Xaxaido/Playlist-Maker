@@ -14,16 +14,18 @@ class FavoriteTracksViewModel(
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
 ) : ViewModel() {
 
-    private val _stateFlow = MutableStateFlow<FavoriteTracksState>(FavoriteTracksState.Default)
+    private val _stateFlow = MutableStateFlow<FavoriteTracksState>(FavoriteTracksState.Loading)
     val stateFlow: StateFlow<FavoriteTracksState> = _stateFlow.asStateFlow()
 
-    fun addToFavorites(track: Track) {
-        favoriteTracksInteractor.addToFavorites(viewModelScope, track) {
-            showFavoriteTracks()
-        }
+    init {
+        observeFavoriteTracks()
     }
 
-    fun showFavoriteTracks() {
+    fun addToFavorites(track: Track) {
+        favoriteTracksInteractor.addToFavorites(viewModelScope, track)
+    }
+
+    private fun observeFavoriteTracks() {
         viewModelScope.launch {
             favoriteTracksInteractor
                 .getAll()
@@ -34,14 +36,12 @@ class FavoriteTracksViewModel(
     }
 
     private fun processResult(tracks: List<Track>) {
-        when {
-            tracks.isNotEmpty() -> {
-                setState(FavoriteTracksState.Content(tracks))
+        setState(
+            when {
+                tracks.isNotEmpty() -> FavoriteTracksState.Content(tracks)
+                else -> FavoriteTracksState.Empty
             }
-            else -> {
-                setState(FavoriteTracksState.Empty)
-            }
-        }
+        )
     }
 
     private fun setState(state: FavoriteTracksState) {

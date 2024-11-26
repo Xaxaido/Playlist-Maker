@@ -30,10 +30,6 @@ class FavoriteTracksInteractorImpl(
         return repository.getIds()
     }
 
-    override fun isFavorite(id: Long): Flow<Boolean> {
-        return repository.isFavorite(id)
-    }
-
     override fun markFavorites(tracks: List<Track>): Flow<List<Track>> = flow {
         getIds()
             .collect { favorites ->
@@ -44,11 +40,7 @@ class FavoriteTracksInteractorImpl(
             }
     }
 
-    override fun addToFavorites(
-        scope: CoroutineScope,
-        track: Track,
-        action: (Boolean) -> Unit,
-    ) {
+    override fun addToFavorites(scope: CoroutineScope, track: Track) {
         scope.launch {
             track.isFavorite = !track.isFavorite
             val entity = track.toTrackEntity()
@@ -57,7 +49,6 @@ class FavoriteTracksInteractorImpl(
             } else {
                 remove(entity)
             }
-            action(track.isFavorite)
         }
     }
 }
