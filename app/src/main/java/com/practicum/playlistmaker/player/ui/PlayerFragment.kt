@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.animation.doOnEnd
 import androidx.core.os.bundleOf
@@ -19,12 +21,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
 import com.practicum.playlistmaker.common.widgets.BaseFragment
+import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
+import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
+import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistAdapter
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -44,6 +50,10 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     private val viewModel by viewModel<PlayerViewModel> {
         parametersOf(requireArguments().getString(ARGS_TRACK).orEmpty())
     }
+    private lateinit var playlistAdapter: PlaylistAdapter
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private var shouldOpenCreatePlaylistFragment = false
+    private var isPlaylisted = false
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -73,14 +83,64 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun setListeners() {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                binding.overlay.isVisible = newState != BottomSheetBehavior.STATE_COLLAPSED
+                                            && newState != BottomSheetBehavior.STATE_HIDDEN
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.overlay.alpha = slideOffset
+                if (shouldOpenCreatePlaylistFragment && binding.overlay.alpha == 0f) {
+                    shouldOpenCreatePlaylistFragment = false
+                    findNavController().navigate(R.id.action_create_playlist)
+                }
+            }
+        })
+
+        binding.createPlaylistBtn.setOnClickListener {
+            shouldOpenCreatePlaylistFragment = true
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
         binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
         binding.addToFavoriteButton.setOnClickListener { viewModel.addToFavorites() }
-        binding.btnAddToPlaylist.setOnClickListener { viewModel.addToPlaylist() }
+
+        binding.btnAddToPlaylist.setOnClickListener {
+            updateBtnState(
+                binding.btnAddToPlaylist,
+                isPlaylisted,
+                R.drawable.added_false_icon,
+                R.drawable.added_false_icon,
+                true
+            )
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.stateFlow.collect { state ->
                     renderState(state)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.playlistsFlow.collect { playlists ->
+                    showPlaylists(playlists)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.trackBufferingFlow.collect { progress ->
+                    updateBufferedProgress(progress)
                 }
             }
         }
@@ -94,8 +154,15 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun setupUI() {
+        viewModel.setTrack()
         binding.shimmerPlaceholder.shimmer.startShimmer()
         updatePlayBtnState(false)
+
+        playlistAdapter = PlaylistAdapter(R.layout.item_bottom_sheet) { playlist ->
+            viewModel.addToPlaylist(playlist)
+        }
+        binding.playlistsRecycler.adapter = playlistAdapter
+        binding.playlistsRecycler.itemAnimator = ItemAnimator()
     }
 
     private fun syncScrollingText() {
@@ -190,13 +257,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         binding.currentTime.setTime(currentPosition)
     }
 
-    private fun ready() {
-        animateProgressChange(binding.progress.max) {
-            binding.progress.isVisible = false
-            updatePlayBtnState(true)
-        }
-    }
-
     private fun stop() {
         updateBtnIcon(binding.btnPlay, false, R.drawable.pause_button, R.drawable.play_button)
         updateCover(false)
@@ -205,7 +265,15 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private fun updateBufferedProgress(progress: Int) {
         if (progress == 0) return
-        animateProgressChange(progress)
+
+        if (progress < binding.progress.max) {
+            animateProgressChange(progress)
+        } else {
+            animateProgressChange(binding.progress.max) {
+                binding.progress.isVisible = false
+                updatePlayBtnState(true)
+            }
+        }
     }
 
     private fun showTrackDescription(result: TrackDescription) {
@@ -217,6 +285,26 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             trackDescription.isVisible = true
             countryText.text = country
         }
+    }
+
+    private fun showPlaylists(playlists: List<Playlist>) {
+        playlistAdapter.submitTracksList(playlists)
+    }
+
+    private fun showAddToPlaylistStatus(playlistTitle: String, isAdded: Boolean) {
+        val message = if (isAdded) {
+            resources.getText(R.string.add_to_playlist_success)
+        } else {
+            resources.getText(R.string.add_to_playlist_error)
+        }
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        Toast.makeText(
+            requireContext(),
+            "$message $playlistTitle",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun updateBtnState(
@@ -248,10 +336,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         when (state) {
             is PlayerState.TrackData -> fillTrackData(state.track)
             is PlayerState.CurrentTime -> updateCurrentTime(state.time)
-            is PlayerState.Ready -> ready()
             is PlayerState.Stop -> stop()
-            is PlayerState.BufferedProgress -> updateBufferedProgress(state.progress)
             is PlayerState.Description -> showTrackDescription(state.result)
+            is PlayerState.AddToPlaylist -> showAddToPlaylistStatus(state.playlistTitle, state.isAdded)
             is PlayerState.IsPlaying -> {
                 updateBtnState(
                     binding.btnPlay,
@@ -269,21 +356,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
                     state.shouldPlayAnimation
                 )
             }
-            is PlayerState.IsPlayListed -> {
-                updateBtnState(
-                    binding.btnAddToPlaylist,
-                    state.isPlayListed,
-                    R.drawable.added_false_icon,
-                    R.drawable.added_false_icon,
-                    state.shouldPlayAnimation
-                )
-            }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        (activity as? BackButtonState)?.updateBackBtn(false)
     }
 
     override fun onResume() {

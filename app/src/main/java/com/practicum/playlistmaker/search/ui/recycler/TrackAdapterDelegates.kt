@@ -22,6 +22,7 @@ fun headerItemDelegate() =
 
 fun trackItemDelegate(
     onTrackClick: (Track) -> Unit,
+    showFavorites: Boolean,
 ) = adapterDelegateViewBinding<TrackListItem.TrackItem, TrackListItem, ItemTrackBinding>(
     { layoutInflater, root -> ItemTrackBinding.inflate(layoutInflater, root, false) }
 ) {
@@ -34,7 +35,7 @@ fun trackItemDelegate(
             .transform(RoundedCorners(2.dpToPx(itemView.context)))
             .into(binding.cover)
 
-        //binding.favorite.isVisible = track.isFavorite
+        if (showFavorites) binding.favorite.isVisible = track.isFavorite
         binding.trackTitle.text = track.trackName
         binding.artistName.setText(track.artistName, track.duration)
         itemView.setOnClickListener { onTrackClick(track) }

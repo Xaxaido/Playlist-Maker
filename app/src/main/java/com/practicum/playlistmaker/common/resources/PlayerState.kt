@@ -6,7 +6,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 interface PlayerState {
 
     object Default : PlayerState
-    object Ready : PlayerState
     object Stop : PlayerState
     class IsPlaying(
         val isPlaying: Boolean,
@@ -17,9 +16,6 @@ interface PlayerState {
     class CurrentTime(
         val time: String
     ) : PlayerState
-    class BufferedProgress(
-        val progress: Int
-    ) : PlayerState
     class Description(
         val result: TrackDescription
     ) : PlayerState
@@ -27,8 +23,8 @@ interface PlayerState {
         val isFavorite: Boolean,
         val shouldPlayAnimation: Boolean = true
     ) : PlayerState
-    class IsPlayListed(
-        val isPlayListed: Boolean,
-        val shouldPlayAnimation: Boolean = true
+    class AddToPlaylist(
+        val playlistTitle: String,
+        val isAdded: Boolean
     ) : PlayerState
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_layout"
+    android:id="@+id/root_layout"
     style="@style/LayoutFullScreen"
+    android:fitsSystemWindows="false"
     tools:ignore="ContentDescription">
 
     <androidx.core.widget.NestedScrollView
@@ -13,7 +14,7 @@
         android:layout_marginTop="@dimen/toolbar_height">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/expanded_container"
+            android:id="@+id/content_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -287,4 +288,55 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</FrameLayout>
+    <View android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/bottom_sheet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/bottom_sheet"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="0dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="@dimen/padding_small_8x"
+            android:background="@drawable/handle" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/padding_small_6x"
+            android:fontFamily="@font/ys_500"
+            android:text="@string/add_to_playlist"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_big" />
+
+        <Button
+            android:id="@+id/create_playlist_btn"
+            style="@style/DarkButton"
+            android:layout_marginTop="@dimen/padding_small_8x"
+            android:text="@string/new_playlist" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playlists_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/padding_small_6x"
+            android:layout_marginTop="@dimen/padding_small_12x"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_bottom_sheet" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

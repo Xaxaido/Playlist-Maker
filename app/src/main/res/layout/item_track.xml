@@ -28,7 +28,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/cover"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/favorite"
+        app:srcCompat="@drawable/ic_favorite"
         tools:visibility="visible" />
 
     <TextView

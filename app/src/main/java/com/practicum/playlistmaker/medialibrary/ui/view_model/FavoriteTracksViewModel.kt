@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.medialibrary.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker.common.resources.FavoriteTracksState
+import com.practicum.playlistmaker.common.resources.MediaLibraryState
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +14,8 @@ class FavoriteTracksViewModel(
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
 ) : ViewModel() {
 
-    private val _stateFlow = MutableStateFlow<FavoriteTracksState>(FavoriteTracksState.Loading)
-    val stateFlow: StateFlow<FavoriteTracksState> = _stateFlow.asStateFlow()
+    private val _stateFlow = MutableStateFlow<MediaLibraryState>(MediaLibraryState.Loading)
+    val stateFlow: StateFlow<MediaLibraryState> = _stateFlow.asStateFlow()
 
     init {
         observeFavoriteTracks()
@@ -38,13 +38,13 @@ class FavoriteTracksViewModel(
     private fun processResult(tracks: List<Track>) {
         setState(
             when {
-                tracks.isNotEmpty() -> FavoriteTracksState.Content(tracks)
-                else -> FavoriteTracksState.Empty
+                tracks.isNotEmpty() -> MediaLibraryState.Content(tracks)
+                else -> MediaLibraryState.Empty
             }
         )
     }
 
-    private fun setState(state: FavoriteTracksState) {
+    private fun setState(state: MediaLibraryState) {
         _stateFlow.value = state
     }
 }
