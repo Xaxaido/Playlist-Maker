@@ -56,6 +56,7 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
             listOf(
                 VisibilityItem(binding.progressBar, listOf(Loading)),
                 VisibilityItem(binding.noPlaylists, listOf(NoData)),
+                VisibilityItem(binding.newPlaylistContainer, listOf(NoData, Results)),
                 VisibilityItem(binding.recycler, listOf(Results)),
             )
         )

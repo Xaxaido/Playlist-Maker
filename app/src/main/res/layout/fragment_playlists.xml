@@ -17,10 +17,8 @@
         android:id="@+id/new_playlist_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/padding_small_8x"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        app:layout_constraintBottom_toTopOf="@id/recycler"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
 
@@ -30,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/dark_button_size"
             android:layout_marginTop="@dimen/padding_small_12x"
+            android:layout_marginBottom="@dimen/padding_small_8x"
             android:text="@string/new_playlist" />
 
     </FrameLayout>
@@ -48,7 +47,7 @@
         android:id="@+id/no_playlists"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:orientation="vertical"
         android:background="?attr/android:colorBackground"
         app:layout_constraintStart_toStartOf="parent"
