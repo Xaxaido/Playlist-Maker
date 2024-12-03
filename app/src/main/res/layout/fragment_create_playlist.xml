@@ -32,18 +32,29 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_end="@dimen/padding_small_8x" />
 
-            <ImageView
-                android:id="@+id/image_picker"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/image_picker_card"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="@dimen/padding_small_4x"
                 android:layout_marginTop="@dimen/padding_small_13x"
-                android:src="@drawable/cover_pick"
-                app:layout_constraintBottom_toTopOf="@id/playlist_title_container"
-                app:layout_constraintDimensionRatio="w, 1:1"
+                android:layout_marginBottom="@dimen/padding_small"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="@dimen/padding_small_4x"
+                app:cardElevation="0dp"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintDimensionRatio="w, 1:1">
+
+                <ImageView
+                    android:id="@+id/image_picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/cover_pick"
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/playlist_title_container"
@@ -54,7 +65,7 @@
                 android:layout_marginTop="@dimen/padding_small_16x"
                 app:boxStrokeColor="@color/input_text_stroke"
                 app:hintTextColor="@color/input_text"
-                app:layout_constraintTop_toBottomOf="@id/image_picker"
+                app:layout_constraintTop_toBottomOf="@id/image_picker_card"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline">
 
