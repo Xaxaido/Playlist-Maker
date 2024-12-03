@@ -34,4 +34,8 @@
         <item name="navigationIconTint">@color/black</item>
     </style>
 
+    <style name="CustomTextInputStyle" parent="">
+        <item name="colorControlActivated">@color/blue</item>
+    </style>
+
 </resources>

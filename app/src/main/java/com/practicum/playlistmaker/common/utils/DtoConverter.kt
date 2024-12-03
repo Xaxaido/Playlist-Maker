@@ -5,9 +5,7 @@ import com.practicum.playlistmaker.search.data.dto.TrackDto
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Extensions.toDate
 import com.practicum.playlistmaker.medialibrary.data.db.entity.FavoriteTrackEntity
-import com.practicum.playlistmaker.medialibrary.data.db.entity.PlaylistEntity
 import com.practicum.playlistmaker.medialibrary.data.db.entity.PlaylistTrackEntity
-import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import java.time.Instant
 
 object DtoConverter {

@@ -17,8 +17,10 @@
         android:id="@+id/new_playlist_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_small_8x"
         android:orientation="vertical"
         android:gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@id/recycler"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
 
@@ -36,8 +38,6 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/padding_small_8x"
-        android:layout_marginHorizontal="@dimen/padding_small_6x"
         android:overScrollMode="never"
         android:background="?attr/android:colorBackground"
         app:layout_constraintStart_toStartOf="parent"

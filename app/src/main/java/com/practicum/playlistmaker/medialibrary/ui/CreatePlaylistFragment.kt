@@ -9,9 +9,7 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
@@ -20,6 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.common.utils.MySnackBar
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
@@ -64,13 +63,12 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.stateFlow.collect { title ->
                     if (title.isNotEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
+                        MySnackBar(
+                            requireActivity(),
                             String.format(
                                 resources.getText(R.string.playlist_created).toString(),
                                 title
-                            ),
-                            Toast.LENGTH_SHORT
+                            )
                         ).show()
                         findNavController().popBackStack()
                     }
@@ -78,16 +76,17 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
             }
         }
 
-        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        val pickMedia = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             uri?.let {
-                getPermissions(uri)
-                binding.imagePicker.setImageURI(uri)
-                saveImageToPrivateStorage(uri)
+                if (getPermissions(uri)) {
+                    binding.imagePicker.setImageURI(uri)
+                    saveImageToPrivateStorage(uri)
+                }
             }
         }
 
         binding.imagePicker.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickMedia.launch(arrayOf("image/*"))
         }
 
         binding.title.doOnTextChanged { text, _, _, _ ->
@@ -124,11 +123,17 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
         }
     }
 
-    private fun getPermissions(uri: Uri) {
+    private fun getPermissions(uri: Uri): Boolean {
         val contentResolver = requireActivity().contentResolver
 
         val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-        contentResolver.takePersistableUriPermission(uri, takeFlags)
+
+        return try {
+            contentResolver.takePersistableUriPermission(uri, takeFlags)
+            true
+        } catch(e: SecurityException) {
+            false
+        }
     }
 
     private fun saveImageToPrivateStorage(uri: Uri) {

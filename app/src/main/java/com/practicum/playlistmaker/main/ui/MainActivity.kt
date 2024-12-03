@@ -19,6 +19,8 @@ import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.main.ui.view_model.MainActivityViewModel
+import com.practicum.playlistmaker.medialibrary.ui.CreatePlaylistFragment
+import com.practicum.playlistmaker.player.ui.PlayerFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), BackButtonState {
@@ -43,11 +45,15 @@ class MainActivity : AppCompatActivity(), BackButtonState {
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         binding.bottomNav.setupWithNavController(navController)
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
+
             when (destination.id) {
-                R.id.player_fragment, R.id.create_playlist_fragment -> {
-                    updateBottomNav(false)
+                R.id.player_fragment -> {
+                    if (currentFragment !is CreatePlaylistFragment) updateBottomNav(false)
+                }
+                R.id.create_playlist_fragment -> {
+                    if (currentFragment !is PlayerFragment) updateBottomNav(false)
                 }
                 else -> {
                     if (!binding.bottomNavContainer.isVisible) {

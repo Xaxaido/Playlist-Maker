@@ -47,6 +47,8 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/playlist_title_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:theme="@style/CustomTextInputStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_small_16x"
@@ -66,6 +68,8 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/description_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:theme="@style/CustomTextInputStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_small_8x"

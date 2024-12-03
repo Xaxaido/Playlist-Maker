@@ -22,6 +22,7 @@ import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistAdapter
+import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistItemDecoration
 import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -71,6 +72,12 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
                     resources.getDimensionPixelSize(R.dimen.toolbar_height),
                 )
             )
+        )
+        binding.recycler.addItemDecoration(PlaylistItemDecoration(
+            2,
+            resources.getDimensionPixelSize(R.dimen.padding_small_6x),
+            resources.getDimensionPixelSize(R.dimen.padding_small_8x),
+        )
         )
 
         binding.blurImageViewBottomMenu.setContentView(binding.recycler)

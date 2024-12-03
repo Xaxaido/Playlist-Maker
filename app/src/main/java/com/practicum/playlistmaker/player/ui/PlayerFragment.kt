@@ -10,7 +10,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.animation.doOnEnd
 import androidx.core.os.bundleOf
@@ -25,6 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
+import com.practicum.playlistmaker.common.utils.MySnackBar
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
@@ -94,10 +94,14 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.alpha = slideOffset
-                if (shouldOpenCreatePlaylistFragment && binding.overlay.alpha == 0f) {
-                    shouldOpenCreatePlaylistFragment = false
-                    findNavController().navigate(R.id.action_create_playlist)
+                try {
+                    binding.overlay.alpha = slideOffset
+                    if (shouldOpenCreatePlaylistFragment && binding.overlay.alpha == 0f) {
+                        shouldOpenCreatePlaylistFragment = false
+                        findNavController().navigate(R.id.action_create_playlist)
+                    }
+                } catch (_: Exception) {
+
                 }
             }
         })
@@ -299,12 +303,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
 
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
-        Toast.makeText(
-            requireContext(),
-            "$message $playlistTitle",
-            Toast.LENGTH_SHORT
-        ).show()
+        MySnackBar(requireActivity(), "$message $playlistTitle").show()
     }
 
     private fun updateBtnState(
