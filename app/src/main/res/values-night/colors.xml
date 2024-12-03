@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="handle_color">@color/white</color>
     <color name="bottom_menu_color">#BF1A1B22</color>
     <color name="player_bottom_control">#F2272727</color>
     <color name="rippleColor">#33AEAFB4</color>

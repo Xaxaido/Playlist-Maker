@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.common.utils
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
@@ -12,8 +13,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 
 object Util {
 
-    const val IS_FAVORITE = "IS_FAVORITE"
-    const val PLAYER_FRAGMENT_IS_FAVORITE = "PLAYER_FRAGMENT_IS_FAVORITE"
     const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
     const val ANIMATION_SHORT= 250L
     const val UPDATE_PLAYBACK_PROGRESS_DELAY= 300L
@@ -45,6 +44,14 @@ object Util {
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
         )
+    }
+
+    fun getColor(context: Context, attr: Int): Int {
+        val typedValue = TypedValue()
+
+        return if (context.theme.resolveAttribute(attr, typedValue, true)) {
+            typedValue.resourceId
+        } else -1
     }
 
     fun drawableToBitmap(context: Context, image: Drawable?) =

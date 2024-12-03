@@ -40,4 +40,5 @@
     <dimen name="actionbar_height">112dp</dimen>
     <dimen name="search_actionbar_height">128dp</dimen>
     <dimen name="play_btn_progress_size">130dp</dimen>
+    <dimen name="playlist_cover_size">160dp</dimen>
 </resources>

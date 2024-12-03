@@ -8,11 +8,12 @@ import com.practicum.playlistmaker.search.domain.model.TrackListItem
 class TrackAdapter(
     onTrackClick: (Track) -> Unit = {},
     onClearHistoryClick: () -> Unit = {},
+    showFavorites: Boolean = true,
 ): AsyncListDifferDelegationAdapter<TrackListItem>(DiffCallback()) {
 
     init {
         delegatesManager.addDelegate(headerItemDelegate())
-            .addDelegate(trackItemDelegate(onTrackClick))
+            .addDelegate(trackItemDelegate(onTrackClick, showFavorites))
             .addDelegate(footerItemDelegate(onClearHistoryClick))
     }
 

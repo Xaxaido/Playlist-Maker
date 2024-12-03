@@ -4,7 +4,8 @@ import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.search.data.dto.TrackDto
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Extensions.toDate
-import com.practicum.playlistmaker.medialibrary.data.db.entity.TrackEntity
+import com.practicum.playlistmaker.medialibrary.data.db.entity.FavoriteTrackEntity
+import com.practicum.playlistmaker.medialibrary.data.db.entity.PlaylistTrackEntity
 import java.time.Instant
 
 object DtoConverter {
@@ -25,7 +26,7 @@ object DtoConverter {
         )
     }
 
-    fun Track.toTrackEntity() = TrackEntity(
+    fun Track.toFavoriteTrackEntity() = FavoriteTrackEntity(
         id,
         trackName,
         artistName,
@@ -41,7 +42,22 @@ object DtoConverter {
         Instant.now().toEpochMilli(),
     )
 
-    fun List<TrackEntity>.toTrack() = map {
+    fun Track.toPlaylistTrackEntity() = PlaylistTrackEntity(
+        id,
+        trackName,
+        artistName,
+        duration,
+        albumCover,
+        albumName,
+        releaseDate,
+        genre,
+        country,
+        previewUrl,
+        artistViewUrl,
+        true,
+    )
+
+    fun List<FavoriteTrackEntity>.toTracks() = map {
         Track(
             it.id,
             it.trackName,

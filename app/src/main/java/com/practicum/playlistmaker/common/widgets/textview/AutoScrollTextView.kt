@@ -58,7 +58,7 @@ class AutoScrollTextView @JvmOverloads constructor(
     }
 
     fun startScrolling() {
-        if (textWidth + gradientWidth < width) return
+        if (textWidth + gradientWidth < width || width == 0) return
 
         val scrollDistance = textWidth + gap
         ValueAnimator.ofFloat(0f, -scrollDistance).apply {
