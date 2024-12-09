@@ -30,6 +30,7 @@ import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
+import com.practicum.playlistmaker.medialibrary.domain.model.PlaylistListItem
 import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistAdapter
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -162,7 +163,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         binding.shimmerPlaceholder.shimmer.startShimmer()
         updatePlayBtnState(false)
 
-        playlistAdapter = PlaylistAdapter(R.layout.item_bottom_sheet) { playlist ->
+        playlistAdapter = PlaylistAdapter { playlist ->
             viewModel.addToPlaylist(playlist)
         }
         binding.playlistsRecycler.adapter = playlistAdapter
@@ -292,7 +293,8 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun showPlaylists(playlists: List<Playlist>) {
-        playlistAdapter.submitTracksList(playlists)
+        val items = playlistAdapter.convertToPlaylistListItem(PlaylistListItem.PlaylistBottomSheetItem::class.java, playlists)
+        playlistAdapter.submitTracksList(items)
     }
 
     private fun showAddToPlaylistStatus(playlistTitle: String, isAdded: Boolean) {

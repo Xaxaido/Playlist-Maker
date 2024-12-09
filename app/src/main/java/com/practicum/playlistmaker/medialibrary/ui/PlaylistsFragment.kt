@@ -21,6 +21,7 @@ import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
+import com.practicum.playlistmaker.medialibrary.domain.model.PlaylistListItem
 import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistAdapter
 import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistItemDecoration
 import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistsViewModel
@@ -61,7 +62,7 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
             )
         )
 
-        adapter = PlaylistAdapter(R.layout.item_playlist)
+        adapter = PlaylistAdapter()
 
         binding.recycler.layoutManager = GridLayoutManager(requireActivity(), 2)
         binding.recycler.adapter = adapter
@@ -99,7 +100,8 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
     }
 
     private fun showPlaylists(list: List<Playlist>) {
-        adapter.submitTracksList(list)  {
+        val items = adapter.convertToPlaylistListItem(PlaylistListItem.PlaylistItem::class.java, list)
+        adapter.submitTracksList(items)  {
             visibility.show(Results)
         }
     }

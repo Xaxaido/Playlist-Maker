@@ -1,36 +1,39 @@
 package com.practicum.playlistmaker.medialibrary.ui.recycler
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
-import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ItemBottomSheetBinding
-import com.practicum.playlistmaker.databinding.ItemPlaylistBinding
+import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
+import com.practicum.playlistmaker.medialibrary.domain.model.PlaylistListItem
 
 class PlaylistAdapter(
-    private val layoutId: Int,
-    private val onClick: (Playlist) -> Unit = {},
-) : ListAdapter<Playlist, PlaylistViewHolder>(PlaylistDiffCallback()) {
+    onClick: (Playlist) -> Unit = {},
+) : AsyncListDifferDelegationAdapter<PlaylistListItem>(PlaylistDiffCallback()) {
 
-    fun submitTracksList(list: List<Playlist>, doOnEnd: (() -> Unit) = {}) {
-        submitList(list) {
+    init {
+        delegatesManager
+            .addDelegate(playlistItemDelegate(onClick))
+            .addDelegate(playlistBottomSheetItemDelegate(onClick))
+    }
+
+    fun submitTracksList(list: List<PlaylistListItem>, doOnEnd: (() -> Unit) = {}) {
+        differ.submitList(list) {
             doOnEnd()
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = when (layoutId) {
-            R.layout.item_playlist -> ItemPlaylistBinding.inflate(inflater, parent, false)
-            R.layout.item_bottom_sheet -> ItemBottomSheetBinding.inflate(inflater, parent, false)
-            else -> throw IllegalArgumentException("Unknown layoutId: $layoutId")
+    fun <T> convertToPlaylistListItem(
+        clazz: Class<T>,
+        list: List<Playlist>,
+    ): List<PlaylistListItem> {
+        return buildList {
+            this += when (clazz) {
+                PlaylistListItem.PlaylistItem::class.java -> {
+                    list.map { PlaylistListItem.PlaylistItem(it) }
+                }
+                PlaylistListItem.PlaylistBottomSheetItem::class.java -> {
+                    list.map { PlaylistListItem.PlaylistBottomSheetItem(it) }
+                }
+                else -> emptyList()
+            }
         }
-
-        return PlaylistViewHolder(binding, onClick)
-    }
-
-    override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        holder.bind(getItem(position))
     }
 }
