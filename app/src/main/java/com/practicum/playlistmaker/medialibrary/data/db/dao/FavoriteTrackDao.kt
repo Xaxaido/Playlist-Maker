@@ -5,20 +5,20 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.practicum.playlistmaker.medialibrary.data.db.entity.TrackEntity
+import com.practicum.playlistmaker.medialibrary.data.db.entity.FavoriteTrackEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface TrackDao {
+interface FavoriteTrackDao {
 
-    @Insert(entity = TrackEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun add(track: TrackEntity)
+    @Insert(entity = FavoriteTrackEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun add(track: FavoriteTrackEntity)
 
-    @Delete(entity = TrackEntity::class)
-    suspend fun remove(track: TrackEntity)
+    @Delete(entity = FavoriteTrackEntity::class)
+    suspend fun remove(track: FavoriteTrackEntity)
 
     @Query("SELECT * FROM favorite_tracks ORDER BY dateAdded DESC")
-    fun getAll(): Flow<List<TrackEntity>>
+    fun getAll(): Flow<List<FavoriteTrackEntity>>
 
     @Query("SELECT id FROM favorite_tracks")
     fun getIds(): Flow<List<Long>>

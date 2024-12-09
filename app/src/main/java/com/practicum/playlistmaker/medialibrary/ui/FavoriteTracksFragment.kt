@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.common.resources.FavoriteTracksState
+import com.practicum.playlistmaker.common.resources.MediaLibraryState
 import com.practicum.playlistmaker.common.resources.VisibilityState.Loading
 import com.practicum.playlistmaker.common.resources.VisibilityState.NoData
 import com.practicum.playlistmaker.common.resources.VisibilityState.Results
@@ -71,7 +71,8 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
                 isClickEnabled = false
                 sendToPlayer(Util.trackToJson(track))
                 Debounce<Any>(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
-            }
+            },
+            showFavorites = false
         )
 
         binding.recycler.adapter = adapter
@@ -115,11 +116,12 @@ class FavoriteTracksFragment: BaseFragment<FragmentFavoriteTracksBinding>() {
         }
     }
 
-    private fun renderState(state: FavoriteTracksState) {
+    @Suppress("UNCHECKED_CAST")
+    private fun renderState(state: MediaLibraryState) {
         when (state) {
-            is FavoriteTracksState.Loading -> visibility.show(Loading)
-            is FavoriteTracksState.Empty -> visibility.show(NoData)
-            is FavoriteTracksState.Content -> showFavoriteTracks(state.tracks)
+            is MediaLibraryState.Loading -> visibility.show(Loading)
+            is MediaLibraryState.Empty -> visibility.show(NoData)
+            is MediaLibraryState.Content<*> -> showFavoriteTracks(state.list as List<Track>)
         }
     }
 

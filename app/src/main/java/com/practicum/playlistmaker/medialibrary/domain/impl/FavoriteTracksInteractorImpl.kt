@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.medialibrary.domain.impl
 
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTrackEntity
-import com.practicum.playlistmaker.medialibrary.data.db.entity.TrackEntity
+import com.practicum.playlistmaker.common.utils.DtoConverter.toFavoriteTrackEntity
+import com.practicum.playlistmaker.medialibrary.data.db.entity.FavoriteTrackEntity
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksRepository
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -14,11 +14,11 @@ class FavoriteTracksInteractorImpl(
     private val repository: FavoriteTracksRepository,
 ) : FavoriteTracksInteractor {
 
-    override suspend fun add(track: TrackEntity) {
+    override suspend fun add(track: FavoriteTrackEntity) {
         repository.add(track)
     }
 
-    override suspend fun remove(track: TrackEntity) {
+    override suspend fun remove(track: FavoriteTrackEntity) {
         repository.remove(track)
     }
 
@@ -43,7 +43,7 @@ class FavoriteTracksInteractorImpl(
     override fun addToFavorites(scope: CoroutineScope, track: Track) {
         scope.launch {
             track.isFavorite = !track.isFavorite
-            val entity = track.toTrackEntity()
+            val entity = track.toFavoriteTrackEntity()
             if (track.isFavorite) {
                 add(entity)
             } else {

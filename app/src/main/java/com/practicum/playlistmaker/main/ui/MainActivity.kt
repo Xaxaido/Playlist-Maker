@@ -19,6 +19,8 @@ import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.main.ui.view_model.MainActivityViewModel
+import com.practicum.playlistmaker.medialibrary.ui.CreatePlaylistFragment
+import com.practicum.playlistmaker.player.ui.PlayerFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), BackButtonState {
@@ -26,6 +28,8 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     private val viewModel by viewModel<MainActivityViewModel>()
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private lateinit var navHostFragment: NavHostFragment
+    private var customNavigation: (() -> Boolean)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,14 +42,18 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     }
 
     private fun setupUI() {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         binding.bottomNav.setupWithNavController(navController)
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
+
             when (destination.id) {
                 R.id.player_fragment -> {
-                    updateBottomNav(false)
+                    if (currentFragment !is CreatePlaylistFragment) updateBottomNav(false)
+                }
+                R.id.create_playlist_fragment -> {
+                    if (currentFragment !is PlayerFragment) updateBottomNav(false)
                 }
                 else -> {
                     if (!binding.bottomNavContainer.isVisible) {
@@ -117,7 +125,20 @@ class MainActivity : AppCompatActivity(), BackButtonState {
         supportActionBar?.apply { setDisplayHomeAsUpEnabled(enabled) }
     }
 
+    override fun setCustomNavigation(action: () -> Boolean) {
+        customNavigation = action
+    }
+
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
+        val result: Boolean
+
+        if (customNavigation != null) {
+            result = customNavigation!!.invoke()
+            customNavigation = null
+        } else {
+            result = navController.navigateUp() || super.onSupportNavigateUp()
+        }
+
+        return result
     }
 }

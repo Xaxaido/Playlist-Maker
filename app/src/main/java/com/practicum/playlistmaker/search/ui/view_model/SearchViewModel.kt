@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.search.ui.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.common.resources.SearchState
-import com.practicum.playlistmaker.common.resources.TracksSearchState
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.main.domain.api.InternetConnectListener
@@ -15,7 +14,6 @@ import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -100,18 +98,9 @@ class SearchViewModel(
         setState(SearchState.Loading)
         viewModelScope.launch {
             tracksInteractor.searchTracks(term)
-                .map { result ->
-                    result.tracks.map {track ->
-                    track.apply { isFavorite = favoritesList.contains(id) }
+                .collect { result ->
+                    processResult(result.tracks, result.error, result.term)
                 }
-
-                when(result) {
-                    is TracksSearchState.Success -> TracksSearchState.Success(result.tracks, result.term)
-                    else -> result
-                }
-            }.collect { result ->
-                processResult(result.tracks, result.error, result.term)
-            }
         }
     }
 
@@ -119,6 +108,9 @@ class SearchViewModel(
         setState(
             when {
                 tracks.isNotEmpty() -> {
+                    tracks.map { track ->
+                        track.isFavorite = favoritesList.contains(track.id)
+                    }
                     currentList = tracks
                     SearchState.TrackSearchResults(tracks, term)
                 }
