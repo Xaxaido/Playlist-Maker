@@ -24,6 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
+import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.common.utils.MySnackBar
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
@@ -81,6 +82,11 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
                 })
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as? BackButtonState)?.setIconColor(false)
     }
 
     private fun setListeners() {
@@ -159,6 +165,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun setupUI() {
+        (activity as? BackButtonState)?.setIconColor(true)
         viewModel.setTrack()
         binding.shimmerPlaceholder.shimmer.startShimmer()
         updatePlayBtnState(false)
@@ -242,7 +249,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         with (binding) {
             playerTrackTitle.setString(track.trackName)
             playerArtistName.setString(track.artistName)
-            playerDurationText.text = track.duration
+            playerDurationText.text = track.duration.millisToSeconds()
             yearText.text = track.releaseDate ?: ""
             genreText.text = track.genre
             albumTitleText.text = track.albumName

@@ -33,7 +33,7 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
 
     private val viewModel by viewModel<CreatePlaylistViewModel>()
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
-    private var cover: String = ""
+    private var coverUri: Uri? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -79,8 +79,8 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
         val pickMedia = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             uri?.let {
                 if (getPermissions(uri)) {
+                    coverUri = uri
                     binding.imagePicker.setImageURI(uri)
-                    saveImageToPrivateStorage(uri)
                 }
             }
         }
@@ -89,15 +89,15 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
             pickMedia.launch(arrayOf("image/*"))
         }
 
-        binding.title.doOnTextChanged { text, _, _, _ ->
+        binding.playlistTitle.doOnTextChanged { text, _, _, _ ->
             val title = text.toString()
             binding.buttonCreatePlaylist.isEnabled = title.isNotEmpty()
         }
 
         binding.buttonCreatePlaylist.setOnClickListener {
             viewModel.createPlaylist(
-                cover,
-                binding.title.text.toString(),
+                coverUri?.let { saveImageToPrivateStorage(it) } ?: "",
+                binding.playlistTitle.text.toString(),
                 binding.description.text.toString()
             )
         }
@@ -115,7 +115,7 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
     }
 
     private fun onBackButtonClick(): Boolean {
-        return if (binding.title.text.toString().isEmpty() && binding.description.text.toString().isEmpty()) {
+        return if (binding.playlistTitle.text.toString().isEmpty() && binding.description.text.toString().isEmpty()) {
             findNavController().navigateUp()
         } else {
             confirmDialog.show()
@@ -136,7 +136,7 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri) {
+    private fun saveImageToPrivateStorage(uri: Uri): String {
         val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlist_covers")
 
         if (!filePath.exists()){
@@ -152,6 +152,6 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
 
-        cover = file.path
+        return file.path
     }
 }

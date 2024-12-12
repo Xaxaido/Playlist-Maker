@@ -19,14 +19,17 @@ interface PlaylistDao {
     suspend fun remove(playlist: PlaylistEntity)
 
     @Query("UPDATE playlists SET tracks = :updatedTracks, tracksCount = :updatedCount WHERE id = :playlistId")
-    suspend fun addToPlaylist(playlistId: Int, updatedTracks: String, updatedCount: Int)
+    suspend fun addToPlaylist(playlistId: Int = -1, updatedTracks: String, updatedCount: Int)
 
     @Query("UPDATE playlists SET cover = :path")
     suspend fun updatePlaylistCover(path: String)
 
+    @Query("SELECT * FROM playlists ORDER BY tracksCount DESC")
+    suspend fun getAll(): List<Playlist>
+
     @Query("SELECT * FROM playlists WHERE id = :playlistId")
-    suspend fun getPlaylist(playlistId: Int): PlaylistEntity
+    fun getPlaylist(playlistId: Int): Flow<Playlist>
 
     @Query("SELECT * FROM playlists ORDER BY tracksCount DESC")
-    fun getAll(): Flow<List<Playlist>>
+    fun observe(): Flow<List<Playlist>>
 }

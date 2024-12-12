@@ -9,7 +9,7 @@ data class FavoriteTrackEntity(
     val id: Long,
     val trackName: String,
     val artistName: String,
-    val duration: String,
+    val duration: Long,
     val albumCover: String?,
     val albumName: String?,
     val releaseDate: String?,

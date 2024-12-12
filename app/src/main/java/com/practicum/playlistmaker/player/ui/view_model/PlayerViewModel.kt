@@ -9,6 +9,7 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
+import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistInteractor
 import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistsInteractor
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener

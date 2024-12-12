@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.common.resources.AppTheme
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlin.math.floor
 
 object Util {
 
@@ -60,4 +61,20 @@ object Util {
             ICON_SIZE.dpToPx(context),
             false
         )
+
+    fun formatValue(value: Int, valueName: String): String {
+        val valueNameToFormat = valueName.split(",")
+        val preLastNumber = value % 100 / 10
+        val lastNumber = value % 10
+
+        if (preLastNumber == 1) {
+            return " " + valueNameToFormat[2]
+        }
+
+        return when (lastNumber) {
+            1 -> " " + valueNameToFormat[0]
+            2, 3, 4 -> " " + valueNameToFormat[1]
+            else -> " " + valueNameToFormat[2]
+        }
+    }
 }

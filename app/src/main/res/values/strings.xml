@@ -19,6 +19,11 @@
     <string name="create_playlist_dialog_message">Все несохраненные данные будут потеряны</string>
     <string name="create_playlist_dialog_cancel">Отмена</string>
     <string name="create_playlist_dialog_finish">Завершить</string>
+    <string name="playlist_minute">минута,минуты,минут</string>
+    <string name="playlist_track">трек,трека,треков</string>
+    <string name="playlist_dialog_message">Хотите удалить трек?</string>
+    <string name="dialog_message_yes">Да</string>
+    <string name="dialog_message_no">Нет</string>
     <string name="search">Поиск</string>
     <string name="search_hint">Поиск</string>
     <string name="nothing_found">Ничего не нашлось</string>

@@ -26,4 +26,9 @@ object Extensions {
         "mm : ss",
         Locale.getDefault()
     ).format(this) ?: ""
+
+    fun Long.millisToMinutes() = SimpleDateFormat(
+        "mm",
+        Locale.getDefault()
+    ).format(this) ?: ""
 }

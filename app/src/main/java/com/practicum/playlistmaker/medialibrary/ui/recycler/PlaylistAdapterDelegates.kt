@@ -21,7 +21,7 @@ fun playlistItemDelegate(
         bindPlaylist(
             itemView,
             binding.cover,
-            binding.title,
+            binding.playlistTitle,
             binding.tracksCount,
             item.playlist,
             onClick,
@@ -38,7 +38,7 @@ fun playlistBottomSheetItemDelegate(
         bindPlaylist(
             itemView,
             binding.cover,
-            binding.title,
+            binding.playlistTitle,
             binding.tracksCount,
             item.playlist,
             onClick,

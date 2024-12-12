@@ -105,7 +105,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 sendToPlayer(Util.trackToJson(track))
                 Debounce<Any>(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             },
-            { clearHistory() }
+            onClearHistoryClick = { clearHistory() }
         )
 
         binding.recycler.adapter = trackAdapter

@@ -7,6 +7,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
+import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.databinding.ItemFooterBinding
 import com.practicum.playlistmaker.databinding.ItemHeaderBinding
 import com.practicum.playlistmaker.databinding.ItemTrackBinding
@@ -22,6 +23,7 @@ fun headerItemDelegate() =
 
 fun trackItemDelegate(
     onTrackClick: (Track) -> Unit,
+    onLongTrackClick: (Track) -> Boolean = { false },
     showFavorites: Boolean,
 ) = adapterDelegateViewBinding<TrackListItem.TrackItem, TrackListItem, ItemTrackBinding>(
     { layoutInflater, root -> ItemTrackBinding.inflate(layoutInflater, root, false) }
@@ -37,8 +39,9 @@ fun trackItemDelegate(
 
         if (showFavorites) binding.favorite.isVisible = track.isFavorite
         binding.trackTitle.text = track.trackName
-        binding.artistName.setText(track.artistName, track.duration)
+        binding.artistName.setText(track.artistName, track.duration.millisToSeconds())
         itemView.setOnClickListener { onTrackClick(track) }
+        itemView.setOnLongClickListener { onLongTrackClick(track) }
         itemView.isVisible = true
     }
 }

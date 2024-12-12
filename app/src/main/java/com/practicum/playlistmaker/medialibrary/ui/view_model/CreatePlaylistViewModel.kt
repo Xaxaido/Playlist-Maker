@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CreatePlaylistViewModel(
-    private val playlistInteractor: PlaylistsInteractor,
+    private val playlistsInteractor: PlaylistsInteractor,
 ) : ViewModel() {
 
     private val _stateFlow = MutableStateFlow("")
@@ -19,7 +19,7 @@ class CreatePlaylistViewModel(
     fun createPlaylist(cover: String, title: String, description: String) {
         val playlist = PlaylistEntity(null, title, description, cover, null)
         viewModelScope.launch {
-            playlistInteractor.add(playlist)
+            playlistsInteractor.add(playlist)
             _stateFlow.value = title
         }
     }
