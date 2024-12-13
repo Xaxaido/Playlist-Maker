@@ -1,20 +1,31 @@
 package com.practicum.playlistmaker.medialibrary.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.common.resources.PlaylistMenuState
 import com.practicum.playlistmaker.common.resources.PlaylistState
+import com.practicum.playlistmaker.common.resources.VisibilityState.NoData
+import com.practicum.playlistmaker.common.resources.VisibilityState.Results
+import com.practicum.playlistmaker.common.resources.VisibilityState.ViewsList
+import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityItem
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Extensions.millisToMinutes
+import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
+import com.practicum.playlistmaker.common.utils.MySnackBar
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
@@ -41,9 +52,11 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
     private val viewModel by viewModel<PlaylistViewModel> {
         parametersOf(requireArguments().getInt(ARGS_PLAYLIST))
     }
+    private lateinit var visibility: ViewsList
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
     private lateinit var track: Track
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var isClickEnabled = true
 
     override fun createBinding(
@@ -68,6 +81,13 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
             }.setPositiveButton(resources.getString(R.string.dialog_message_yes)) { _, _ ->
                 viewModel.removeTrack(track.id)
             }
+
+        visibility = ViewsList(
+            listOf(
+                VisibilityItem(binding.emptyMedialibrary, listOf(NoData)),
+                VisibilityItem(binding.recycler, listOf(Results)),
+            )
+        )
 
         trackAdapter = TrackAdapter(
             { track ->
@@ -100,10 +120,73 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.tracksLIstFlow.collect {
-                    showTracksList(it)
+                viewModel.tracksListFlow.collect { tracks ->
+                    if (tracks.isEmpty()) {
+                        visibility.show(NoData)
+                    } else {
+                        showTracksList(tracks)
+                    }
                 }
             }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.playlistMenuFlow.collect {
+                    renderMenu(it)
+                }
+            }
+        }
+
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                binding.overlay.isVisible = newState != BottomSheetBehavior.STATE_COLLAPSED
+                        && newState != BottomSheetBehavior.STATE_HIDDEN
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                try {
+                    binding.overlay.alpha = slideOffset
+                } catch (_: Exception) {
+
+                }
+            }
+        })
+
+        binding.menu.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        binding.share.setOnClickListener {
+            viewModel.sharePlaylist()
+        }
+
+        binding.sharePlaylist.setOnClickListener {
+            viewModel.sharePlaylist()
+        }
+
+        binding.editPlaylist.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_create_playlist,
+                CreatePlaylistFragment.createArgs(viewModel.playlist),
+            )
+        }
+
+        binding.removePlaylist.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(resources.getString(R.string.remove_playlist))
+                .setMessage(resources.getString(R.string.remove_playlist_message))
+                .setNeutralButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
+                }.setPositiveButton(resources.getString(R.string.dialog_message_yes)) { _, _ ->
+                    viewModel.removePlaylist()
+                }.show()
         }
     }
 
@@ -115,6 +198,8 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
     }
 
     private fun fillPlaylistData(playlist: Playlist, duration: Long) {
+        val count = Util.formatValue(playlist.tracksCount, getString(R.string.playlist_track))
+
         with (binding) {
             Glide.with(this@PlaylistFragment)
                 .load(playlist.cover)
@@ -127,19 +212,67 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
 
             val durationInMinutes = duration.millisToMinutes().toInt()
             summary.setText(
-                "$durationInMinutes ${Util.formatValue(durationInMinutes, getString(R.string.playlist_minute))}",
-                "${playlist.tracksCount} ${Util.formatValue(playlist.tracksCount, getString(R.string.playlist_track))}"
+                Util.formatValue(durationInMinutes, getString(R.string.playlist_minute)),
+                count
             )
+        }
+
+        with (binding.playlist) {
+            Glide.with(this@PlaylistFragment)
+                .load(playlist.cover)
+                .placeholder(R.drawable.playlist_cover_placeholder)
+                .centerCrop()
+                .into(cover)
+
+            playlistTitle.text = playlist.name
+            tracksCount.text = count
         }
     }
 
     private fun showTracksList(list: List<Track>) {
-        trackAdapter.submitTracksList(false, list, false)
+        trackAdapter.submitTracksList(false, list, false) {
+            visibility.show(Results)
+        }
+    }
+
+    private fun sharePlaylist(playlist: Playlist, list: List<Track>) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        if (list.isEmpty()) {
+            MySnackBar(
+                requireActivity(),
+                getString(R.string.share_playlist_error)
+            ).show()
+            return
+        }
+
+        val message = buildString {
+            appendLine(playlist.name)
+            appendLine(playlist.description)
+            appendLine(Util.formatValue(playlist.tracksCount, getString(R.string.playlist_track)))
+            appendLine()
+            list.forEachIndexed { index, track ->
+                appendLine("${index + 1}. ${track.artistName} - ${track.trackName} (${track.duration.millisToSeconds()})")
+            }
+        }
+
+        Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, message)
+            startActivity(Intent.createChooser(this, null))
+        }
     }
 
     private fun renderState(state: PlaylistState) {
         when (state) {
             is PlaylistState.PlaylistInfo -> fillPlaylistData(state.playlist, state.duration)
+        }
+    }
+
+    private fun renderMenu(state: PlaylistMenuState) {
+        when (state) {
+            is PlaylistMenuState.Share -> sharePlaylist(state.playlist, state.tracks)
+            is PlaylistMenuState.Remove -> findNavController().navigateUp()
         }
     }
 }

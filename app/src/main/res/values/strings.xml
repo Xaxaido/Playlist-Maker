@@ -11,6 +11,8 @@
     <string name="playlist_name">Название*</string>
     <string name="playlist_description">Описание</string>
     <string name="btn_create">Создать</string>
+    <string name="edit">Редактировать</string>
+    <string name="save">Сохранить</string>
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="playlist_created">Плейлист %s создан</string>
     <string name="add_to_playlist_success">Добавлено в плейлист</string>
@@ -24,6 +26,13 @@
     <string name="playlist_dialog_message">Хотите удалить трек?</string>
     <string name="dialog_message_yes">Да</string>
     <string name="dialog_message_no">Нет</string>
+    <string name="playlist_share_error">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="playlist_remove_dialog_message">Хотите удалить плейлист?</string>
+    <string name="share_playlist">Поделиться</string>
+    <string name="share_playlist_error">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="edit_playlist">Редактировать информацию</string>
+    <string name="remove_playlist">Удалить плейлист</string>
+    <string name="remove_playlist_message">Хотите удалить плейлист?</string>
     <string name="search">Поиск</string>
     <string name="search_hint">Поиск</string>
     <string name="nothing_found">Ничего не нашлось</string>

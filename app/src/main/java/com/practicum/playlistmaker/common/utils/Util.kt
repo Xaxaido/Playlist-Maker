@@ -10,7 +10,6 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.common.resources.AppTheme
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
 import com.practicum.playlistmaker.search.domain.model.Track
-import kotlin.math.floor
 
 object Util {
 
@@ -68,13 +67,13 @@ object Util {
         val lastNumber = value % 10
 
         if (preLastNumber == 1) {
-            return " " + valueNameToFormat[2]
+            return "$value ${valueNameToFormat[2]}"
         }
 
         return when (lastNumber) {
-            1 -> " " + valueNameToFormat[0]
-            2, 3, 4 -> " " + valueNameToFormat[1]
-            else -> " " + valueNameToFormat[2]
+            1 -> "$value ${valueNameToFormat[0]}"
+            2, 3, 4 -> "$value ${valueNameToFormat[1]}"
+            else -> "$value ${valueNameToFormat[2]}"
         }
     }
 }

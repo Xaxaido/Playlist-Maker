@@ -32,6 +32,7 @@ import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.medialibrary.domain.model.PlaylistListItem
+import com.practicum.playlistmaker.medialibrary.ui.CreatePlaylistFragment
 import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistAdapter
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -105,7 +106,10 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
                     binding.overlay.alpha = slideOffset
                     if (shouldOpenCreatePlaylistFragment && binding.overlay.alpha == 0f) {
                         shouldOpenCreatePlaylistFragment = false
-                        findNavController().navigate(R.id.action_create_playlist)
+                        findNavController().navigate(
+                            R.id.action_create_playlist,
+                            CreatePlaylistFragment.createArgs(null),
+                        )
                     }
                 } catch (_: Exception) {
 

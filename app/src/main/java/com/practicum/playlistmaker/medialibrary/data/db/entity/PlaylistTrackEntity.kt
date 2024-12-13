@@ -18,4 +18,5 @@ data class PlaylistTrackEntity(
     val previewUrl: String,
     val artistViewUrl: String?,
     val isFavorite: Boolean,
+    val dateAdded: Long,
 )

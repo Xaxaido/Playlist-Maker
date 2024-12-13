@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
-    private var customNavigation: (() -> Boolean)? = null
+    override var customNavigateAction: (() -> Boolean)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     }
 
     override fun setCustomNavigation(action: () -> Boolean) {
-        customNavigation = action
+        customNavigateAction = action
     }
 
     override fun setIconColor(isDefault: Boolean) {
@@ -150,12 +150,15 @@ class MainActivity : AppCompatActivity(), BackButtonState {
         }
     }
 
+    override fun setTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         val result: Boolean
 
-        if (customNavigation != null) {
-            result = customNavigation!!.invoke()
-            customNavigation = null
+        if (customNavigateAction != null) {
+            result = customNavigateAction!!.invoke()
         } else {
             result = navController.navigateUp() || super.onSupportNavigateUp()
         }

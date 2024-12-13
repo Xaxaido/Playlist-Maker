@@ -100,7 +100,10 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
         }
 
         binding.createPlaylist.setOnClickListener {
-            findNavController().navigate(R.id.action_create_playlist)
+            findNavController().navigate(
+                R.id.action_create_playlist,
+                CreatePlaylistFragment.createArgs(null)
+                )
         }
     }
 

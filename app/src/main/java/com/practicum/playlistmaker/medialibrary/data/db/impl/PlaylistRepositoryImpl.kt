@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.common.utils.DtoConverter.playlistTracksToTracks
 import com.practicum.playlistmaker.medialibrary.data.AppDataBase
+import com.practicum.playlistmaker.medialibrary.data.db.entity.PlaylistEntity
 import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistRepository
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -15,7 +16,7 @@ class PlaylistRepositoryImpl(
     private val gson: Gson,
 ) : PlaylistRepository {
 
-    private fun getTracksIds(json: String): MutableList<Long> {
+    private fun getTracksIds(json: String?): MutableList<Long> {
         return gson.fromJson(json, object : TypeToken<List<Long>>() {}.type) ?: mutableListOf()
     }
 
@@ -29,6 +30,13 @@ class PlaylistRepositoryImpl(
             } == true
         }) {
             dataBase.playlistTrackDao().remove(trackId)
+        }
+    }
+
+    override suspend fun removePlaylist(playlist: PlaylistEntity) {
+        dataBase.playlistDao().remove(playlist)
+        getTracksIds(playlist.tracks).forEach {
+            removeTrackIfNecessary(it)
         }
     }
 
