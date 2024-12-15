@@ -24,6 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
+import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.common.utils.MySnackBar
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
@@ -31,6 +32,7 @@ import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.medialibrary.domain.model.PlaylistListItem
+import com.practicum.playlistmaker.medialibrary.ui.CreatePlaylistFragment
 import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistAdapter
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -83,13 +85,16 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as? BackButtonState)?.setIconColor(false)
+    }
+
     private fun setListeners() {
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
+                BottomSheetBehavior.STATE_EXPANDED
                 binding.overlay.isVisible = newState != BottomSheetBehavior.STATE_COLLAPSED
                                             && newState != BottomSheetBehavior.STATE_HIDDEN
             }
@@ -99,7 +104,10 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
                     binding.overlay.alpha = slideOffset
                     if (shouldOpenCreatePlaylistFragment && binding.overlay.alpha == 0f) {
                         shouldOpenCreatePlaylistFragment = false
-                        findNavController().navigate(R.id.action_create_playlist)
+                        findNavController().navigate(
+                            R.id.action_create_playlist,
+                            CreatePlaylistFragment.createArgs(null),
+                        )
                     }
                 } catch (_: Exception) {
 
@@ -159,6 +167,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun setupUI() {
+        (activity as? BackButtonState)?.setIconColor(true)
         viewModel.setTrack()
         binding.shimmerPlaceholder.shimmer.startShimmer()
         updatePlayBtnState(false)
@@ -168,6 +177,15 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
         binding.playlistsRecycler.adapter = playlistAdapter
         binding.playlistsRecycler.itemAnimator = ItemAnimator()
+
+        val height = (resources.displayMetrics.heightPixels * 2) / 3
+
+        binding.bottomSheetLayout.layoutParams.height = height
+        binding.bottomSheetLayout.requestLayout()
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     private fun syncScrollingText() {
@@ -242,7 +260,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         with (binding) {
             playerTrackTitle.setString(track.trackName)
             playerArtistName.setString(track.artistName)
-            playerDurationText.text = track.duration
+            playerDurationText.text = track.duration.millisToSeconds()
             yearText.text = track.releaseDate ?: ""
             genreText.text = track.genre
             albumTitleText.text = track.albumName
@@ -299,12 +317,12 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private fun showAddToPlaylistStatus(playlistTitle: String, isAdded: Boolean) {
         val message = if (isAdded) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             resources.getText(R.string.add_to_playlist_success)
         } else {
             resources.getText(R.string.add_to_playlist_error)
         }
 
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         MySnackBar(requireActivity(), "$message $playlistTitle").show()
     }
 

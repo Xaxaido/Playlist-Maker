@@ -2,11 +2,13 @@ package com.practicum.playlistmaker.main.ui
 
 import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -20,6 +22,7 @@ import com.practicum.playlistmaker.databinding.ActivityMainBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.main.ui.view_model.MainActivityViewModel
 import com.practicum.playlistmaker.medialibrary.ui.CreatePlaylistFragment
+import com.practicum.playlistmaker.medialibrary.ui.PlaylistFragment
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
-    private var customNavigation: (() -> Boolean)? = null
+    override var customNavigateAction: (() -> Boolean)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +53,10 @@ class MainActivity : AppCompatActivity(), BackButtonState {
 
             when (destination.id) {
                 R.id.player_fragment -> {
-                    if (currentFragment !is CreatePlaylistFragment) updateBottomNav(false)
+                    if (currentFragment !is CreatePlaylistFragment
+                        && currentFragment !is PlaylistFragment) updateBottomNav(false)
                 }
-                R.id.create_playlist_fragment -> {
+                R.id.create_playlist_fragment, R.id.playlist_fragment -> {
                     if (currentFragment !is PlayerFragment) updateBottomNav(false)
                 }
                 else -> {
@@ -126,15 +130,35 @@ class MainActivity : AppCompatActivity(), BackButtonState {
     }
 
     override fun setCustomNavigation(action: () -> Boolean) {
-        customNavigation = action
+        customNavigateAction = action
+    }
+
+    override fun setIconColor(isDefault: Boolean) {
+        val color = if (isDefault) {
+            TypedValue().apply {
+                theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, this, true)
+            }.data
+        } else {
+            ContextCompat.getColor(this, R.color.black)
+        }
+
+        supportActionBar?.apply {
+            setHomeAsUpIndicator(
+                ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_back)?.apply {
+                    setTint(color)
+                })
+        }
+    }
+
+    override fun setTitle(title: String) {
+        supportActionBar?.title = title
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val result: Boolean
 
-        if (customNavigation != null) {
-            result = customNavigation!!.invoke()
-            customNavigation = null
+        if (customNavigateAction != null) {
+            result = customNavigateAction!!.invoke()
         } else {
             result = navController.navigateUp() || super.onSupportNavigateUp()
         }

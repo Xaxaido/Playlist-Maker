@@ -300,7 +300,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:background="@drawable/bottom_sheet"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
@@ -313,7 +313,7 @@
             android:background="@drawable/handle" />
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/playlist_title"
             android:layout_width="wrap_content"
             android:layout_height="52dp"
             android:gravity="center"

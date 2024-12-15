@@ -9,7 +9,7 @@ data class PlaylistTrackEntity(
     val id: Long,
     val trackName: String,
     val artistName: String,
-    val duration: String,
+    val duration: Long,
     val albumCover: String?,
     val albumName: String?,
     val releaseDate: String?,
@@ -18,4 +18,5 @@ data class PlaylistTrackEntity(
     val previewUrl: String,
     val artistViewUrl: String?,
     val isFavorite: Boolean,
+    val dateAdded: Long,
 )

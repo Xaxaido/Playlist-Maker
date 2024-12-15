@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.medialibrary.data.db.impl
 
-import com.practicum.playlistmaker.common.utils.DtoConverter.toTracks
+import com.practicum.playlistmaker.common.utils.DtoConverter.favoriteTracksToTracks
 import com.practicum.playlistmaker.medialibrary.data.AppDataBase
 import com.practicum.playlistmaker.medialibrary.data.db.entity.FavoriteTrackEntity
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksRepository
@@ -22,7 +22,7 @@ class FavoriteTracksRepositoryImpl(
 
     override fun getAll(): Flow<List<Track>> {
         return dataBase.favoriteTrackDao().getAll().map { tracks ->
-            tracks.toTracks()
+            tracks.favoriteTracksToTracks()
         }
     }
 

@@ -13,6 +13,12 @@ interface PlaylistTrackDao {
     @Insert(entity = PlaylistTrackEntity::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun add(track: PlaylistTrackEntity)
 
+    @Query("DELETE FROM playlist_tracks WHERE id = :trackId")
+    suspend fun remove(trackId: Long)
+
+    @Query("SELECT * FROM playlist_tracks ORDER BY dateAdded DESC")
+    suspend fun getAll(): List<PlaylistTrackEntity>
+
     @Query("SELECT id FROM playlist_tracks")
     fun getIds(): Flow<List<Long>>
 }

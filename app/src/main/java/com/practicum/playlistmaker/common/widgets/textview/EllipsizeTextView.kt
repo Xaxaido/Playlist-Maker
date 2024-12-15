@@ -19,7 +19,12 @@ class EllipsizeTextView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
-    private fun String.width() = paint.measureText(this)
+    private fun String.width(): Float {
+        return paint.apply {
+            textSize = this@EllipsizeTextView.textSize
+            typeface = this@EllipsizeTextView.typeface
+        }.measureText(this)
+    }
     private fun Int.dpToPx() = (this * context.resources.displayMetrics.density).toInt()
 
     private var sourceText = ""
@@ -37,7 +42,9 @@ class EllipsizeTextView @JvmOverloads constructor(
     fun setText(sourceText: String, extraText: String) {
         this.sourceText = sourceText
         this.extraText = extraText
-        requestLayout()
+        post {
+            requestLayout()
+        }
     }
 
     private fun ellipsize(sourceText: String): String {
@@ -50,9 +57,9 @@ class EllipsizeTextView @JvmOverloads constructor(
         return result + ELLIPSIZE_SYMBOL
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
         if (measuredWidth > 0) {
             val isFullVisible = sourceText.width() <= availableWidth
             text = updateText(if (isFullVisible) sourceText else ellipsize(sourceText))

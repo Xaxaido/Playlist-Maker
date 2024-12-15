@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.databinding.ItemBottomSheetBinding
 import com.practicum.playlistmaker.databinding.ItemPlaylistBinding
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
@@ -21,7 +22,7 @@ fun playlistItemDelegate(
         bindPlaylist(
             itemView,
             binding.cover,
-            binding.title,
+            binding.playlistTitle,
             binding.tracksCount,
             item.playlist,
             onClick,
@@ -38,7 +39,7 @@ fun playlistBottomSheetItemDelegate(
         bindPlaylist(
             itemView,
             binding.cover,
-            binding.title,
+            binding.playlistTitle,
             binding.tracksCount,
             item.playlist,
             onClick,
@@ -61,6 +62,6 @@ private fun bindPlaylist(
         .into(cover)
 
     title.text = playlist.name
-    tracksCount.text = playlist.tracksCount.toString()
+    tracksCount.text = Util.formatValue(playlist.tracksCount, itemView.context.getString(R.string.playlist_track))
     itemView.setOnClickListener { onClick(playlist) }
 }

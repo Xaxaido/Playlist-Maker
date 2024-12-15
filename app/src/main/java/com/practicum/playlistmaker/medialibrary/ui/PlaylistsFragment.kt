@@ -62,7 +62,12 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
             )
         )
 
-        adapter = PlaylistAdapter()
+        adapter = PlaylistAdapter { playlist ->
+            findNavController().navigate(
+                R.id.action_open_playlist,
+                PlaylistFragment.createArgs(playlist.id),
+            )
+        }
 
         binding.recycler.layoutManager = GridLayoutManager(requireActivity(), 2)
         binding.recycler.adapter = adapter
@@ -95,7 +100,10 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
         }
 
         binding.createPlaylist.setOnClickListener {
-            findNavController().navigate(R.id.action_create_playlist)
+            findNavController().navigate(
+                R.id.action_create_playlist,
+                CreatePlaylistFragment.createArgs(null)
+                )
         }
     }
 

@@ -34,7 +34,7 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/playlist_title"
         style="@style/DescriptionText"
         android:layout_width="0dp"
         android:layout_marginTop="@dimen/padding_small_2x"
@@ -54,7 +54,7 @@
         android:textSize="@dimen/bottom_menu_text_size"
         app:layout_constraintEnd_toEndOf="@id/cover_card"
         app:layout_constraintStart_toStartOf="@id/cover_card"
-        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/playlist_title"
         tools:text="999 tracks" />
 
 </androidx.constraintlayout.widget.ConstraintLayout >

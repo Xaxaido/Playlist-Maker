@@ -22,9 +22,7 @@ object Util {
     const val HISTORY_MAX_COUNT = 10
     const val NO_CONNECTION = -1
     const val HTTP_OK = 200
-    const val HTTP_BAD_REQUEST = 400
     const val HTTP_NOT_FOUND = 404
-    const val REQUEST_TIMEOUT = 408
     const val INTERNAL_SERVER_ERROR = 500
     const val REQUEST_CANCELLED = -2
     const val ICON_SIZE = 32
@@ -60,4 +58,20 @@ object Util {
             ICON_SIZE.dpToPx(context),
             false
         )
+
+    fun formatValue(value: Int, valueName: String): String {
+        val valueNameToFormat = valueName.split(",")
+        val preLastNumber = value % 100 / 10
+        val lastNumber = value % 10
+
+        if (preLastNumber == 1) {
+            return "$value ${valueNameToFormat[2]}"
+        }
+
+        return when (lastNumber) {
+            1 -> "$value ${valueNameToFormat[0]}"
+            2, 3, 4 -> "$value ${valueNameToFormat[1]}"
+            else -> "$value ${valueNameToFormat[2]}"
+        }
+    }
 }

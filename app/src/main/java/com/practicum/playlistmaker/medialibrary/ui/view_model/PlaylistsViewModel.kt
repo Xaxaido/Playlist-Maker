@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(
-    private val playlistInteractor: PlaylistsInteractor,
+    private val playlistsInteractor: PlaylistsInteractor,
 ) : ViewModel() {
 
     private val _stateFlow = MutableStateFlow<MediaLibraryState>(MediaLibraryState.Loading)
@@ -23,7 +23,7 @@ class PlaylistsViewModel(
 
     private fun observePlaylists() {
         viewModelScope.launch {
-            playlistInteractor
+            playlistsInteractor
                 .getAll()
                 .collect {
                     processResult(it)

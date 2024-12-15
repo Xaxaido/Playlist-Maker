@@ -36,7 +36,7 @@ class PlaylistsRepositoryImpl(
     }
 
     override fun getAll(): Flow<List<Playlist>> {
-        return dataBase.playlistDao().getAll()
+        return dataBase.playlistDao().observe()
     }
 
     override fun getIds(): Flow<List<Long>> {

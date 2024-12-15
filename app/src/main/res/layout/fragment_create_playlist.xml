@@ -70,7 +70,7 @@
                 app:layout_constraintEnd_toEndOf="@id/right_guideline">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/title"
+                        android:id="@+id/playlist_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/playlist_name" />
