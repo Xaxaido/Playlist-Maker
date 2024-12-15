@@ -76,7 +76,8 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
         (activity as? BackButtonState)?.setIconColor(false)
 
         confirmDialog = MaterialAlertDialogBuilder(requireActivity())
-            .setMessage(resources.getString(R.string.playlist_dialog_message))
+            .setTitle(getString(R.string.remove_track_title))
+            .setMessage(getString(R.string.remove_track_message))
             .setNeutralButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
             }.setPositiveButton(resources.getString(R.string.dialog_message_yes)) { _, _ ->
                 viewModel.removeTrack(track.id)

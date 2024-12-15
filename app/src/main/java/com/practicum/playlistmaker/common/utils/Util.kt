@@ -22,9 +22,7 @@ object Util {
     const val HISTORY_MAX_COUNT = 10
     const val NO_CONNECTION = -1
     const val HTTP_OK = 200
-    const val HTTP_BAD_REQUEST = 400
     const val HTTP_NOT_FOUND = 404
-    const val REQUEST_TIMEOUT = 408
     const val INTERNAL_SERVER_ERROR = 500
     const val REQUEST_CANCELLED = -2
     const val ICON_SIZE = 32

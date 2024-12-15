@@ -300,7 +300,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:background="@drawable/bottom_sheet"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"

@@ -23,7 +23,9 @@
     <string name="create_playlist_dialog_finish">Завершить</string>
     <string name="playlist_minute">минута,минуты,минут</string>
     <string name="playlist_track">трек,трека,треков</string>
-    <string name="playlist_dialog_message">Хотите удалить трек?</string>
+    <string name="playlist_empty">В этом плейлисте нет треков</string>
+    <string name="remove_track_title">Удалить трек</string>
+    <string name="remove_track_message">Хотите удалить трек?</string>
     <string name="dialog_message_yes">Да</string>
     <string name="dialog_message_no">Нет</string>
     <string name="playlist_share_error">В этом плейлисте нет списка треков, которым можно поделиться</string>

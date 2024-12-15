@@ -91,12 +91,10 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun setListeners() {
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
+                BottomSheetBehavior.STATE_EXPANDED
                 binding.overlay.isVisible = newState != BottomSheetBehavior.STATE_COLLAPSED
                                             && newState != BottomSheetBehavior.STATE_HIDDEN
             }
@@ -179,6 +177,15 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
         binding.playlistsRecycler.adapter = playlistAdapter
         binding.playlistsRecycler.itemAnimator = ItemAnimator()
+
+        val height = (resources.displayMetrics.heightPixels * 2) / 3
+
+        binding.bottomSheetLayout.layoutParams.height = height
+        binding.bottomSheetLayout.requestLayout()
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     private fun syncScrollingText() {
@@ -310,12 +317,12 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private fun showAddToPlaylistStatus(playlistTitle: String, isAdded: Boolean) {
         val message = if (isAdded) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             resources.getText(R.string.add_to_playlist_success)
         } else {
             resources.getText(R.string.add_to_playlist_error)
         }
 
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         MySnackBar(requireActivity(), "$message $playlistTitle").show()
     }
 

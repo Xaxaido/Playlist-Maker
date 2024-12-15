@@ -141,7 +141,7 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
                 android:textSize="@dimen/text_big"
-                android:text="@string/empty_medialibrary"
+                android:text="@string/playlist_empty"
                 android:drawablePadding="@dimen/padding_small_6x"
                 app:drawableTopCompat="@drawable/nothing_found" />
 
