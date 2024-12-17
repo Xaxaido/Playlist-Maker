@@ -51,7 +51,7 @@
                     android:id="@+id/image_picker"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/cover_pick"
+                    android:src="@drawable/ic_add_photo"
                     android:scaleType="centerCrop" />
 
             </androidx.cardview.widget.CardView>
@@ -69,11 +69,12 @@
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/playlist_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/playlist_name" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/playlist_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_medium"
+                    android:hint="@string/playlist_name" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -94,6 +95,7 @@
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_medium"
                     android:hint="@string/playlist_description" />
 
             </com.google.android.material.textfield.TextInputLayout>

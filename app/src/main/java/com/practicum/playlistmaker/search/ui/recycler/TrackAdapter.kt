@@ -7,7 +7,7 @@ import com.practicum.playlistmaker.search.domain.model.TrackListItem
 
 class TrackAdapter(
     onTrackClick: (Track) -> Unit = {},
-    onLongTrackClick: (Track) -> Boolean = { false },
+    onLongTrackClick: (Int, Track) -> Boolean = { _, _ -> false },
     onClearHistoryClick: () -> Unit = {},
     showFavorites: Boolean = true,
 ): AsyncListDifferDelegationAdapter<TrackListItem>(DiffCallback()) {

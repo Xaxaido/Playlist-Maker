@@ -29,6 +29,8 @@ import com.practicum.playlistmaker.common.utils.MySnackBar
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
+import com.practicum.playlistmaker.common.widgets.recycler.SwipeHelper
+import com.practicum.playlistmaker.common.widgets.recycler.UnderlayButton
 import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
@@ -54,9 +56,8 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
     }
     private lateinit var visibility: ViewsList
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var confirmDialog: MaterialAlertDialogBuilder
-    private lateinit var track: Track
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var swipeHelper: SwipeHelper
     private var isClickEnabled = true
 
     override fun createBinding(
@@ -75,14 +76,6 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
     private fun setupUI() {
         (activity as? BackButtonState)?.setIconColor(false)
 
-        confirmDialog = MaterialAlertDialogBuilder(requireActivity())
-            .setTitle(getString(R.string.remove_track_title))
-            .setMessage(getString(R.string.remove_track_message))
-            .setNeutralButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
-            }.setPositiveButton(resources.getString(R.string.dialog_message_yes)) { _, _ ->
-                viewModel.removeTrack(track.id)
-            }
-
         visibility = ViewsList(
             listOf(
                 VisibilityItem(binding.emptyMedialibrary, listOf(NoData)),
@@ -98,16 +91,30 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
                 sendToPlayer(Util.trackToJson(track))
                 Debounce<Any>(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             },
-            { track ->
-                this.track = track
-                confirmDialog.show()
+            { pos, track ->
+                showDialog { removeTrack(pos, track.id) }
                 true
             },
             showFavorites = false
             )
         binding.recycler.adapter = trackAdapter
         binding.recycler.itemAnimator = ItemAnimator()
-        binding.blurImageViewBottomMenu.setContentView(binding.recycler)
+        swipeHelper = initSwipeHelper()
+    }
+
+    private fun showDialog(action: () -> Unit) {
+        MaterialAlertDialogBuilder(requireActivity())
+            .setTitle(getString(R.string.remove_track_title))
+            .setMessage(getString(R.string.remove_track_message))
+            .setNeutralButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
+            }.setPositiveButton(resources.getString(R.string.dialog_message_yes)) { _, _ ->
+                action()
+            }.show()
+    }
+
+    private fun initSwipeHelper() = object : SwipeHelper(binding.recycler) {
+
+        override fun instantiateUnderlayButton(pos: Int): MutableList<UnderlayButton> = mutableListOf(btnDelete())
     }
 
     private fun setListeners() {
@@ -241,7 +248,7 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
 
         if (list.isEmpty()) {
             MySnackBar(
-                requireActivity(),
+                requireView(),
                 getString(R.string.share_playlist_error)
             ).show()
             return
@@ -274,6 +281,33 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
         when (state) {
             is PlaylistMenuState.Share -> sharePlaylist(state.playlist, state.tracks)
             is PlaylistMenuState.Remove -> findNavController().navigateUp()
+        }
+    }
+
+    private fun removeTrack(pos: Int, id: Long) {
+        swipeHelper.disableClick()
+        trackAdapter.notifyItemChanged(pos)
+        Debounce<Any>(Util.ANIMATION_SHORT, viewLifecycleOwner.lifecycleScope) {
+            swipeHelper.startParticleAnimation(binding.particleView, pos) {
+                viewModel.removeTrack(id)
+                swipeHelper.enableClick()
+            }
+        }.start()
+    }
+
+    private val btnDelete: () -> UnderlayButton = {
+        UnderlayButton(
+            requireActivity(),
+            getString(R.string.history_delete_item),
+            R.drawable.ic_delete,
+            bgColor = requireActivity().getColor(R.color.red),
+            textColor = requireActivity().getColor(R.color.white),
+        ) { pos ->
+            val track = trackAdapter.getItem(pos)!!
+
+            showDialog {
+                removeTrack(pos, track.id)
+            }
         }
     }
 }

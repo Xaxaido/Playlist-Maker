@@ -23,6 +23,7 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.CreatePlaylistState
 import com.practicum.playlistmaker.common.utils.MySnackBar
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
@@ -68,6 +69,8 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
     }
 
     private fun setupUI() {
+        Util.drawFrame(binding.imagePicker, resources.displayMetrics.density, ContextCompat.getColor(requireActivity(), R.color.greyMedium))
+
         confirmDialog = MaterialAlertDialogBuilder(requireActivity())
             .setTitle(resources.getString(R.string.create_playlist_dialog_title))
             .setMessage(resources.getString(R.string.create_playlist_dialog_message))
@@ -173,7 +176,7 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
 
             if (playlist == null) {
                 MySnackBar(
-                    requireActivity(),
+                    requireView(),
                     String.format(
                         resources.getText(R.string.playlist_created).toString(),
                         title
