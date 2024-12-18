@@ -33,7 +33,6 @@ import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistViewModel
 import com.practicum.playlistmaker.player.ui.PlayerFragment
-import com.practicum.playlistmaker.player.ui.PlaylistBottomDialogFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import kotlinx.coroutines.launch

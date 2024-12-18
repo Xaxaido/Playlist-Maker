@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.player.ui
+package com.practicum.playlistmaker.medialibrary.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,9 +15,8 @@ import com.practicum.playlistmaker.common.widgets.BaseBottomDialogFragment
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBottomDialogBinding
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.medialibrary.domain.model.PlaylistListItem
-import com.practicum.playlistmaker.medialibrary.ui.CreatePlaylistFragment
 import com.practicum.playlistmaker.medialibrary.ui.recycler.PlaylistAdapter
-import com.practicum.playlistmaker.player.ui.view_model.PlaylistsBottomSheetDialogViewModel
+import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistsBottomSheetDialogViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -60,6 +59,13 @@ class PlaylistsBottomDialogFragment(
         }
 
         binding.playlistsRecycler.adapter = playlistAdapter
+
+        val height = (resources.displayMetrics.heightPixels * 2) / 3
+
+        binding.bottomSheetLayout.apply {
+            layoutParams.height = height
+            requestLayout()
+        }
     }
 
     private fun setListeners() {

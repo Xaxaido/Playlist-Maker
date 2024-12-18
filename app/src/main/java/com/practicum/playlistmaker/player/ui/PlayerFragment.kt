@@ -26,6 +26,7 @@ import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
+import com.practicum.playlistmaker.medialibrary.ui.PlaylistsBottomDialogFragment
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -42,10 +43,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             bundleOf(ARGS_TRACK to json)
     }
 
-    private val viewModel by viewModel<PlayerViewModel>(ownerProducer = { this }) {
+    private val viewModel by viewModel<PlayerViewModel> {
         parametersOf(requireArguments().getString(ARGS_TRACK).orEmpty())
     }
-    private var isPlaylisted = false
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -54,24 +54,10 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         return FragmentPlayerBinding.inflate(inflater, container, false)
     }
 
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        return if (nextAnim == 0) {
-            super.onCreateAnimation(transit, enter, nextAnim)
-        } else {
-            AnimationUtils.loadAnimation(requireActivity(), nextAnim).apply {
-                setAnimationListener(object : Animation.AnimationListener {
-
-                    override fun onAnimationStart(animation: Animation) {}
-
-                    override fun onAnimationEnd(animation: Animation) {
-                        setupUI()
-                        setListeners()
-                    }
-
-                    override fun onAnimationRepeat(animation: Animation) {}
-                })
-            }
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupUI()
+        setListeners()
     }
 
     override fun onDestroyView() {
@@ -86,7 +72,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         binding.btnAddToPlaylist.setOnClickListener {
             updateBtnState(
                 binding.btnAddToPlaylist,
-                isPlaylisted,
+                false,
                 R.drawable.added_false_icon,
                 R.drawable.added_false_icon,
                 true
@@ -124,11 +110,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         viewModel.setTrack()
         binding.shimmerPlaceholder.shimmer.startShimmer()
         updatePlayBtnState(false)
-
-        /*val height = (resources.displayMetrics.heightPixels * 2) / 3
-
-        binding.bottomSheetLayout.layoutParams.height = height
-        binding.bottomSheetLayout.requestLayout()*/
     }
 
     private fun syncScrollingText() {
