@@ -35,7 +35,7 @@ class PlaylistsBottomDialogFragment(
         }
     }
 
-    private val viewModel by viewModel<PlaylistsBottomSheetDialogViewModel> {
+    private val viewModel by viewModel<PlaylistsBottomSheetDialogViewModel>(ownerProducer = {this}) {
         parametersOf(track)
     }
 

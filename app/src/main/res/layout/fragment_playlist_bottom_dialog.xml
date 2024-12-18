@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/Theme.PlaylistMaker"
+    android:id="@+id/bottom_sheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@drawable/bottom_sheet">
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="@dimen/padding_small_8x"
+            android:background="@drawable/handle" />
+
+        <include
+            android:id="@+id/playlist"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginStart="@dimen/padding_small_2x"
+            layout="@layout/item_bottom_sheet" />
+
+        <TextView
+            android:id="@+id/share_playlist"
+            style="@style/TextButton"
+            android:text="@string/share_playlist"
+            app:layout_constraintTop_toBottomOf="@+id/theme_text" />
+
+        <TextView
+            android:id="@+id/edit_playlist"
+            style="@style/TextButton"
+            android:text="@string/edit_playlist"
+            app:layout_constraintTop_toBottomOf="@+id/btn_settings_share" />
+
+        <TextView
+            android:id="@+id/remove_playlist"
+            style="@style/TextButton"
+            android:text="@string/remove_playlist"
+            app:layout_constraintTop_toBottomOf="@+id/btn_contact_support" />
+
+    </LinearLayout>

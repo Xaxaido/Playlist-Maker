@@ -8,7 +8,9 @@ import com.practicum.playlistmaker.common.utils.DtoConverter.toPlaylistEntity
 import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistInteractor
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -24,8 +26,8 @@ class PlaylistViewModel(
     private val _tracksListFlow = MutableStateFlow<List<Track>>(emptyList())
     val tracksListFlow: StateFlow<List<Track>> = _tracksListFlow.asStateFlow()
 
-    private val _playlistMenuFlow = MutableStateFlow<PlaylistMenuState>(PlaylistMenuState.Default)
-    val playlistMenuFlow: StateFlow<PlaylistMenuState> = _playlistMenuFlow.asStateFlow()
+    private val _playlistMenuFlow = MutableSharedFlow<PlaylistMenuState>()
+    val playlistMenuFlow: SharedFlow<PlaylistMenuState> = _playlistMenuFlow
 
     private lateinit var _playlist: Playlist
     val playlist: Playlist get() = _playlist
@@ -36,7 +38,7 @@ class PlaylistViewModel(
     }
 
     fun sharePlaylist() {
-        _playlistMenuFlow.value = PlaylistMenuState.Share(_playlist, tracksList)
+        setMenuState(PlaylistMenuState.Share(_playlist, tracksList))
     }
 
     fun removeTrack(trackId: Long) {
@@ -48,7 +50,13 @@ class PlaylistViewModel(
     fun removePlaylist() {
         viewModelScope.launch {
             playlistInteractor.removePlaylist(_playlist.toPlaylistEntity())
-            _playlistMenuFlow.value = PlaylistMenuState.Remove
+            setMenuState(PlaylistMenuState.Remove)
+        }
+    }
+
+    private fun setMenuState(state: PlaylistMenuState) {
+        viewModelScope.launch {
+            _playlistMenuFlow.emit(state)
         }
     }
 

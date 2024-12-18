@@ -42,7 +42,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             bundleOf(ARGS_TRACK to json)
     }
 
-    private val viewModel by viewModel<PlayerViewModel> {
+    private val viewModel by viewModel<PlayerViewModel>(ownerProducer = { this }) {
         parametersOf(requireArguments().getString(ARGS_TRACK).orEmpty())
     }
     private var isPlaylisted = false

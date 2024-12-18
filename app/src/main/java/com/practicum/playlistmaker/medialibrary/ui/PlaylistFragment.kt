@@ -5,15 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlaylistMenuState
@@ -36,6 +33,7 @@ import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistViewModel
 import com.practicum.playlistmaker.player.ui.PlayerFragment
+import com.practicum.playlistmaker.player.ui.PlaylistBottomDialogFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.TrackAdapter
 import kotlinx.coroutines.launch
@@ -51,12 +49,11 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
             bundleOf(ARGS_PLAYLIST to playlistId)
     }
 
-    private val viewModel by viewModel<PlaylistViewModel> {
+    private val viewModel by viewModel<PlaylistViewModel>(ownerProducer = { this }) {
         parametersOf(requireArguments().getInt(ARGS_PLAYLIST))
     }
     private lateinit var visibility: ViewsList
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var swipeHelper: SwipeHelper
     private var isClickEnabled = true
 
@@ -146,55 +143,12 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
             }
         }
 
-
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                binding.overlay.isVisible = newState != BottomSheetBehavior.STATE_COLLAPSED
-                        && newState != BottomSheetBehavior.STATE_HIDDEN
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                try {
-                    binding.overlay.alpha = slideOffset
-                } catch (_: Exception) {
-
-                }
-            }
-        })
-
         binding.menu.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            PlaylistBottomDialogFragment.newInstance().show(childFragmentManager, PlaylistBottomDialogFragment.TAG)
         }
 
         binding.share.setOnClickListener {
             viewModel.sharePlaylist()
-        }
-
-        binding.sharePlaylist.setOnClickListener {
-            viewModel.sharePlaylist()
-        }
-
-        binding.editPlaylist.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_create_playlist,
-                CreatePlaylistFragment.createArgs(viewModel.playlist),
-            )
-        }
-
-        binding.removePlaylist.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
-            MaterialAlertDialogBuilder(requireActivity())
-                .setTitle(resources.getString(R.string.remove_playlist))
-                .setMessage(resources.getString(R.string.remove_playlist_message))
-                .setNeutralButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
-                }.setPositiveButton(resources.getString(R.string.dialog_message_yes)) { _, _ ->
-                    viewModel.removePlaylist()
-                }.show()
         }
     }
 
@@ -224,17 +178,6 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
                 count
             )
         }
-
-        with (binding.playlist) {
-            Glide.with(this@PlaylistFragment)
-                .load(playlist.cover)
-                .placeholder(R.drawable.playlist_cover_placeholder)
-                .centerCrop()
-                .into(cover)
-
-            playlistTitle.text = playlist.name
-            tracksCount.text = count
-        }
     }
 
     private fun showTracksList(list: List<Track>) {
@@ -244,8 +187,6 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
     }
 
     private fun sharePlaylist(playlist: Playlist, list: List<Track>) {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
         if (list.isEmpty()) {
             MySnackBar(
                 requireView(),
