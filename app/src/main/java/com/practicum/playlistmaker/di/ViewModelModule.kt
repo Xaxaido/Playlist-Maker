@@ -6,6 +6,8 @@ import com.practicum.playlistmaker.medialibrary.ui.view_model.FavoriteTracksView
 import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistViewModel
 import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistsViewModel
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
+import com.practicum.playlistmaker.medialibrary.ui.view_model.PlaylistsBottomSheetDialogViewModel
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 import org.koin.core.module.dsl.viewModel
@@ -22,7 +24,7 @@ val viewModelModule = module {
     }
 
     viewModel { (json: String) ->
-        PlayerViewModel(get(), get(), get(), get(), json)
+        PlayerViewModel(get(), get(), get(), json)
     }
 
     viewModel {
@@ -43,5 +45,9 @@ val viewModelModule = module {
 
     viewModel { (json: String?) ->
         CreatePlaylistViewModel(get(), get(), json)
+    }
+
+    viewModel { (track: Track) ->
+        PlaylistsBottomSheetDialogViewModel(get(), track)
     }
 }

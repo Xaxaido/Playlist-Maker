@@ -7,6 +7,8 @@ import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import androidx.navigation.NavDeepLinkBuilder
+import com.practicum.playlistmaker.R
 
 class PlaybackService : MediaSessionService() {
 
@@ -14,12 +16,13 @@ class PlaybackService : MediaSessionService() {
     private var _mediaSession: MediaSession? = null
     private val mediaSession get() = _mediaSession
 
-    private fun getSingleTopActivity(): PendingIntent = PendingIntent.getActivity(
-        this,
-        0,
-        Intent(this, PlayerFragment::class.java),
-        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-    )
+    private fun getSingleTopActivity(): PendingIntent {
+        return NavDeepLinkBuilder(this)
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.player_fragment)
+            .setArguments(null)
+            .createPendingIntent()
+    }
 
     @UnstableApi
     override fun onCreate() {

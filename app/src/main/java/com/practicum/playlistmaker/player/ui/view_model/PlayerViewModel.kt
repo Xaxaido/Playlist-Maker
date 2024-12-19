@@ -9,9 +9,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.medialibrary.domain.db.FavoriteTracksInteractor
-import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistInteractor
-import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistsInteractor
-import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.player.domain.api.MediaPlayerListener
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
@@ -23,14 +20,13 @@ import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
-    private val playlistsInteractor: PlaylistsInteractor,
     private val trackDescriptionInteractor: TrackDescriptionInteractor,
     private val playerInteractor: PlayerInteractor,
     json: String,
 ) : ViewModel(), MediaPlayerListener {
 
+    val track: Track = Util.jsonToTrack(json)
     private var shouldPlayAnimation = false
-    private val track: Track = Util.jsonToTrack(json)
     private val timers: Map<String, Debounce<Any>> = mapOf(
         UPDATE_PLAYBACK_PROGRESS to Debounce(Util.UPDATE_PLAYBACK_PROGRESS_DELAY, viewModelScope) {
             setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
@@ -43,16 +39,12 @@ class PlayerViewModel(
     private val _stateFlow = MutableStateFlow<PlayerState>(PlayerState.Default)
     val stateFlow: StateFlow<PlayerState> = _stateFlow.asStateFlow()
 
-    private val _playlistsFlow = MutableStateFlow<List<Playlist>>(emptyList())
-    val playlistsFlow: StateFlow<List<Playlist>> = _playlistsFlow.asStateFlow()
-
     private val _trackBufferingFlow = MutableStateFlow(0)
     val trackBufferingFlow: StateFlow<Int> = _trackBufferingFlow.asStateFlow()
 
     init {
         playerInteractor.init(this, track)
         observeFavoriteTracks()
-        observePlaylists()
     }
 
     fun setTrack() {
@@ -62,19 +54,6 @@ class PlayerViewModel(
     fun addToFavorites() {
         shouldPlayAnimation = true
         favoriteTracksInteractor.addToFavorites(viewModelScope, track)
-    }
-
-    fun addToPlaylist(playlist: Playlist) {
-        val tracks: List<Long> = playlistsInteractor.getTracks(playlist.tracks)
-
-        if (tracks.contains(track.id)) {
-            setState(PlayerState.AddToPlaylist(playlist.name, false))
-        } else {
-            viewModelScope.launch {
-                playlistsInteractor.addToPlaylist(playlist, track)
-                setState(PlayerState.AddToPlaylist(playlist.name, true))
-            }
-        }
     }
 
     fun controlPlayback(shouldPlay: Boolean = true) {
@@ -111,15 +90,6 @@ class PlayerViewModel(
                     val isFavorite = ids.contains(track.id)
                     setState(PlayerState.IsFavorite(isFavorite, shouldPlayAnimation))
             }
-        }
-    }
-
-    private fun observePlaylists() {
-        viewModelScope.launch {
-            playlistsInteractor.getAll()
-                .collect { playlists ->
-                    _playlistsFlow.value = playlists
-                }
         }
     }
 

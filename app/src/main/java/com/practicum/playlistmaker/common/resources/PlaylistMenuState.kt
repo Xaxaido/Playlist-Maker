@@ -5,7 +5,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 
 interface PlaylistMenuState {
 
-    object Default : PlaylistMenuState
     object Remove : PlaylistMenuState
     class Share(
         val playlist: Playlist,

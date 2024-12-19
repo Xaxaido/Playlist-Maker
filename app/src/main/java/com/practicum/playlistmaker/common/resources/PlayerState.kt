@@ -23,8 +23,4 @@ interface PlayerState {
         val isFavorite: Boolean,
         val shouldPlayAnimation: Boolean = true
     ) : PlayerState
-    class AddToPlaylist(
-        val playlistTitle: String,
-        val isAdded: Boolean
-    ) : PlayerState
 }

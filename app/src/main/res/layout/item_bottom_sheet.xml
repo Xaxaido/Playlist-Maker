@@ -12,9 +12,11 @@
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_small_6x"
+        android:layout_marginEnd="@dimen/padding_small_4x"
+        android:layout_marginVertical="@dimen/padding_small_4x"
         app:cardElevation="0dp"
-        app:cardCornerRadius="2dp"
-        android:layout_margin="@dimen/padding_small_4x">
+        app:cardCornerRadius="2dp">
 
         <ImageView
             android:id="@+id/cover"
@@ -47,7 +49,7 @@
             android:id="@+id/tracks_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_small_2x"
+            android:layout_marginTop="@dimen/padding_small"
             android:textSize="@dimen/text_regular"
             android:fontFamily="@font/ys_500"
             android:textColor="@color/greyMedium"
