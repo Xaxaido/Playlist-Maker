@@ -1,11 +1,14 @@
 package com.practicum.playlistmaker.common.widgets
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.practicum.playlistmaker.R
 
 abstract class BaseBottomDialogFragment<T : ViewBinding> : BottomSheetDialogFragment() {
 
@@ -15,6 +18,12 @@ abstract class BaseBottomDialogFragment<T : ViewBinding> : BottomSheetDialogFrag
     }
 
     abstract fun createBinding(inflater: LayoutInflater, container: ViewGroup?): T
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+        dialog.window?.attributes?.windowAnimations = R.style.BottomDialogAnimations
+        return dialog
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
