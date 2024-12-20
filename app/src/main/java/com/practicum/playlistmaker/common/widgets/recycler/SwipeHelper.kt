@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -77,16 +78,12 @@ abstract class SwipeHelper(
     fun startParticleAnimation(particleView: ParticleView, pos: Int, onAnimationEnd: () -> Unit) {
         val viewToRemove = recyclerView.findViewHolderForAdapterPosition(pos)?.itemView ?: return
         val bitmap = Bitmap.createBitmap(viewToRemove.width, viewToRemove.height, Bitmap.Config.ARGB_8888)
+        val left = recyclerView.left + (recyclerView.parent as ViewGroup).left.toFloat()
+        val top = viewToRemove.top.toFloat() + recyclerView.top + (recyclerView.parent as ViewGroup).top
 
         Canvas(bitmap).also { viewToRemove.draw(it) }
         viewToRemove.isVisible = false
-        particleView.animator = ParticleAnimator(
-            recyclerView.context,
-            particleView,
-            bitmap,
-            0f,
-            viewToRemove.top.toFloat() + recyclerView.top
-        )
+        particleView.animator = ParticleAnimator(recyclerView.context, particleView, bitmap, left, top)
         particleView.startAnimation { onAnimationEnd() }
     }
 

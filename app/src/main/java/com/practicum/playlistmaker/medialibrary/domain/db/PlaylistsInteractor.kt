@@ -14,4 +14,5 @@ interface PlaylistsInteractor {
     fun getAll(): Flow<List<Playlist>>
     fun getIds(): Flow<List<Long>>
     fun getTracks(json: String?): MutableList<Long>
+    fun saveImage(uri: String): String
 }

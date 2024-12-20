@@ -11,6 +11,10 @@ class PlaylistsInteractorImpl(
     private val repository: PlaylistsRepository,
 ) : PlaylistsInteractor {
 
+    override fun saveImage(uri: String): String {
+        return repository.saveImage(uri)
+    }
+
     override suspend fun add(playlist: PlaylistEntity) {
         repository.add(playlist)
     }
