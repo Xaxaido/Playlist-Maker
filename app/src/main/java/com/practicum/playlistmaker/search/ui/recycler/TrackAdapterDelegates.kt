@@ -23,7 +23,7 @@ fun headerItemDelegate() =
 
 fun trackItemDelegate(
     onTrackClick: (Track) -> Unit,
-    onLongTrackClick: (Track) -> Boolean = { false },
+    onLongTrackClick: (Int, Track) -> Boolean = { _, _ -> false },
     showFavorites: Boolean,
 ) = adapterDelegateViewBinding<TrackListItem.TrackItem, TrackListItem, ItemTrackBinding>(
     { layoutInflater, root -> ItemTrackBinding.inflate(layoutInflater, root, false) }
@@ -41,7 +41,7 @@ fun trackItemDelegate(
         binding.trackTitle.text = track.trackName
         binding.artistName.setText(track.artistName, track.duration.millisToSeconds())
         itemView.setOnClickListener { onTrackClick(track) }
-        itemView.setOnLongClickListener { onLongTrackClick(track) }
+        itemView.setOnLongClickListener { onLongTrackClick(absoluteAdapterPosition, track) }
         itemView.isVisible = true
     }
 }

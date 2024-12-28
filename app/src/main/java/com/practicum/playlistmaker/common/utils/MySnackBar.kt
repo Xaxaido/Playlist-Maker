@@ -1,24 +1,22 @@
 package com.practicum.playlistmaker.common.utils
 
-import android.app.Activity
-
+import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
-import com.practicum.playlistmaker.R
 
 class MySnackBar(
-    private val activity: Activity,
+    private val view: View,
     private val message: String,
 ) {
 
     fun show() {
         Snackbar.make(
-            activity.findViewById(R.id.content_layout),
+            view,
             message,
             Snackbar.LENGTH_LONG
         ).apply {
-            val color = Util.getColor(activity, android.R.attr.colorBackground)
-            view.setBackgroundColor(ContextCompat.getColor(activity, color))
+            val color = Util.getColor(context, android.R.attr.colorBackground)
+            view.setBackgroundColor(ContextCompat.getColor(context, color))
             show()
         }
     }

@@ -35,6 +35,10 @@ class CreatePlaylistViewModel(
         }
     }
 
+    fun saveImage(uri: String): String {
+        return playlistsInteractor.saveImage(uri)
+    }
+
     private fun setState(state: CreatePlaylistState) {
         _stateFlow.value = state
     }

@@ -1,11 +1,8 @@
 package com.practicum.playlistmaker.medialibrary.ui
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +20,7 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.CreatePlaylistState
 import com.practicum.playlistmaker.common.utils.MySnackBar
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
@@ -31,9 +29,6 @@ import com.practicum.playlistmaker.medialibrary.ui.view_model.CreatePlaylistView
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import java.io.File
-import java.io.FileOutputStream
-import java.time.Instant
 
 class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
 
@@ -68,6 +63,8 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
     }
 
     private fun setupUI() {
+        Util.drawFrame(binding.imagePicker, resources.displayMetrics.density, ContextCompat.getColor(requireActivity(), R.color.greyMedium))
+
         confirmDialog = MaterialAlertDialogBuilder(requireActivity())
             .setTitle(resources.getString(R.string.create_playlist_dialog_title))
             .setMessage(resources.getString(R.string.create_playlist_dialog_message))
@@ -108,7 +105,7 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
         binding.buttonCreatePlaylist.setOnClickListener {
             viewModel.createPlaylist(
                 playlist?.id,
-                playlist?.cover ?: coverUri?.let { saveImageToPrivateStorage(it) } ?: "",
+                playlist?.cover ?: coverUri?.let { viewModel.saveImage(it.toString()) } ?: "",
                 binding.playlistTitle.text.toString(),
                 binding.description.text.toString(),
                 playlist?.tracks,
@@ -149,31 +146,12 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri): String {
-        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlist_covers")
-
-        if (!filePath.exists()){
-            filePath.mkdirs()
-        }
-
-        val fileName = "cover_${Instant.now().toEpochMilli()}.jpg"
-        val file = File(filePath, fileName)
-        val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
-
-        return file.path
-    }
-
     private fun createPlaylist(title: String) {
         if (title.isNotEmpty()) {
 
             if (playlist == null) {
                 MySnackBar(
-                    requireActivity(),
+                    requireView(),
                     String.format(
                         resources.getText(R.string.playlist_created).toString(),
                         title

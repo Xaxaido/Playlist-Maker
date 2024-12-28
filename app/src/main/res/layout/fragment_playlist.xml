@@ -120,7 +120,6 @@
             android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/padding_small_6x"
             android:layout_marginTop="@dimen/padding_small_12x"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_track" />
@@ -142,70 +141,17 @@
                 android:gravity="center"
                 android:textSize="@dimen/text_big"
                 android:text="@string/playlist_empty"
-                android:drawablePadding="@dimen/padding_small_6x"
-                app:drawableTopCompat="@drawable/nothing_found" />
+                android:drawablePadding="@dimen/padding_small_6x" />
 
         </FrameLayout>
 
     </LinearLayout>
 
-    <View
-        android:id="@+id/overlay"
+    <com.practicum.playlistmaker.common.widgets.recycler.ParticleView
+        android:id="@+id/particle_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#99000000"
-        android:visibility="gone"/>
-
-    <LinearLayout
-        android:id="@+id/bottom_sheet_menu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:clickable="true"
-        android:background="@drawable/bottom_sheet"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
-        <View
-            android:layout_width="50dp"
-            android:layout_height="6dp"
-            android:layout_marginTop="@dimen/padding_small_8x"
-            android:background="@drawable/handle" />
-
-        <include
-            android:id="@+id/playlist"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_marginStart="@dimen/padding_small_2x"
-            layout="@layout/item_bottom_sheet" />
-
-        <TextView
-            android:id="@+id/share_playlist"
-            style="@style/TextButton"
-            android:text="@string/share_playlist"
-            app:layout_constraintTop_toBottomOf="@+id/theme_text" />
-
-        <TextView
-            android:id="@+id/edit_playlist"
-            style="@style/TextButton"
-            android:text="@string/edit_playlist"
-            app:layout_constraintTop_toBottomOf="@+id/btn_settings_share" />
-
-        <TextView
-            android:id="@+id/remove_playlist"
-            style="@style/TextButton"
-            android:text="@string/remove_playlist"
-            app:layout_constraintTop_toBottomOf="@+id/btn_contact_support" />
-
-    </LinearLayout>
-
-    <com.practicum.playlistmaker.common.widgets.BlurredImageView
-        android:id="@+id/blur_image_view_bottom_menu"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
