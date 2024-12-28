@@ -108,7 +108,6 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
                 playlist?.cover ?: coverUri?.let { viewModel.saveImage(it.toString()) } ?: "",
                 binding.playlistTitle.text.toString(),
                 binding.description.text.toString(),
-                playlist?.tracks,
                 playlist?.tracksCount,
             )
         }
@@ -167,11 +166,13 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
         (activity as? BackButtonState)?.setTitle(getString(R.string.edit))
 
         with (binding) {
-            Glide.with(this@CreatePlaylistFragment)
-                .load(playlist.cover)
-                .placeholder(ContextCompat.getDrawable(requireContext(), R.drawable.album_cover_stub))
-                .centerCrop()
-                .into(imagePicker)
+            if (!playlist.cover.isNullOrEmpty()) {
+                Glide.with(this@CreatePlaylistFragment)
+                    .load(playlist.cover)
+                    .placeholder(ContextCompat.getDrawable(requireContext(), R.drawable.album_cover_stub))
+                    .centerCrop()
+                    .into(imagePicker)
+            }
 
             playlistTitle.setText(playlist.name)
             description.setText(playlist.description)

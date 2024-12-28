@@ -3,12 +3,10 @@ package com.practicum.playlistmaker.medialibrary.data.db.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "playlists")
-data class PlaylistEntity(
+@Entity(tableName = "playlist_tracks")
+data class PlaylistTracksEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int?,
-    val name: String,
-    val description: String?,
-    val cover: String?,
-    val tracksCount: Int = 0
+    val playlistId: Int,
+    val trackId: Long,
 )

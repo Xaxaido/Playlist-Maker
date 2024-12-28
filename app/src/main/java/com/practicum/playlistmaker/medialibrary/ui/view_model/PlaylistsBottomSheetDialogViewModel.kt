@@ -3,6 +3,9 @@ package com.practicum.playlistmaker.medialibrary.ui.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.common.resources.PlaylistsBottomDialogFragmentState
+import com.practicum.playlistmaker.common.utils.DtoConverter.toPlaylistEntity
+import com.practicum.playlistmaker.common.utils.DtoConverter.toPlaylistTrackEntity
+import com.practicum.playlistmaker.medialibrary.data.db.entity.PlaylistTracksEntity
 import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistsInteractor
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -27,13 +30,15 @@ class PlaylistsBottomSheetDialogViewModel(
     }
 
     fun addToPlaylist(playlist: Playlist) {
-        val tracks: List<Long> = playlistsInteractor.getTracks(playlist.tracks)
+        viewModelScope.launch {
+            val isTrackInPlaylist = playlistsInteractor.isTrackInPlaylist(playlist.id, track.id)
 
-        if (tracks.contains(track.id)) {
-            _addToPlaylistFlow.value = PlaylistsBottomDialogFragmentState.AddToPlaylist(playlist.name, false)
-        } else {
-            viewModelScope.launch {
-                playlistsInteractor.addToPlaylist(playlist, track)
+            if (isTrackInPlaylist) {
+                _addToPlaylistFlow.value = PlaylistsBottomDialogFragmentState.AddToPlaylist(playlist.name, false)
+            } else {
+                val playlistTracks = PlaylistTracksEntity(null, playlist.id, track.id)
+
+                playlistsInteractor.addToPlaylist(playlist.toPlaylistEntity(), playlistTracks, track.toPlaylistTrackEntity())
                 _addToPlaylistFlow.value = PlaylistsBottomDialogFragmentState.AddToPlaylist(playlist.name, true)
             }
         }

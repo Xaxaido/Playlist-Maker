@@ -7,9 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaylistRepository {
 
-    suspend fun removePlaylist(playlist: PlaylistEntity)
-    suspend fun removeTrack(playlist: Playlist, trackId: Long)
+    suspend fun removePlaylist(playlistId: Int)
+    suspend fun removeTrack(playlist: PlaylistEntity, trackId: Long)
     fun getPlaylist(id: Int): Flow<Playlist>
-    fun getTracks(json: String?): Flow<List<Track>>
-
+    fun getTracks(playlistId: Int): Flow<List<Track>>
 }

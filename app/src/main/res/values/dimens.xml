@@ -36,7 +36,8 @@
     <dimen name="album_cover_size">45dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
     <dimen name="panel_height">61dp</dimen>
-    <dimen name="play_btn_size">100dp</dimen>
+    <dimen name="play_btn_small">50dp</dimen>
+    <dimen name="play_btn_big">100dp</dimen>
     <dimen name="ui_margin_top">100dp</dimen>
     <dimen name="actionbar_height">112dp</dimen>
     <dimen name="search_actionbar_height">128dp</dimen>

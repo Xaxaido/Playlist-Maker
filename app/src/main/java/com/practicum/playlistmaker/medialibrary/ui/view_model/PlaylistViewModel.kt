@@ -43,13 +43,13 @@ class PlaylistViewModel(
 
     fun removeTrack(trackId: Long) {
         viewModelScope.launch {
-            playlistInteractor.removeTrack(_playlist, trackId)
+            playlistInteractor.removeTrack(_playlist.toPlaylistEntity(), trackId)
         }
     }
 
     fun removePlaylist() {
         viewModelScope.launch {
-            playlistInteractor.removePlaylist(_playlist.toPlaylistEntity())
+            playlistInteractor.removePlaylist(_playlist.id)
             setMenuState(PlaylistMenuState.Remove)
         }
     }
@@ -72,16 +72,16 @@ class PlaylistViewModel(
     }
 
     private fun processResult(playlist: Playlist?) {
+        if (playlist == null) return
+
         viewModelScope.launch {
             playlistInteractor
-                .getTracks(playlist?.tracks)
+                .getTracks(playlist.id)
                 .collect { tracks ->
-                    if (playlist == null) return@collect
-
-                    tracksList = tracks
                     var duration = 0L
 
                     tracks.forEach { duration += it.duration }
+                    tracksList = tracks
                     _playlistFlow.value = PlaylistState.PlaylistInfo(playlist, duration)
                     _tracksListFlow.value = tracks
                 }

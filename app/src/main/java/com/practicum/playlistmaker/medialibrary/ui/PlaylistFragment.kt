@@ -1,16 +1,20 @@
 package com.practicum.playlistmaker.medialibrary.ui
 
 import android.content.Intent
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlaylistMenuState
@@ -72,6 +76,15 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
     private fun setupUI() {
         (activity as? BackButtonState)?.setIconColor(false)
 
+        BottomSheetBehavior.from(binding.bottomSheetLayout).apply {
+            binding.menu.post {
+                val height = resources.displayMetrics.heightPixels - binding.menu.bottom - getStatusBarHeight()
+                if (peekHeight > height) {
+                    peekHeight = height
+                }
+            }
+        }
+
         visibility = ViewsList(
             listOf(
                 VisibilityItem(binding.emptyMedialibrary, listOf(NoData)),
@@ -96,6 +109,22 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
         binding.recycler.adapter = trackAdapter
         binding.recycler.itemAnimator = ItemAnimator()
         swipeHelper = initSwipeHelper()
+    }
+
+
+    private fun getStatusBarHeight(): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowInsets = requireActivity().window.decorView.rootWindowInsets
+            val insets = windowInsets.getInsets(WindowInsets.Type.systemBars())
+
+            return insets.top
+        } else {
+            val rectangle = Rect()
+            val window = requireActivity().window
+            window.decorView.getWindowVisibleDisplayFrame(rectangle)
+
+            return rectangle.top
+        }
     }
 
     private fun showDialog(action: () -> Unit) {

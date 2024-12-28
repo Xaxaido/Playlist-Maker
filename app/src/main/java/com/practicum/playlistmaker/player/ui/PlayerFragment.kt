@@ -6,9 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.animation.doOnEnd
 import androidx.core.os.bundleOf
@@ -70,14 +67,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         binding.addToFavoriteButton.setOnClickListener { viewModel.addToFavorites() }
 
         binding.btnAddToPlaylist.setOnClickListener {
-            updateBtnState(
-                binding.btnAddToPlaylist,
-                false,
-                R.drawable.added_false_icon,
-                R.drawable.added_false_icon,
-                true
-            )
-
+            binding.btnAddToPlaylist.updateBtnState(false)
             PlaylistsBottomDialogFragment.newInstance(viewModel.track).show(childFragmentManager, PlaylistsBottomDialogFragment.TAG)
         }
 
@@ -119,24 +109,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             it.scrollDelay += maxDuration - it.scrollDuration
             it.startScrolling()
         }
-    }
-
-    private fun startAnimation(view: View, action: () -> Unit) {
-        val scaleDown = AnimationUtils.loadAnimation(context, R.anim.scale_down)
-        val scaleUp = AnimationUtils.loadAnimation(context, R.anim.scale_up)
-
-        scaleDown.setAnimationListener(object : Animation.AnimationListener {
-
-            override fun onAnimationStart(animation: Animation?) {}
-            override fun onAnimationRepeat(animation: Animation?) {}
-
-            override fun onAnimationEnd(animation: Animation?) {
-                action()
-                view.startAnimation(scaleUp)
-            }
-        })
-
-        view.startAnimation(scaleDown)
     }
 
     private fun updatePlayBtnState(isActive: Boolean) {
@@ -205,7 +177,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun stop() {
-        updateBtnIcon(binding.btnPlay, false, R.drawable.pause_button, R.drawable.play_button)
+        binding.btnPlay.setActive(false)
         updateCover(false)
         binding.currentTime.reset()
     }
@@ -234,31 +206,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
     }
 
-    private fun updateBtnState(
-        button: ImageView,
-        isInActiveState: Boolean,
-        activeIcon: Int,
-        inactiveIcon: Int,
-        shouldPlayAnimation: Boolean = true,
-        action: () -> Unit = {},
-    ) {
-        if (shouldPlayAnimation) {
-            startAnimation(button) {
-                updateBtnIcon(button, isInActiveState, activeIcon, inactiveIcon)
-                action()
-            }
-        } else {
-            updateBtnIcon(button, isInActiveState, activeIcon, inactiveIcon)
-        }
-    }
-
-    private fun updateBtnIcon(button: ImageView, isInActiveState: Boolean, activeIcon: Int, inactiveIcon: Int) {
-        button.setImageResource(
-            if (isInActiveState) activeIcon
-            else inactiveIcon
-        )
-    }
-
     private fun renderState(state: PlayerState) {
         when (state) {
             is PlayerState.TrackData -> fillTrackData(state.track)
@@ -266,21 +213,12 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             is PlayerState.Stop -> stop()
             is PlayerState.Description -> showTrackDescription(state.result)
             is PlayerState.IsPlaying -> {
-                updateBtnState(
-                    binding.btnPlay,
-                    state.isPlaying,
-                    R.drawable.pause_button,
-                    R.drawable.play_button
-                ) { updateCover(state.isPlaying) }
+                binding.btnPlay.updateBtnState(state.isPlaying) {
+                    updateCover(state.isPlaying)
+                }
             }
             is PlayerState.IsFavorite -> {
-                updateBtnState(
-                    binding.addToFavoriteButton,
-                    state.isFavorite,
-                    R.drawable.favorite_true_icon,
-                    R.drawable.favorite_false_icon,
-                    state.shouldPlayAnimation
-                )
+                binding.addToFavoriteButton.updateBtnState(state.isFavorite)
             }
         }
     }
