@@ -9,6 +9,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -66,7 +67,6 @@ class PlayerButtonView @JvmOverloads constructor(
             override fun onAnimationRepeat(animation: Animation?) {}
 
             override fun onAnimationEnd(animation: Animation?) {
-                invalidate()
                 action()
                 startAnimation(scaleUp)
             }
@@ -86,5 +86,23 @@ class PlayerButtonView @JvmOverloads constructor(
         image?.let {
             canvas.drawBitmap(it, null, imageRect, paint)
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                return true
+            }
+            MotionEvent.ACTION_UP -> {
+                performClick()
+                return true
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+    override fun performClick(): Boolean {
+        super.performClick()
+        return true
     }
 }
