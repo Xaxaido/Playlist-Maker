@@ -218,7 +218,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
                 }
             }
             is PlayerState.IsFavorite -> {
-                binding.addToFavoriteButton.updateBtnState(state.isFavorite)
+                binding.addToFavoriteButton.updateBtnState(state.isFavorite, state.shouldPlayAnimation)
             }
         }
     }

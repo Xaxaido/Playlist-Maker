@@ -27,7 +27,7 @@ class PlayerButtonView @JvmOverloads constructor(
     private val icon: Bitmap?
     private val activeIcon: Bitmap?
     private var imageRect = RectF(0f, 0f, 0f, 0f)
-    private var paint: Paint? = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { isFilterBitmap = true }
     private var isActive = false
 
     init {
@@ -37,13 +37,8 @@ class PlayerButtonView @JvmOverloads constructor(
                 activeIcon = getDrawable(R.styleable.PlayerButtonView_activeIcon)?.toBitmap()
 
                 val tint = getColor(R.styleable.PlayerButtonView_tint, Color.TRANSPARENT)
-                if (tint == Color.TRANSPARENT) {
-                    paint = null
-                }
-
-                paint?.apply {
-                    isFilterBitmap = true
-                    colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
+                if (tint != Color.TRANSPARENT) {
+                    paint.colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
                 }
             } finally {
                 recycle()
@@ -56,7 +51,12 @@ class PlayerButtonView @JvmOverloads constructor(
         invalidate()
     }
 
-    fun updateBtnState(isActive: Boolean, action: () -> Unit = {}) {
+    fun updateBtnState(isActive: Boolean, shouldPlayAnimation: Boolean = true, action: () -> Unit = {}) {
+        if (!shouldPlayAnimation) {
+            setActive(isActive)
+            return
+        }
+
         val scaleDown = AnimationUtils.loadAnimation(context, R.anim.scale_down)
         val scaleUp = AnimationUtils.loadAnimation(context, R.anim.scale_up)
 
