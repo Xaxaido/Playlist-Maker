@@ -67,7 +67,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         binding.addToFavoriteButton.setOnClickListener { viewModel.addToFavorites() }
 
         binding.btnAddToPlaylist.setOnClickListener {
-            binding.btnAddToPlaylist.updateBtnState(false)
             PlaylistsBottomDialogFragment.newInstance(viewModel.track).show(childFragmentManager, PlaylistsBottomDialogFragment.TAG)
         }
 
@@ -177,7 +176,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun stop() {
-        binding.btnPlay.setActive(false)
+        binding.btnPlay.redraw(false)
         updateCover(false)
         binding.currentTime.reset()
     }
@@ -212,11 +211,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             is PlayerState.CurrentTime -> updateCurrentTime(state.time)
             is PlayerState.Stop -> stop()
             is PlayerState.Description -> showTrackDescription(state.result)
-            is PlayerState.IsPlaying -> {
-                binding.btnPlay.updateBtnState(state.isPlaying) {
-                    updateCover(state.isPlaying)
-                }
-            }
+            is PlayerState.IsPlaying -> updateCover(state.isPlaying)
             is PlayerState.IsFavorite -> {
                 binding.addToFavoriteButton.updateBtnState(state.isFavorite, state.shouldPlayAnimation)
             }
@@ -232,7 +227,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         super.onPause()
 
         if (!requireActivity().isChangingConfigurations) {
+            binding.btnPlay.redraw(false)
             viewModel.controlPlayback(false)
+            viewModel.stopTimers()
         }
     }
 }

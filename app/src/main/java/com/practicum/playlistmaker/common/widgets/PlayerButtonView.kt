@@ -27,6 +27,7 @@ class PlayerButtonView @JvmOverloads constructor(
 
     private val icon: Bitmap?
     private val activeIcon: Bitmap?
+    private var bitmapImage: Bitmap?
     private var imageRect = RectF(0f, 0f, 0f, 0f)
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { isFilterBitmap = true }
     private var isActive = false
@@ -36,6 +37,7 @@ class PlayerButtonView @JvmOverloads constructor(
             try {
                 icon = getDrawable(R.styleable.PlayerButtonView_icon)?.toBitmap()
                 activeIcon = getDrawable(R.styleable.PlayerButtonView_activeIcon)?.toBitmap()
+                bitmapImage = icon
 
                 val tint = getColor(R.styleable.PlayerButtonView_tint, Color.TRANSPARENT)
                 if (tint != Color.TRANSPARENT) {
@@ -47,14 +49,15 @@ class PlayerButtonView @JvmOverloads constructor(
         }
     }
 
-    fun setActive(isActive: Boolean) {
-        this.isActive = isActive
+    fun redraw(isActive: Boolean? = null) {
+        setActive(isActive)
+        bitmapImage = if (this.isActive ) activeIcon ?: icon else icon
         invalidate()
     }
 
-    fun updateBtnState(isActive: Boolean, shouldPlayAnimation: Boolean = true, action: () -> Unit = {}) {
+    fun updateBtnState(isActive: Boolean, shouldPlayAnimation: Boolean = true) {
         if (!shouldPlayAnimation) {
-            setActive(isActive)
+            redraw(isActive)
             return
         }
 
@@ -67,13 +70,16 @@ class PlayerButtonView @JvmOverloads constructor(
             override fun onAnimationRepeat(animation: Animation?) {}
 
             override fun onAnimationEnd(animation: Animation?) {
-                action()
+                redraw(isActive)
                 startAnimation(scaleUp)
             }
         })
 
-        this.isActive = isActive
         startAnimation(scaleDown)
+    }
+
+    private fun setActive(isActive: Boolean? = null) {
+        this.isActive = isActive ?: !this.isActive
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -82,8 +88,7 @@ class PlayerButtonView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        val image = if (isActive) activeIcon ?: icon else icon
-        image?.let {
+        bitmapImage?.let {
             canvas.drawBitmap(it, null, imageRect, paint)
         }
     }
@@ -94,10 +99,13 @@ class PlayerButtonView @JvmOverloads constructor(
                 return true
             }
             MotionEvent.ACTION_UP -> {
+                setActive()
+                updateBtnState(isActive)
                 performClick()
                 return true
             }
         }
+
         return super.onTouchEvent(event)
     }
 

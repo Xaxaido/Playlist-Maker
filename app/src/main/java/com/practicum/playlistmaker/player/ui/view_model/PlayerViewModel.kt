@@ -56,6 +56,12 @@ class PlayerViewModel(
         favoriteTracksInteractor.addToFavorites(viewModelScope, track)
     }
 
+    fun stopTimers() {
+        timers.forEach {
+            if (it.value.isRunning) it.value.stop()
+        }
+    }
+
     fun controlPlayback(shouldPlay: Boolean = true) {
         playerInteractor.apply {
             if (isPlaying) {
@@ -99,13 +105,6 @@ class PlayerViewModel(
         }
     }
 
-    private fun release() {
-        timers.forEach {
-            if (it.value.isRunning) it.value.stop()
-        }
-        playerInteractor.release()
-    }
-
     private fun ready() {
         _trackBufferingFlow.value = 100
         (timers[UPDATE_BUFFERED_PROGRESS] as Debounce).stop()
@@ -130,7 +129,8 @@ class PlayerViewModel(
     }
 
     override fun onCleared() {
-        release()
+        stopTimers()
+        playerInteractor.release()
         super.onCleared()
     }
 
