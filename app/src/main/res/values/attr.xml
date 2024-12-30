@@ -8,4 +8,10 @@
     <declare-styleable name="AutoScrollTextView">
         <attr name="gradientWidth" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="PlayerButtonView">
+        <attr name="icon" format="reference" />
+        <attr name="activeIcon" format="reference" />
+        <attr name="tint" format="color" />
+    </declare-styleable>
 </resources>

@@ -81,6 +81,7 @@ class SearchViewModel(
 
         isHistoryVisible?.let {
             if (it) {
+                searchHistoryInteractor.updateTracks(updatedTracks)
                 setState(SearchState.TrackSearchHistory(updatedTracks, false))
             } else {
                 setState(SearchState.TrackSearchResults(updatedTracks, null, false))

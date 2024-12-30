@@ -11,11 +11,11 @@ class PlaylistInteractorImpl(
     private val repository: PlaylistRepository,
 ) : PlaylistInteractor {
 
-    override suspend fun removePlaylist(playlist: PlaylistEntity) {
-        repository.removePlaylist(playlist)
+    override suspend fun removePlaylist(playlistId: Int) {
+        repository.removePlaylist(playlistId)
     }
 
-    override suspend fun removeTrack(playlist: Playlist, trackId: Long) {
+    override suspend fun removeTrack(playlist: PlaylistEntity, trackId: Long) {
         repository.removeTrack(playlist, trackId)
     }
 
@@ -23,7 +23,7 @@ class PlaylistInteractorImpl(
         return repository.getPlaylist(id)
     }
 
-    override fun getTracks(json: String?): Flow<List<Track>> {
-        return repository.getTracks(json)
+    override fun getTracks(playlistId: Int): Flow<List<Track>> {
+        return repository.getTracks(playlistId)
     }
 }

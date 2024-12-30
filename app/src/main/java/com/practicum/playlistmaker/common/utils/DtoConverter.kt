@@ -64,7 +64,6 @@ object DtoConverter {
         name,
         description,
         cover,
-        tracks,
         tracksCount,
     )
 

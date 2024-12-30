@@ -27,8 +27,8 @@ class CreatePlaylistViewModel(
         }
     }
 
-    fun createPlaylist(id: Int? = null, cover: String, title: String, description: String, tracks: String? = null, tracksCount: Int? = null) {
-        val playlist = PlaylistEntity(id, title, description, cover, tracks, tracksCount ?: 0)
+    fun createPlaylist(id: Int? = null, cover: String, title: String, description: String, tracksCount: Int? = null) {
+        val playlist = PlaylistEntity(id, title, description, cover, tracksCount ?: 0)
         viewModelScope.launch {
             playlistsInteractor.add(playlist)
             setState(CreatePlaylistState.Create(title))

@@ -10,6 +10,10 @@ class SearchHistoryInteractorImpl(
 
     override val history = searchHistoryRepository.history
 
+    override fun updateTracks(tracks: List<Track>) {
+        searchHistoryRepository.updateTracks(tracks)
+    }
+
     override fun addTrack(track: Track) { searchHistoryRepository.addTrack(track) }
 
     override fun removeTrack(pos: Int) { searchHistoryRepository.removeTrack(pos) }
