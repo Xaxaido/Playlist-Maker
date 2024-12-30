@@ -28,6 +28,14 @@ class SearchHistoryRepositoryImpl(
         } else mutableListOf()
     }
 
+    override fun updateTracks(tracks: List<Track>) {
+        _history.apply {
+            clear()
+            addAll(tracks)
+        }
+        saveHistory()
+    }
+
     override fun addTrack(track: Track) {
         _history.apply {
             removeIf { it.id == track.id }

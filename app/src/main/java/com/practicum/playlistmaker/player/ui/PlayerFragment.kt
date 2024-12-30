@@ -213,7 +213,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             is PlayerState.Description -> showTrackDescription(state.result)
             is PlayerState.IsPlaying -> updateCover(state.isPlaying)
             is PlayerState.IsFavorite -> {
-                binding.addToFavoriteButton.updateBtnState(state.isFavorite, state.shouldPlayAnimation)
+                if (!state.shouldPlayAnimation) {
+                    binding.addToFavoriteButton.updateBtnState(state.isFavorite, false)
+                }
             }
         }
     }
