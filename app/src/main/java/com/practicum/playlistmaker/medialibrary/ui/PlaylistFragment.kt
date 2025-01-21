@@ -131,7 +131,7 @@ class PlaylistFragment: BaseFragment<FragmentPlaylistBinding>() {
         MaterialAlertDialogBuilder(requireActivity())
             .setTitle(getString(R.string.remove_track_title))
             .setMessage(getString(R.string.remove_track_message))
-            .setNeutralButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
+            .setNegativeButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
             }.setPositiveButton(resources.getString(R.string.dialog_message_yes)) { _, _ ->
                 action()
             }.show()

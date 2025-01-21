@@ -68,7 +68,7 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
         confirmDialog = MaterialAlertDialogBuilder(requireActivity())
             .setTitle(resources.getString(R.string.create_playlist_dialog_title))
             .setMessage(resources.getString(R.string.create_playlist_dialog_message))
-            .setNeutralButton(resources.getString(R.string.create_playlist_dialog_cancel)) { _, _ ->
+            .setNegativeButton(resources.getString(R.string.create_playlist_dialog_cancel)) { _, _ ->
             }.setPositiveButton(resources.getString(R.string.create_playlist_dialog_finish)) { _, _ ->
                 findNavController().navigateUp()
             }

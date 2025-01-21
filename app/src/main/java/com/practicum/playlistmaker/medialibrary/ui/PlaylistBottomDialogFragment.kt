@@ -90,7 +90,7 @@ class PlaylistBottomDialogFragment : BaseBottomDialogFragment<FragmentPlaylistBo
             MaterialAlertDialogBuilder(requireActivity())
                 .setTitle(resources.getString(R.string.remove_playlist))
                 .setMessage(resources.getString(R.string.remove_playlist_message))
-                .setNeutralButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
+                .setNegativeButton(resources.getString(R.string.dialog_message_no)) { _, _ ->
                 }.setPositiveButton(resources.getString(R.string.dialog_message_yes)) { _, _ ->
                     viewModel.removePlaylist()
                 }.show()
