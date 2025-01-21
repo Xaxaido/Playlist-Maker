@@ -17,6 +17,9 @@ interface FavoriteTrackDao {
     @Delete(entity = FavoriteTrackEntity::class)
     suspend fun remove(track: FavoriteTrackEntity)
 
+    @Query("SELECT EXISTS (SELECT 1 FROM favorite_tracks WHERE id = :trackId)")
+    suspend fun isTrackFavorite(trackId: Long): Boolean
+
     @Query("SELECT * FROM favorite_tracks ORDER BY dateAdded DESC")
     fun getAll(): Flow<List<FavoriteTrackEntity>>
 

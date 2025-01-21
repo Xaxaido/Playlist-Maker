@@ -26,7 +26,6 @@ class PlayerViewModel(
 ) : ViewModel(), MediaPlayerListener {
 
     val track: Track = Util.jsonToTrack(json)
-    private var shouldPlayAnimation = false
     private val timers: Map<String, Debounce<Any>> = mapOf(
         UPDATE_PLAYBACK_PROGRESS to Debounce(Util.UPDATE_PLAYBACK_PROGRESS_DELAY, viewModelScope) {
             setState(PlayerState.CurrentTime(playerInteractor.currentPosition.millisToSeconds()))
@@ -44,7 +43,7 @@ class PlayerViewModel(
 
     init {
         playerInteractor.init(this, track)
-        observeFavoriteTracks()
+        isTrackFavorite(track.id)
     }
 
     fun setTrack() {
@@ -52,7 +51,6 @@ class PlayerViewModel(
     }
 
     fun addToFavorites() {
-        shouldPlayAnimation = true
         favoriteTracksInteractor.addToFavorites(viewModelScope, track)
     }
 
@@ -79,7 +77,8 @@ class PlayerViewModel(
     fun searchTrackDescription(url: String?) {
         url?.let{
             viewModelScope.launch {
-                trackDescriptionInteractor.searchTrackDescription(it)
+                trackDescriptionInteractor
+                    .searchTrackDescription(it)
                     .collect { result ->
                         setState(PlayerState.Description(result))
                     }
@@ -89,13 +88,13 @@ class PlayerViewModel(
 
     private fun setState(state: PlayerState) { _stateFlow.value = state }
 
-    private fun observeFavoriteTracks() {
+    private fun isTrackFavorite(id: Long) {
         viewModelScope.launch {
-            favoriteTracksInteractor.getIds()
-                .collect { ids ->
-                    val isFavorite = ids.contains(track.id)
-                    setState(PlayerState.IsFavorite(isFavorite, shouldPlayAnimation))
-            }
+            favoriteTracksInteractor
+                .isTrackFavorite(id)
+                .collect { isFavorite ->
+                    setState(PlayerState.IsFavorite(isFavorite))
+                }
         }
     }
 

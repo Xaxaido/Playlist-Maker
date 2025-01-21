@@ -17,6 +17,7 @@
         <item name="colorControlHighlight">@color/rippleColor</item>
         <item name="actionBarStyle">@style/Theme.PlaylistMaker.AppBarOverlay</item>
         <item name="switchStyle">@style/MySwitchStyle</item>
+        <item name="materialAlertDialogTheme">@style/Theme.PlaylistMaker.Dialog</item>
     </style>
 
 </resources>
