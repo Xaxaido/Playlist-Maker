@@ -56,6 +56,8 @@ class CreatePlaylistFragment: BaseFragment<FragmentCreatePlaylistBinding>() {
         return FragmentCreatePlaylistBinding.inflate(inflater, container, false)
     }
 
+    override fun removeBinding() {}
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUI()

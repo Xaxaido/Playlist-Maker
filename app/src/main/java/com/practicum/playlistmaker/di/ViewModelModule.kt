@@ -24,7 +24,7 @@ val viewModelModule = module {
     }
 
     viewModel { (json: String) ->
-        PlayerViewModel(get(), get(), get(), json)
+        PlayerViewModel(get(), get(), json)
     }
 
     viewModel {

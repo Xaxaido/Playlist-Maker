@@ -16,6 +16,8 @@ import com.practicum.playlistmaker.common.resources.VisibilityState.NoData
 import com.practicum.playlistmaker.common.resources.VisibilityState.Results
 import com.practicum.playlistmaker.common.resources.VisibilityState.ViewsList
 import com.practicum.playlistmaker.common.resources.VisibilityState.VisibilityItem
+import com.practicum.playlistmaker.common.utils.Debounce
+import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BaseFragment
 import com.practicum.playlistmaker.common.widgets.recycler.ItemAnimator
 import com.practicum.playlistmaker.common.widgets.recycler.PaddingItemDecoration
@@ -46,6 +48,8 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
         return FragmentPlaylistsBinding.inflate(inflater, container, false)
     }
 
+    override fun removeBinding() {}
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUI()
@@ -63,6 +67,10 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
         )
 
         adapter = PlaylistAdapter { playlist ->
+            if (!isClickEnabled) return@PlaylistAdapter
+
+            isClickEnabled = false
+            Debounce<Any>(Util.BUTTON_ENABLED_DELAY, lifecycleScope) { isClickEnabled = true }.start()
             findNavController().navigate(
                 R.id.action_open_playlist,
                 PlaylistFragment.createArgs(playlist.id),
@@ -103,7 +111,7 @@ class PlaylistsFragment: BaseFragment<FragmentPlaylistsBinding>() {
             findNavController().navigate(
                 R.id.action_create_playlist,
                 CreatePlaylistFragment.createArgs(null)
-                )
+            )
         }
     }
 

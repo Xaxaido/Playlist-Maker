@@ -15,6 +15,7 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
     }
 
     abstract fun createBinding(inflater: LayoutInflater, container: ViewGroup?): T
+    abstract fun removeBinding()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,6 +28,7 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
 
     override fun onDestroyView() {
         _binding = null
+        removeBinding()
         super.onDestroyView()
     }
 }

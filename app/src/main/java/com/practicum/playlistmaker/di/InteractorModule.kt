@@ -8,9 +8,7 @@ import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistsInteractor
 import com.practicum.playlistmaker.medialibrary.domain.impl.FavoriteTracksInteractorImpl
 import com.practicum.playlistmaker.medialibrary.domain.impl.PlaylistInteractorImpl
 import com.practicum.playlistmaker.medialibrary.domain.impl.PlaylistsInteractorImpl
-import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.api.TrackDescriptionInteractor
-import com.practicum.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.practicum.playlistmaker.player.domain.impl.TrackDescriptionInteractorImpl
 import com.practicum.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
@@ -46,10 +44,6 @@ val interactorModule = module {
 
     single<TrackDescriptionInteractor> {
         TrackDescriptionInteractorImpl(get())
-    }
-
-    single<PlayerInteractor> {
-        PlayerInteractorImpl(get())
     }
 
     single<SettingsInteractor> {

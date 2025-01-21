@@ -1,12 +1,22 @@
 package com.practicum.playlistmaker.player.ui
 
+import android.Manifest
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.animation.doOnEnd
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -25,6 +35,7 @@ import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.main.domain.api.BackButtonState
 import com.practicum.playlistmaker.medialibrary.ui.PlaylistsBottomDialogFragment
 import com.practicum.playlistmaker.player.domain.model.TrackDescription
+import com.practicum.playlistmaker.player.services.MusicService
 import com.practicum.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.launch
@@ -34,7 +45,8 @@ import org.koin.core.parameter.parametersOf
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     companion object {
-        private const val ARGS_TRACK = "ARGS_TRACK"
+        const val ARGS_TRACK = "ARGS_TRACK"
+        private const val LOG_TAG = "Media Player"
 
         fun createArgs(json: String): Bundle =
             bundleOf(ARGS_TRACK to json)
@@ -42,6 +54,25 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private val viewModel by viewModel<PlayerViewModel> {
         parametersOf(requireArguments().getString(ARGS_TRACK).orEmpty())
+    }
+    private lateinit var trackJson: String
+    private val serviceConnection = object : ServiceConnection {
+
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicService.MusicServiceBinder
+            viewModel.setAudioPlayerControl(binder.getService())
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            viewModel.removeAudioPlayerControl()
+        }
+    }
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d(LOG_TAG, "Permission 'POST_NOTIFICATIONS' granted!")
+        }
     }
 
     override fun createBinding(
@@ -51,8 +82,17 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         return FragmentPlayerBinding.inflate(inflater, container, false)
     }
 
+    override fun removeBinding() {
+        unbindMusicService()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
         setupUI()
         setListeners()
     }
@@ -63,7 +103,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     }
 
     private fun setListeners() {
-        binding.btnPlay.setOnClickListener { viewModel.controlPlayback() }
+        binding.btnPlay.setOnClickListener { viewModel.playbackControl() }
         binding.addToFavoriteButton.setOnClickListener { viewModel.addToFavorites() }
 
         binding.btnAddToPlaylist.setOnClickListener {
@@ -72,7 +112,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.stateFlow.collect { state ->
+                viewModel.playerState.collect { state ->
                     renderState(state)
                 }
             }
@@ -80,7 +120,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.trackBufferingFlow.collect { progress ->
+                viewModel.trackBufferingState.collect { progress ->
                     updateBufferedProgress(progress)
                 }
             }
@@ -96,9 +136,25 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
     private fun setupUI() {
         (activity as? BackButtonState)?.setIconColor(true)
+        trackJson = requireArguments().getString(ARGS_TRACK).orEmpty()
         viewModel.setTrack()
+        bindMusicService()
         binding.shimmerPlaceholder.shimmer.startShimmer()
         updatePlayBtnState(false)
+    }
+
+    private fun createServiceIntent(): Intent {
+        return Intent(requireContext(), MusicService::class.java).apply {
+            putExtra(ARGS_TRACK, trackJson)
+        }
+    }
+
+    private fun bindMusicService() {
+        requireContext().bindService(createServiceIntent(), serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun unbindMusicService() {
+        requireContext().unbindService(serviceConnection)
     }
 
     private fun syncScrollingText() {
@@ -211,7 +267,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
             is PlayerState.CurrentTime -> updateCurrentTime(state.time)
             is PlayerState.Stop -> stop()
             is PlayerState.Description -> showTrackDescription(state.result)
-            is PlayerState.IsPlaying -> updateCover(state.isPlaying)
+            is PlayerState.Playing -> updateCover(state.isPlaying)
             is PlayerState.IsFavorite -> binding.addToFavoriteButton.updateBtnState(state.isFavorite, false)
         }
     }
@@ -219,15 +275,18 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     override fun onResume() {
         super.onResume()
         (activity as? BackButtonState)?.updateBackBtn(true)
+        viewModel.showNotification(false)
     }
 
     override fun onPause() {
         super.onPause()
 
-        if (!requireActivity().isChangingConfigurations) {
-            binding.btnPlay.redraw(false)
-            viewModel.controlPlayback(false)
-            viewModel.stopTimers()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (requireContext().checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                viewModel.showNotification(true)
+            }
+        } else {
+            viewModel.showNotification(true)
         }
     }
 }
