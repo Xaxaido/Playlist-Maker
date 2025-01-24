@@ -57,11 +57,12 @@ class MediaPlayerNotification(
         cover?.let {
             notificationLayoutExpanded.setImageViewBitmap(R.id.notification_icon, it)
         }
-
+        track?.let {
+            notificationLayout.setTextViewText(R.id.notification_text, "${it.artistName} - ${it.trackName}")
+            notificationLayoutExpanded.setTextViewText(R.id.notification_title, it.artistName)
+            notificationLayoutExpanded.setTextViewText(R.id.notification_text, it.trackName)
+        }
         notificationLayout.setTextViewText(R.id.notification_title, context.getString(R.string.app_name))
-        notificationLayout.setTextViewText(R.id.notification_text, "${track?.artistName} - ${track?.trackName}")
-        notificationLayoutExpanded.setTextViewText(R.id.notification_title, track?.artistName)
-        notificationLayoutExpanded.setTextViewText(R.id.notification_text, track?.trackName)
         notificationLayoutExpanded.setTextViewText(R.id.current_time, currentPosition.millisToSeconds())
         notificationLayoutExpanded.setTextViewText(R.id.duration, duration.millisToSeconds())
         notificationLayoutExpanded.setImageViewResource(R.id.notification_play_pause, icon)
