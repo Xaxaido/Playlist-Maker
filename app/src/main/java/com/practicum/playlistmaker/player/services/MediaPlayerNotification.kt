@@ -90,6 +90,7 @@ class MediaPlayerNotification(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setOngoing(true)
+            .setShowWhen(false)
             .build()
     }
 
