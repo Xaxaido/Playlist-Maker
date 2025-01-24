@@ -29,8 +29,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         return FragmentSettingsBinding.inflate(inflater, container, false)
     }
 
-    override fun removeBinding() {}
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.themeSwitch.isChecked = viewModel.getThemeSwitchState()

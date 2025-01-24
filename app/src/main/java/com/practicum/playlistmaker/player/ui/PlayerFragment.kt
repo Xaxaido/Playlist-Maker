@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -26,6 +28,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Extensions.dpToPx
@@ -56,6 +60,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         parametersOf(requireArguments().getString(ARGS_TRACK).orEmpty())
     }
     private lateinit var trackJson: String
+    private var cover: Bitmap? = null
     private val serviceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -82,10 +87,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         return FragmentPlayerBinding.inflate(inflater, container, false)
     }
 
-    override fun removeBinding() {
-        unbindMusicService()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -100,6 +101,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
     override fun onDestroyView() {
         super.onDestroyView()
         (activity as? BackButtonState)?.setIconColor(false)
+        unbindMusicService()
     }
 
     private fun setListeners() {
@@ -218,17 +220,27 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
         }
 
         Glide.with(this)
+            .asBitmap()
             .load(track.getPlayerAlbumCover())
             .placeholder(R.drawable.player_album_cover_stub)
             .centerCrop()
             .transform(RoundedCorners(8.dpToPx(requireActivity())))
-            .into(binding.albumCover)
+            .into(object : CustomTarget<Bitmap>() {
+
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    cover = resource
+                    binding.albumCover.setImageBitmap(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {}
+            })
 
         syncScrollingText()
     }
 
     private fun updateCurrentTime(currentPosition: String) {
         binding.currentTime.setTime(currentPosition)
+        Log.d(LOG_TAG, "$LOG_TAG $currentPosition")
     }
 
     private fun stop() {
@@ -283,10 +295,10 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (requireContext().checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                viewModel.showNotification(true)
+                viewModel.showNotification(true, cover)
             }
         } else {
-            viewModel.showNotification(true)
+            viewModel.showNotification(true, cover)
         }
     }
 }

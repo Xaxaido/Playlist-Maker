@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.player.ui.view_model
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.common.resources.PlayerState
@@ -71,11 +72,11 @@ class PlayerViewModel(
         } ?: setState(PlayerState.Description(TrackDescription(null)))
     }
 
-    fun showNotification(shouldShow: Boolean) {
+    fun showNotification(shouldShow: Boolean, cover: Bitmap? = null) {
         if (!shouldShow) {
             audioPlayerControl?.stopForeground()
         } else if (audioPlayerControl?.isPLaying == true) {
-            audioPlayerControl?.startForeground()
+            audioPlayerControl?.startForeground(cover)
         }
     }
 
