@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Playlist maker</string>
+    <string name="app_name" translatable="false">Playlist Maker</string>
     <string name="prefs_file_name" translatable="false">Main preferences</string>
     <string name="database_file_name" translatable="false">database.db</string>
     <string name="app_theme" translatable="false">appTheme</string>
     <string name="search_history" translatable="false">searchHistory</string>
     <string name="player_layout" translatable="false">playerLayout</string>
     <string name="undefined" translatable="false">undefined</string>
+    <string name="service_name">Медиа служба</string>
+    <string name="service_description">Служба для проигрывания музыки</string>
     <string name="image_view_stub">иконка</string>
     <string name="playlist_name">Название*</string>
     <string name="playlist_description">Описание</string>
@@ -46,7 +48,6 @@
     <string name="history_remove_from_fav">Не нравится</string>
     <string name="player_duration">Длительность</string>
     <string name="default_duration_start" translatable="false">00 : 00</string>
-    <string name="default_duration_end" translatable="false">00 : 30</string>
     <string name="player_album">Альбом</string>
     <string name="player_year">Год</string>
     <string name="player_genre">Жанр</string>

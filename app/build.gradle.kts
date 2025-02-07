@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.practicum.playlistmaker"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.practicum.playlistmaker"
@@ -50,8 +50,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.media3.session)
-    implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

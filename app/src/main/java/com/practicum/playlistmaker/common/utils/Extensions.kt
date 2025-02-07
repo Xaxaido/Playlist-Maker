@@ -22,12 +22,12 @@ object Extensions {
         context.resources.displayMetrics
     ).toInt()
 
-    fun Long.millisToSeconds() = SimpleDateFormat(
+    fun Number.millisToSeconds() = SimpleDateFormat(
         "mm : ss",
         Locale.getDefault()
     ).format(this) ?: ""
 
-    fun Long.millisToMinutes() = SimpleDateFormat(
+    fun Number.millisToMinutes() = SimpleDateFormat(
         "mm",
         Locale.getDefault()
     ).format(this) ?: ""

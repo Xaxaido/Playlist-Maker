@@ -6,8 +6,9 @@ import com.practicum.playlistmaker.search.domain.model.Track
 interface PlayerState {
 
     object Default : PlayerState
+    object Prepared : PlayerState
     object Stop : PlayerState
-    class IsPlaying(
+    class Playing(
         val isPlaying: Boolean,
     ) : PlayerState
     class TrackData(
