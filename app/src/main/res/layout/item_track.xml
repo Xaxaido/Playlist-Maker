@@ -11,13 +11,13 @@
 
     <ImageView
         android:id="@+id/cover"
-        android:layout_width="@dimen/album_cover_size"
-        android:layout_height="@dimen/album_cover_size"
+        android:layout_width="47dp"
+        android:layout_height="42dp"
         android:layout_marginVertical="@dimen/padding_small_4x"
         android:layout_marginStart="@dimen/padding_small_6x"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/album_cover_stub" />
 
     <ImageView

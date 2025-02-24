@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKsp)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -42,6 +43,15 @@ android {
 }
 
 dependencies {
+    implementation (libs.androidx.ui)
+    implementation (libs.androidx.material)
+    implementation (libs.androidx.activity.compose)
+    implementation (libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation (libs.insert.koin.koin.androidx.compose)
+    implementation(libs.coil.compose)
+    debugImplementation(libs.androidx.ui.tooling)
+
     implementation(libs.adapterdelegates4.kotlin.dsl)
     implementation (libs.hannesdorfmann.adapterdelegates4.kotlin.dsl.viewbinding)
     implementation (libs.koinAndroid)
