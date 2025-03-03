@@ -30,23 +30,23 @@
             android:src="@drawable/ic_menu_search"
             app:tint="@color/search_hint_color" />
 
-        <EditText
-            android:id="@+id/search_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/padding_small_4x"
-            android:layout_weight="1"
-            android:autofillHints="true"
-            android:background="@null"
-            android:hint="@string/search_hint"
-            android:inputType="text"
-            android:textColor="@color/black"
-            android:textColorHint="@color/search_hint_color"
-            android:textCursorDrawable="@drawable/text_cursor"
-            android:textSize="@dimen/text_medium"
-            android:singleLine="true"
-            tools:ignore="LabelFor,TouchTargetSizeCheck" />
+            <EditText
+                android:id="@+id/search_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding_small_4x"
+                android:layout_weight="1"
+                android:autofillHints="true"
+                android:background="@null"
+                android:hint="@string/search_hint"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/search_hint_color"
+                android:textCursorDrawable="@drawable/text_cursor"
+                android:textSize="@dimen/text_medium"
+                android:singleLine="true"
+                tools:ignore="LabelFor,TouchTargetSizeCheck" />
 
         <ImageButton
             android:id="@+id/button_clear"

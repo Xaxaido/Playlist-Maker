@@ -11,6 +11,7 @@ import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Shader
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.animation.LinearInterpolator
 import androidx.appcompat.widget.AppCompatTextView
 import com.practicum.playlistmaker.R
@@ -23,12 +24,12 @@ class AutoScrollTextView @JvmOverloads constructor(
 
     var scrollDelay = 2000L
     var scrollDuration = 0L
-    private val paint: Paint
+    var gradientWidth = 0
+    private var paint: Paint
     private var textWidth = 0f
     private var animationOffset = 0f
     private val gap = 100f
     private var gradient: LinearGradient? = null
-    private var gradientWidth = 0
     private val scrollInterpolator = LinearInterpolator()
 
     init {
@@ -38,15 +39,15 @@ class AutoScrollTextView @JvmOverloads constructor(
             textSize = this@AutoScrollTextView.textSize
             color = this@AutoScrollTextView.currentTextColor
         }
+    }
 
-        attrs?.let {
-            val typedArray: TypedArray = context.obtainStyledAttributes(it,
-                R.styleable.AutoScrollTextView, 0, 0)
-            try {
-                gradientWidth = typedArray.getDimensionPixelSize(R.styleable.AutoScrollTextView_gradientWidth, 0)
-            } finally {
-                typedArray.recycle()
-            }
+    fun setParams(size: Float) {
+        paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                size,
+                context.resources.displayMetrics
+            )
         }
     }
 
@@ -80,6 +81,16 @@ class AutoScrollTextView @JvmOverloads constructor(
             }
             start()
         }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val textHeight = paint.fontMetrics.run { bottom - top }
+        val desiredHeight = (paddingTop + textHeight + paddingBottom).toInt()
+
+        val resolvedHeight = resolveSize(desiredHeight, heightMeasureSpec)
+        val resolvedWidth = MeasureSpec.getSize(widthMeasureSpec)
+
+        setMeasuredDimension(resolvedWidth, resolvedHeight)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

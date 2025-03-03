@@ -15,13 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Switch
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.SwitchDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -42,20 +42,20 @@ import com.practicum.playlistmaker.sharing.domain.model.IntentAction
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
+fun SettingsScreen(viewModel: SettingsViewModel) {
 
     val context = LocalContext.current
-    var isChecked by remember { mutableStateOf(false) }
+    val isChecked = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        isChecked = viewModel.getThemeSwitchState()
+        isChecked.value = viewModel.getThemeSwitchState()
         viewModel.sharedFlow.collect { action ->
             startIntent(context, action)
         }
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.toolbar_height)),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         SettingsTheme(viewModel, isChecked)
         CompoundButton(stringResource(id = R.string.share_app), R.drawable.ic_share_app) { viewModel.shareApp() }
@@ -65,7 +65,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 }
 
 @Composable
-fun SettingsTheme(viewModel: SettingsViewModel, isChecked: Boolean) {
+fun SettingsTheme(viewModel: SettingsViewModel, isChecked: MutableState<Boolean>) {
     Row(
         modifier = Modifier.height(dimensionResource(R.dimen.panel_height))
             .padding(horizontal = dimensionResource(R.dimen.padding_small_8x)),
@@ -74,10 +74,11 @@ fun SettingsTheme(viewModel: SettingsViewModel, isChecked: Boolean) {
         TextButton(stringResource(id = R.string.theme_dark))
         Spacer(modifier = Modifier.weight(1f))
         Switch(
-            checked = isChecked,
+            checked = isChecked.value,
             onCheckedChange = {
+                isChecked.value = it
                 viewModel.saveTheme(it)
-                Util.applyTheme(viewModel.getCurrentTheme())
+                viewModel.switchTheme(it)
             },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = colorResource(R.color.blue),
@@ -92,10 +93,8 @@ fun SettingsTheme(viewModel: SettingsViewModel, isChecked: Boolean) {
 @Composable
 fun TextButton(text: String) {
     Text(
-        style = TextStyle(
-            fontSize = dimensionResource(id = R.dimen.text_medium).value.sp,
-            fontFamily = FontFamily(Font(R.font.ys_400, FontWeight.Normal)),
-            color = colorResource(R.color.textButton_TextColor),
+        style = MaterialTheme.typography.titleLarge.copy(
+            color = MaterialTheme.colorScheme.onBackground
         ),
         text = text
     )

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,14 +37,16 @@ import com.practicum.playlistmaker.common.resources.MediaLibraryState
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.common.widgets.BlurredImageView
 import com.practicum.playlistmaker.common.widgets.recycler.ParticleView
+import com.practicum.playlistmaker.main.ui.Routes
 import com.practicum.playlistmaker.medialibrary.ui.view_model.FavoriteTracksViewModel
-import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.ItemTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun FavoriteTracksScreen(viewModel: FavoriteTracksViewModel = koinViewModel(), navController: NavController) {
@@ -59,8 +62,8 @@ fun FavoriteTracksScreen(viewModel: FavoriteTracksViewModel = koinViewModel(), n
         Column {
             Spacer(Modifier.fillMaxWidth().height(dimensionResource(R.dimen.padding_small_8x)))
             List(visible = state is MediaLibraryState.Content<*>, state = state, scope = scope, navController = navController, isClickEnabled = isClickEnabled)
-            Progress(visible = state is MediaLibraryState.Loading)
-            EmptyMediaLibrary(visible = state is MediaLibraryState.Empty, stringResource(R.string.empty_medialibrary))
+            Progress(modifier = null, visible = state is MediaLibraryState.Loading)
+            NothingToShow(modifier = null, visible = state is MediaLibraryState.Empty, stringResource(R.string.empty_medialibrary))
         }
         AndroidView(
             modifier = Modifier.fillMaxSize(),
@@ -92,14 +95,12 @@ fun List(visible: Boolean, state: MediaLibraryState, scope: CoroutineScope, navC
         items(tracks) { item ->
             ItemTrack(
                 track = item,
-                onClick =  {
+                onClick = {
                     if (isClickEnabled.value) {
                         isClickEnabled.value = false
                         val json = Util.trackToJson(item)
-                        navController.navigate(
-                            R.id.action_send_to_player,
-                            PlayerFragment.createArgs(json),
-                        )
+                        val encodedJson = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        navController.navigate("${Routes.Player.name}/$encodedJson")
                         scope.launch {
                             delay(Util.BUTTON_ENABLED_DELAY)
                             isClickEnabled.value = true
@@ -112,18 +113,27 @@ fun List(visible: Boolean, state: MediaLibraryState, scope: CoroutineScope, navC
 }
 
 @Composable
-fun Progress(visible: Boolean) {
+fun Progress(modifier: Modifier?, visible: Boolean) {
     if (!visible) return
 
-    CircularProgressIndicator()
+    Box(
+       modifier = modifier ?: Modifier.padding(top = dimensionResource(R.dimen.ui_margin_top))
+           .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(44.dp),
+            color = colorResource(R.color.blue)
+        )
+    }
 }
 
 @Composable
-fun EmptyMediaLibrary(visible: Boolean, message: String) {
+fun NothingToShow(modifier: Modifier?, visible: Boolean, message: String) {
     if (!visible) return
 
     Column(
-        Modifier.fillMaxWidth()
+        modifier = modifier ?: Modifier.fillMaxWidth()
             .padding(top = dimensionResource(R.dimen.ui_margin_top)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

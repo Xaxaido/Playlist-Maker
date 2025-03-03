@@ -26,6 +26,12 @@ class PlayerViewModel(
     private val _playerState = MutableStateFlow<PlayerState>(PlayerState.Default)
     val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
 
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
+
+    private val _trackDescription = MutableStateFlow(TrackDescription(null))
+    val trackDescription: StateFlow<TrackDescription> = _trackDescription.asStateFlow()
+
     private val _trackBufferingState = MutableStateFlow(0)
     val trackBufferingState: StateFlow<Int> = _trackBufferingState.asStateFlow()
 
@@ -60,18 +66,6 @@ class PlayerViewModel(
         favoriteTracksInteractor.addToFavorites(viewModelScope, track)
     }
 
-    fun searchTrackDescription(url: String?) {
-        url?.let{
-            viewModelScope.launch {
-                trackDescriptionInteractor
-                    .searchTrackDescription(it)
-                    .collect { result ->
-                        setState(PlayerState.Description(result))
-                    }
-            }
-        } ?: setState(PlayerState.Description(TrackDescription(null)))
-    }
-
     fun showNotification(shouldShow: Boolean, cover: Bitmap? = null) {
         if (!shouldShow) {
             audioPlayerControl?.stopForeground()
@@ -98,9 +92,23 @@ class PlayerViewModel(
         viewModelScope.launch {
             favoriteTracksInteractor
                 .isTrackFavorite(id)
-                .collect { isFavorite ->
-                    setState(PlayerState.IsFavorite(isFavorite))
+                .collect { favorite ->
+                    _isFavorite.value = favorite
                 }
+        }
+    }
+
+    fun searchTrackDescription(url: String?) {
+        if (url != null) {
+            viewModelScope.launch {
+                trackDescriptionInteractor
+                    .searchTrackDescription(url)
+                    .collect { result ->
+                        _trackDescription.value = result
+                    }
+            }
+        } else {
+            _trackDescription.value = TrackDescription(null)
         }
     }
 

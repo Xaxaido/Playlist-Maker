@@ -9,6 +9,7 @@ import com.practicum.playlistmaker.medialibrary.data.db.entity.PlaylistTracksEnt
 import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistsInteractor
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,8 +23,8 @@ class PlaylistsBottomSheetDialogViewModel(
     private val _playlistsFlow = MutableStateFlow<List<Playlist>>(emptyList())
     val playlistsFlow: StateFlow<List<Playlist>> = _playlistsFlow.asStateFlow()
 
-    private val _addToPlaylistFlow = MutableStateFlow<PlaylistsBottomDialogFragmentState>(PlaylistsBottomDialogFragmentState.Default)
-    val addToPlaylistFlow: StateFlow<PlaylistsBottomDialogFragmentState> = _addToPlaylistFlow.asStateFlow()
+    private val _addToPlaylistFlow = MutableSharedFlow<PlaylistsBottomDialogFragmentState>()
+    val addToPlaylistFlow: MutableSharedFlow<PlaylistsBottomDialogFragmentState> = _addToPlaylistFlow
 
     init {
         observePlaylists()
@@ -34,12 +35,12 @@ class PlaylistsBottomSheetDialogViewModel(
             val isTrackInPlaylist = playlistsInteractor.isTrackInPlaylist(playlist.id, track.id)
 
             if (isTrackInPlaylist) {
-                _addToPlaylistFlow.value = PlaylistsBottomDialogFragmentState.AddToPlaylist(playlist.name, false)
+                _addToPlaylistFlow.emit(PlaylistsBottomDialogFragmentState.AddToPlaylist(playlist.name, false))
             } else {
                 val playlistTracks = PlaylistTracksEntity(null, playlist.id, track.id)
 
                 playlistsInteractor.addToPlaylist(playlist.toPlaylistEntity(), playlistTracks, track.toPlaylistTrackEntity())
-                _addToPlaylistFlow.value = PlaylistsBottomDialogFragmentState.AddToPlaylist(playlist.name, true)
+                _addToPlaylistFlow.emit(PlaylistsBottomDialogFragmentState.AddToPlaylist(playlist.name, true))
             }
         }
     }

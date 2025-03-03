@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation (libs.insert.koin.koin.androidx.compose)
     implementation(libs.coil.compose)
+    implementation (libs.google.accompanist.systemuicontroller)
+    implementation(libs.haze)
     debugImplementation(libs.androidx.ui.tooling)
 
     implementation(libs.adapterdelegates4.kotlin.dsl)

@@ -14,7 +14,9 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.AttrRes
+import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.practicum.playlistmaker.R
 
@@ -25,14 +27,14 @@ class PlayerButtonView @JvmOverloads constructor(
     @StyleRes defStyleRes: Int = 0,
 ) : View(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val icon: Bitmap?
-    private val activeIcon: Bitmap?
-    private var bitmapImage: Bitmap?
+    private var icon: Bitmap? = null
+    private var activeIcon: Bitmap? = null
+    private var bitmapImage: Bitmap? = null
     private var imageRect = RectF(0f, 0f, 0f, 0f)
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { isFilterBitmap = true }
     private var isActive = false
 
-    init {
+    /*init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.PlayerButtonView, defStyleAttr, defStyleRes).apply {
             try {
                 icon = getDrawable(R.styleable.PlayerButtonView_icon)?.toBitmap()
@@ -46,6 +48,18 @@ class PlayerButtonView @JvmOverloads constructor(
             } finally {
                 recycle()
             }
+        }
+    }*/
+
+    fun setParams(context: Context, @DrawableRes icon: Int, @DrawableRes activeIcon: Int? = null, tint: Int? = null) {
+        this.icon = ContextCompat.getDrawable(context, icon)?.toBitmap()
+        this.activeIcon = activeIcon?.let {
+            ContextCompat.getDrawable(context, activeIcon)?.toBitmap()
+        }
+        bitmapImage = this.icon
+
+        if (tint != null) {
+            paint.colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
         }
     }
 

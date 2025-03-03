@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.common.utils
 
+import android.app.UiModeManager
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.ColorFilter
@@ -12,6 +13,7 @@ import android.graphics.drawable.LayerDrawable
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
 import com.google.gson.Gson
@@ -23,6 +25,7 @@ import kotlin.math.hypot
 
 object Util {
 
+    const val ARGS_TRACK = "ARGS_TRACK"
     const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
     const val ANIMATION_SHORT= 250L
     const val UPDATE_PLAYBACK_PROGRESS_DELAY= 300L
@@ -44,14 +47,15 @@ object Util {
     fun jsonToTrack(json: String): Track = Gson().fromJson(json, Track::class.java)
     fun trackToJson(track: Track): String = Gson().toJson(track)
 
-    fun applyTheme(theme: String) {
-        AppCompatDelegate.setDefaultNightMode(
-            when (theme) {
-                AppTheme.LIGHT.value -> AppCompatDelegate.MODE_NIGHT_NO
-                AppTheme.DARK.value -> AppCompatDelegate.MODE_NIGHT_YES
-                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    fun getTheme(context: Context, theme: String): Boolean {
+        return when (theme) {
+            AppTheme.LIGHT.value -> false
+            AppTheme.DARK.value -> true
+            else -> {
+                val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+                uiModeManager.nightMode == UiModeManager.MODE_NIGHT_YES
             }
-        )
+        }
     }
 
     fun getColor(context: Context, attr: Int): Int {

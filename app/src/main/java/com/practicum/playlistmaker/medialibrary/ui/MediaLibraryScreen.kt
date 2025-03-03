@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,9 +35,7 @@ fun MediaLibraryScreen(navController: NavController) {
     val selectedTabIndex = pagerState.currentPage
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = dimensionResource(R.dimen.toolbar_height))
+        modifier = Modifier.fillMaxSize()
     ) {
         TabRow(
             selectedTabIndex = selectedTabIndex,
@@ -51,7 +48,7 @@ fun MediaLibraryScreen(navController: NavController) {
                         .height(2.dp)
                         .padding(horizontal = dimensionResource(R.dimen.padding_small_8x))
                         .fillMaxSize()
-                        .background(color = colorResource(R.color.black))
+                        .background(MaterialTheme.colorScheme.onBackground)
                 )
             },
             divider = {},
@@ -88,7 +85,9 @@ fun PagerTab(scope: CoroutineScope, pagerState: PagerState, index: Int, selected
         text = {
             Text(
                 text = text,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    color =  MaterialTheme.colorScheme.onBackground
+                ),
             )
         }
     )
