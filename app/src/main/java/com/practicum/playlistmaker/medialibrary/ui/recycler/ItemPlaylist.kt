@@ -19,9 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.practicum.playlistmaker.R
@@ -39,9 +37,7 @@ fun ItemPlaylist(playlist: Playlist, onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
+            modifier = Modifier.aspectRatio(1f),
             elevation = CardDefaults.cardElevation(0.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.Transparent
@@ -61,21 +57,17 @@ fun ItemPlaylist(playlist: Playlist, onClick: () -> Unit) {
         }
         Text(
             text = playlist.name,
-            style = TextStyle(
-                fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
-                color = MaterialTheme.colorScheme.onSurface
+            style = MaterialTheme.typography.titleSmall.copy(
+                color = MaterialTheme.colorScheme.onBackground
             ),
-            modifier = Modifier
-                .padding(top = dimensionResource(R.dimen.padding_small_2x))
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_2x))
         )
         Text(
             text = Util.formatValue(playlist.tracksCount, stringResource(R.string.playlist_track)),
-            style = TextStyle(
-                fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
-                color = MaterialTheme.colorScheme.onSurface
+            style = MaterialTheme.typography.titleSmall.copy(
+                color = MaterialTheme.colorScheme.onBackground
             ),
-            modifier = Modifier
-                .padding(top = dimensionResource(R.dimen.padding_small))
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small))
         )
     }
 }

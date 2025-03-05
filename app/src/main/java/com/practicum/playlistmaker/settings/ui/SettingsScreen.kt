@@ -29,17 +29,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 import com.practicum.playlistmaker.sharing.domain.model.ActionType
 import com.practicum.playlistmaker.sharing.domain.model.IntentAction
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
@@ -101,7 +94,7 @@ fun TextButton(text: String) {
 }
 
 @Composable
-fun CompoundButton(title: String, icon: Int, onClick: () -> Unit) {
+fun CompoundButton(title: String, icon: Int? = null, onClick: () -> Unit) {
     Row(
         modifier = Modifier.height(dimensionResource(R.dimen.panel_height))
             .padding(horizontal = dimensionResource(R.dimen.padding_small_8x))
@@ -112,11 +105,13 @@ fun CompoundButton(title: String, icon: Int, onClick: () -> Unit) {
     ) {
         TextButton(title)
         Spacer(modifier = Modifier.weight(1f))
-        Image(
-            alignment = Alignment.Center,
-            painter = painterResource(id = icon),
-            contentDescription = null,
-        )
+        icon?.let {
+            Image(
+                alignment = Alignment.Center,
+                painter = painterResource(id = it),
+                contentDescription = null,
+            )
+        }
     }
 }
 

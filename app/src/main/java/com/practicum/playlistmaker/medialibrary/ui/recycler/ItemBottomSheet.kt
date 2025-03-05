@@ -3,11 +3,9 @@ package com.practicum.playlistmaker.medialibrary.ui.recycler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,8 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.practicum.playlistmaker.R
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
@@ -34,7 +30,7 @@ fun ItemBottomSheet(playlist: Playlist, onClick: () -> Unit) {
     val context = LocalContext.current
 
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxWidth()
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -1,8 +1,9 @@
 package com.practicum.playlistmaker.search.ui.recycler
 
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.practicum.playlistmaker.R
 import androidx.compose.ui.viewinterop.AndroidView
@@ -28,15 +30,23 @@ import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.common.widgets.textview.EllipsizeTextView
 import com.practicum.playlistmaker.search.domain.model.Track
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ItemTrack(track: Track, onClick: () -> Unit) {
+fun ItemTrack(
+    track: Track,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit = {}
+) {
     val context = LocalContext.current
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable { onClick() }
+            .   combinedClickable(
+                onClick = { onClick() },
+                onLongClick = { onLongClick() }
+            )
     ) {
         val (cover, favorite, trackData, btnTrack) = createRefs()
 
@@ -85,7 +95,9 @@ fun ItemTrack(track: Track, onClick: () -> Unit) {
                 text = track.trackName,
                 style = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onBackground
-                )
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             AndroidView(

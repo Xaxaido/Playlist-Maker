@@ -25,6 +25,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.MediaLibraryState
 import com.practicum.playlistmaker.common.utils.Util
@@ -39,7 +40,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun PlaylistsScreen(viewModel: PlaylistsViewModel = koinViewModel(), navController: NavController) {
+fun PlaylistsScreen(viewModel: PlaylistsViewModel = koinViewModel(), navController: NavController, gson: Gson) {
 
     val state by viewModel.stateFlow.collectAsState()
     val scope = rememberCoroutineScope()
@@ -57,9 +58,15 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = koinViewModel(), navControll
                 modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_4x), bottom = dimensionResource(R.dimen.padding_small)),
                 stringResource(R.string.new_playlist)
             ) {
-                //navController.navigate(navController.navigate("${Routes.CreatePlaylist}/$json"))
+                navController.navigate("${Routes.CreatePlaylist.name}?playlistJson=null")
             }
-            GridList(visible = state is MediaLibraryState.Content<*>, state = state, scope = scope, navController = navController, isClickEnabled = isClickEnabled)
+            GridList(
+                visible = state is MediaLibraryState.Content<*>,
+                state = state, scope = scope,
+                navController = navController,
+                isClickEnabled = isClickEnabled,
+                gson = gson
+            )
             Progress(modifier = null, visible = state is MediaLibraryState.Loading)
             NothingToShow(modifier = null, visible = state is MediaLibraryState.Empty, stringResource(R.string.playlist_empty))
         }
@@ -68,7 +75,14 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = koinViewModel(), navControll
 
 @Suppress("UNCHECKED_CAST")
 @Composable
-fun GridList(visible: Boolean, state: MediaLibraryState, scope: CoroutineScope, navController: NavController, isClickEnabled: MutableState<Boolean>) {
+fun GridList(
+    visible: Boolean,
+    state: MediaLibraryState,
+    scope: CoroutineScope,
+    navController: NavController,
+    isClickEnabled: MutableState<Boolean>,
+    gson: Gson
+) {
     if (!visible) return
 
     val playlists = (state as MediaLibraryState.Content<Playlist>).list
@@ -86,7 +100,7 @@ fun GridList(visible: Boolean, state: MediaLibraryState, scope: CoroutineScope, 
                 onClick = {
                     if (isClickEnabled.value) {
                         isClickEnabled.value = false
-                        //navController.navigate()
+                        navController.navigate("${Routes.Playlist.name}/${item.id}")
                         scope.launch {
                             delay(Util.BUTTON_ENABLED_DELAY)
                             isClickEnabled.value = true

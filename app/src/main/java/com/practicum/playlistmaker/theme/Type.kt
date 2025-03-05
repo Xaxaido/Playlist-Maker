@@ -1,8 +1,6 @@
 package com.practicum.playlistmaker.theme
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -47,6 +45,9 @@ val PlaylistMakerTypography = Typography(
         fontSize = 14.sp,
         fontWeight = FontWeight.W500
     ),
+    displayMedium = defaultTextStyle.copy(
+        fontSize = 18.sp
+    ),
     headlineMedium = defaultTextStyle.copy(
         fontSize = 19.sp,
         fontWeight = FontWeight.W500
@@ -55,4 +56,8 @@ val PlaylistMakerTypography = Typography(
         fontSize = 22.sp,
         fontWeight = FontWeight.W500
     ),
+    displayLarge = defaultTextStyle.copy(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.W500
+    )
 )

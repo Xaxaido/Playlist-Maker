@@ -11,13 +11,10 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -33,22 +30,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -63,7 +61,7 @@ import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.common.utils.Util.ARGS_TRACK
 import com.practicum.playlistmaker.common.widgets.PlayerButton
 import com.practicum.playlistmaker.common.widgets.SlidingTime
-import com.practicum.playlistmaker.common.widgets.textview.AutoScrollTextView
+import com.practicum.playlistmaker.main.ui.Routes
 import com.practicum.playlistmaker.medialibrary.ui.PlaylistsBottomSheet
 import com.practicum.playlistmaker.player.services.MusicService
 import com.practicum.playlistmaker.player.ui.PlayerConstants.PLAYER_SCREEN
@@ -104,7 +102,7 @@ fun PlayerScreen(navController: NavController, trackJson: String) {
     var time by remember { mutableStateOf("") }
     var isStopped by remember { mutableStateOf<Boolean?>(null) }
     var cover by remember { mutableStateOf<Bitmap?>(null) }
-    var trackLoaded = remember { mutableStateOf(false) }
+    val trackLoaded = remember { mutableStateOf(false) }
 
     val playerState by viewModel.playerState.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
@@ -188,17 +186,13 @@ fun PlayerScreen(navController: NavController, trackJson: String) {
             }
         },
         addPlaylist = {
-            /*navController.navigate(
-                R.id.action_create_playlist,
-                CreatePlaylistFragment.createArgs(null),
-            )*/
+            navController.navigate("${Routes.CreatePlaylist.name}?playlistJson=null")
         },
         track = viewModel.track
     )
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
         ConstraintLayout(
@@ -236,27 +230,29 @@ fun PlayerScreen(navController: NavController, trackJson: String) {
                         }
                     .padding(horizontal = dimensionResource(R.dimen.padding_small_4x)),
             )
-            CustomText(
+            TitleText(
                 modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_12x))
                     .constrainAs(trackTitle) {
-                        start.linkTo(parent.start)
+                        start.linkTo(guidelineLeft)
                         end.linkTo(guidelineRight)
                         top.linkTo(albumCover.bottom)
                         bottom.linkTo(artistName.top)
+                        width = Dimension.fillToConstraints
                     },
-                text = track?.trackName.toString(),
-                size = dimensionResource(R.dimen.title_text_size).value
+                style = MaterialTheme.typography.headlineLarge,
+                text = track?.trackName.toString()
             )
-            CustomText(
+            TitleText(
                 modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_6x))
                     .constrainAs(artistName) {
-                        start.linkTo(parent.start)
+                        start.linkTo(guidelineLeft)
                         end.linkTo(guidelineRight)
                         top.linkTo(trackTitle.bottom)
                         bottom.linkTo(play.top)
+                        width = Dimension.fillToConstraints
                     },
-                text = track?.artistName.toString(),
-                size = dimensionResource(R.dimen.text_regular).value
+                style = MaterialTheme.typography.titleMedium,
+                text = track?.artistName.toString()
             )
             PlayerButton(
                 modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_small_4x), top = dimensionResource(R.dimen.padding_small_15x))
@@ -423,24 +419,6 @@ fun PlayerScreen(navController: NavController, trackJson: String) {
 }
 
 @Composable
-fun CustomText(modifier: Modifier, text: String, size: Float) {
-    AndroidView(
-        modifier = modifier.padding(horizontal = dimensionResource(R.dimen.padding_small_4x))
-            .fillMaxWidth(),
-        factory = { context ->
-            AutoScrollTextView(context).apply {
-                gradientWidth = context.resources.getDimension(R.dimen.padding_small_8x).toInt()
-                this.text = text
-                setParams(size = size)
-            }
-        },
-        update = { view ->
-            view.text = text
-        }
-    )
-}
-
-@Composable
 fun TextBox(modifier: Modifier, text: String, isCaption: Boolean = false) {
     Text(
         text = text,
@@ -450,6 +428,23 @@ fun TextBox(modifier: Modifier, text: String, isCaption: Boolean = false) {
         modifier = modifier.padding(top = dimensionResource(R.dimen.padding_small_15x)),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+fun TitleText(
+    modifier: Modifier,
+    style: TextStyle,
+    text: String
+) {
+    Text(
+        text = text,
+        style = style.copy(
+            color = MaterialTheme.colorScheme.onBackground
+        ),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier
     )
 }
 
@@ -476,6 +471,7 @@ fun Progress(loaded: MutableState<Boolean>, modifier: Modifier, progress: Float)
         modifier = modifier.padding(top = dimensionResource(R.dimen.padding_small_15x))
             .size(dimensionResource(R.dimen.play_btn_big) - 6.dp),
         strokeWidth = 4.dp,
-        color = MaterialTheme.colorScheme.onBackground
+        color = MaterialTheme.colorScheme.onBackground,
+        trackColor = Color.Transparent
     )
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.utils.Util
 import com.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
@@ -32,11 +33,13 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(gson: Gson) {
     val context = LocalContext.current
     val viewModel: SettingsViewModel = koinViewModel()
     val darkTheme by viewModel.darkMode.collectAsState()
     var themeState by remember { mutableStateOf(false) }
+    val onBackClick = remember { mutableStateOf<(() -> Unit)?>(null) }
+    var topBarTitle by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.getThemeSettings().also { theme ->
@@ -49,10 +52,13 @@ fun MainScreen() {
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
 
-        val screensWithoutBackButton =
-            listOf(Routes.Settings.name, Routes.MediaLibrary.name, Routes.Search.name)
+        val screensWithoutBackButton = listOf(Routes.Settings.name, Routes.MediaLibrary.name, Routes.Search.name)
+        val screensWithoutTopBar = listOf(Routes.Playlist.name)
         val showBackButton = currentDestination?.route !in screensWithoutBackButton
         val showBottomBar = currentDestination?.route in screensWithoutBackButton
+        val showTopBar = screensWithoutTopBar.any {
+            currentDestination?.route?.startsWith(it) == false
+        }
 
         val screensWithTitle = listOf(
             Routes.Settings.name,
@@ -60,54 +66,66 @@ fun MainScreen() {
             Routes.Search.name,
             Routes.CreatePlaylist.name
         )
-        val showTitle = currentDestination?.route in screensWithTitle
+        val showTitle = screensWithTitle.any { currentDestination?.route?.startsWith(it) == true }
+
+        LaunchedEffect(currentDestination) {
+            topBarTitle = if (currentDestination?.route?.startsWith(Routes.CreatePlaylist.name) == true) {
+                navController.currentBackStackEntry?.arguments?.getString("playlistJson")?.let {
+                    context.getString(R.string.edit_playlist)
+                } ?: context.getString(R.string.new_playlist)
+            } else {
+                getScreenTitle(context, currentDestination?.route)
+            }
+        }
 
         Scaffold(
             modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
             topBar = {
-                TopAppBar(
-                    title = {
-                        if (showTitle) {
-                            Text(
-                                style = MaterialTheme.typography.headlineLarge.copy(
-                                    color = MaterialTheme.colorScheme.onBackground
-                                ),
-                                text = getScreenTitle(context, currentDestination?.route)
-                            )
-                        }
-                    },
-                    navigationIcon = {
-                        if (showBackButton) {
-                            IconButton(onClick = { navController.navigateUp() }) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
-                                    tint = MaterialTheme.colorScheme.onBackground ,
-                                    contentDescription = "Назад"
+                if (showTopBar) {
+                    TopAppBar(
+                        title = {
+                            if (showTitle) {
+                                Text(
+                                    style = MaterialTheme.typography.headlineLarge.copy(
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    ),
+                                    text = topBarTitle
                                 )
                             }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.onBackground
+                        },
+                        navigationIcon = {
+                            if (showBackButton) {
+                                IconButton(onClick = onBackClick.value?.let { { it() } }
+                                    ?: { navController.navigateUp() }) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.ArrowBack,
+                                        tint = MaterialTheme.colorScheme.onBackground,
+                                        contentDescription = "Назад"
+                                    )
+                                }
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            titleContentColor = MaterialTheme.colorScheme.onBackground
+                        )
                     )
-                )
+                }
             },
             bottomBar = {
                 if (showBottomBar) BottomNavigationBar(navController)
             }
         ) { innerPadding ->
-            NavGraph(viewModel = viewModel, navController = navController, modifier = Modifier.padding(innerPadding))
+            NavGraph(viewModel = viewModel, navController = navController, modifier = Modifier.padding(innerPadding), gson = gson, onBackClick = onBackClick)
         }
     }
 }
 
 fun getScreenTitle(context: Context, route: String?): String {
-    return when (route) {
-        Routes.Settings.name -> context.getString(R.string.settings)
-        Routes.MediaLibrary.name -> context.getString(R.string.media_library)
-        Routes.Search.name -> context.getString(R.string.search)
-        Routes.CreatePlaylist.name -> context.getString(R.string.new_playlist)
+    return when {
+        route?.startsWith(Routes.Settings.name) == true -> context.getString(R.string.settings)
+        route?.startsWith(Routes.MediaLibrary.name) == true -> context.getString(R.string.media_library)
+        route?.startsWith(Routes.Search.name) == true -> context.getString(R.string.search)
         else -> ""
     }
 }

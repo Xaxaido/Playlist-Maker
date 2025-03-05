@@ -50,6 +50,11 @@
         <item name="android:textColor">@color/greyMedium</item>
     </style>
 
+    <style name="PlaylistDataText">
+        <item name="android:textSize">@dimen/playlist_description_text</item>
+        <item name="android:fontFamily">@font/ys_400</item>
+    </style>
+
     <style name="Ellipsized" parent="DescriptionText">
         <item name="android:layout_width">0dp</item>
         <item name="layout_constraintHorizontal_bias">1</item>

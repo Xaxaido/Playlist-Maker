@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.common.utils
 
 import android.app.UiModeManager
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.DashPathEffect
@@ -9,11 +10,9 @@ import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
 import android.util.TypedValue
-import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
 import com.google.gson.Gson
@@ -73,6 +72,18 @@ object Util {
             false
         )
 
+    fun Drawable.toImageBitmap(): ImageBitmap {
+        val bitmap = Bitmap.createBitmap(
+            intrinsicWidth,
+            intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        setBounds(0, 0, canvas.width, canvas.height)
+        draw(canvas)
+        return bitmap.asImageBitmap()
+    }
+
     fun formatValue(value: Int, valueName: String): String {
         val valueNameToFormat = valueName.split(",")
         val preLastNumber = value % 100 / 10
@@ -89,13 +100,11 @@ object Util {
         }
     }
 
-    fun drawFrame(view: View, density: Float, borderColor: Int) {
+    fun drawFrame(density: Float, borderColor: Int): Drawable {
         val borderWidth = 1 * density
         val cornerRadius = 8 * density
         val dashLength = 32 * density
         val gapLength = 32 * density
-
-        val currentBackground = view.background
 
         val dashedBorder = object : Drawable() {
             private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -121,8 +130,7 @@ object Util {
             override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
         }
 
-        val combinedBackground = LayerDrawable(arrayOf(currentBackground, dashedBorder))
-        view.background = combinedBackground
+        return dashedBorder
     }
 
     fun drawDashedRoundedRect(

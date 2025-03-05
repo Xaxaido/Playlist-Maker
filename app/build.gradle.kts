@@ -51,6 +51,7 @@ dependencies {
     implementation (libs.insert.koin.koin.androidx.compose)
     implementation(libs.coil.compose)
     implementation (libs.google.accompanist.systemuicontroller)
+    implementation (libs.accompanist.drawablepainter)
     implementation(libs.haze)
     debugImplementation(libs.androidx.ui.tooling)
 

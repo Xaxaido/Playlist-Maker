@@ -23,12 +23,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun MediaLibraryScreen(navController: NavController) {
+fun MediaLibraryScreen(navController: NavController, gson: Gson) {
 
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -65,7 +66,7 @@ fun MediaLibraryScreen(navController: NavController) {
         ) { page ->
             when(page) {
                 0 -> FavoriteTracksScreen(navController = navController)
-                1 -> PlaylistsScreen(navController = navController)
+                1 -> PlaylistsScreen(navController = navController, gson = gson)
             }
         }
     }

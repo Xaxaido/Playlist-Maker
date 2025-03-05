@@ -20,11 +20,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -278,18 +279,10 @@ fun NetworkFailure(modifier: Modifier, visible: Boolean, message: String, btnTit
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_small_6x)),
             textAlign = TextAlign.Center,
         )
-        Button(
+        DarkButton(
             modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_12x)),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            ),
-            onClick = onClick
-        ) {
-            Text(
-                text = btnTitle
-            )
-        }
+            text = btnTitle
+        ) { onClick() }
     }
 }
 
@@ -353,32 +346,39 @@ fun SearchTextField(
                 fontSize = dimensionResource(id = R.dimen.text_medium).value.sp
             )
         }
-        BasicTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterStart)
-                .onFocusChanged { focusState ->
-                    hasFocus.value = focusState.isFocused
-                    if (hasFocus.value && searchRequest.value.isEmpty() && viewModel.isHistoryVisible != true) {
+
+        val textSelectionColors = TextSelectionColors(
+            handleColor = colorResource(R.color.blue),
+            backgroundColor = colorResource(R.color.blue).copy(alpha = 0.4f)
+        )
+        CompositionLocalProvider(LocalTextSelectionColors provides textSelectionColors) {
+            BasicTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterStart)
+                    .onFocusChanged { focusState ->
+                        hasFocus.value = focusState.isFocused
+                        if (hasFocus.value && searchRequest.value.isEmpty() && viewModel.isHistoryVisible != true) {
+                            viewModel.getHistory(true)
+                        }
+                    },
+                value = searchRequest.value,
+                onValueChange = { newValue: String ->
+                    searchRequest.value = newValue
+
+                    if (hasFocus.value) viewModel.search(searchRequest.value)
+                    if (hasFocus.value && searchRequest.value.isEmpty()) {
                         viewModel.getHistory(true)
                     }
                 },
-            value = searchRequest.value,
-            onValueChange = { newValue: String ->
-                searchRequest.value = newValue
-
-                if (hasFocus.value) viewModel.search(searchRequest.value)
-                if (hasFocus.value && searchRequest.value.isEmpty()) {
-                    viewModel.getHistory(true)
-                }
-            },
-            textStyle = TextStyle(
-                color = colorResource(R.color.black),
-                fontSize = dimensionResource(id = R.dimen.text_medium).value.sp,
-                textAlign = TextAlign.Start
-            ),
-            cursorBrush = SolidColor(colorResource(R.color.blue)),
-        )
+                textStyle = TextStyle(
+                    color = colorResource(R.color.black),
+                    fontSize = dimensionResource(id = R.dimen.text_medium).value.sp,
+                    textAlign = TextAlign.Start
+                ),
+                cursorBrush = SolidColor(colorResource(R.color.blue)),
+            )
+        }
     }
 }
 
