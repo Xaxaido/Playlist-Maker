@@ -1,23 +1,5 @@
 <resources>
 
-    <style name="SelectableItemBackground">
-        <item name="android:theme">@style/Theme.PlaylistMaker</item>
-        <item name="android:foreground">?attr/selectableItemBackground</item>
-    </style>
-
-    <style name="MySwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
-        <item name="switchMinWidth">56dp</item>
-        <item name="thumbTint">@color/switch_thumb</item>
-        <item name="trackTint">@color/switch_track</item>
-    </style>
-
-    <style name="LayoutFullScreen">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:fitsSystemWindows">true</item>
-        <item name="android:background">?attr/android:colorBackground</item>
-    </style>
-
     <style name="TextButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/panel_height</item>
@@ -27,17 +9,6 @@
         <item name="android:fontFamily">@font/ys_400</item>
         <item name="android:textColor">@color/textButton_TextColor</item>
         <item name="drawableTint">?attr/colorSecondary</item>
-    </style>
-
-    <style name="RadioButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:button">@null</item>
-        <item name="android:fontFamily">@font/ys_400</item>
-        <item name="android:textColor">@color/textButton_TextColor</item>
-        <item name="android:textSize">@dimen/text_regular</item>
-        <item name="android:drawablePadding">@dimen/padding_small_2x</item>
-        <item name="android:background">@null</item>
     </style>
 
     <style name="DescriptionText">
@@ -80,32 +51,6 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:textSize">@dimen/text_big</item>
         <item name="android:textColor">@color/textButton_TextColor</item>
-    </style>
-
-    <style name="WindowAnimationFadeInOut">
-        <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
-        <item name="android:windowExitAnimation">@anim/slide_out_left</item>
-    </style>
-
-    <style name="tabLayoutText">
-        <item name="android:textSize">@dimen/text_regular</item>
-        <item name="tabTextColor">@color/textButton_TextColor</item>
-        <item name="tabPadding">@dimen/padding_small_8x</item>
-    </style>
-
-    <style name="BottomNavText_Active" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">@dimen/bottom_menu_text_size</item>
-        <item name="android:fontFamily">@font/ys_400</item>
-    </style>
-
-    <style name="BottomNavText" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">@dimen/bottom_menu_text_size</item>
-        <item name="android:fontFamily">@font/ys_400</item>
-    </style>
-
-    <style name="BottomDialogAnimations">
-        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
-        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
     </style>
 
 </resources>

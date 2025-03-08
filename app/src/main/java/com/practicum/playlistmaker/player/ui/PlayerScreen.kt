@@ -222,13 +222,12 @@ fun PlayerScreen(navController: NavController, trackJson: String) {
                 },
                 contentDescription = null,
                 modifier = Modifier.aspectRatio(1f)
-                    .padding(horizontal = dimensionResource(R.dimen.padding_small_4x))
                     .padding(top = dimensionResource(R.dimen.padding_small_13x))
                         .constrainAs(albumCover) {
                             start.linkTo(guidelineLeft)
                             end.linkTo(guidelineRight)
-                        }
-                    .padding(horizontal = dimensionResource(R.dimen.padding_small_4x)),
+                            width = Dimension.fillToConstraints
+                        },
             )
             TitleText(
                 modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_12x))

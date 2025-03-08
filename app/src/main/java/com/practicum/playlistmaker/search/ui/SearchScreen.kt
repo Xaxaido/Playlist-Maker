@@ -304,7 +304,7 @@ fun Search(
                 .fillMaxWidth()
                 .height(36.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(color = colorResource(R.color.editText_BgColor)),
+                .background(color = MaterialTheme.colorScheme.surface),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(

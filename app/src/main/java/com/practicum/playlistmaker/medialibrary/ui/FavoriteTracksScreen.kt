@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -27,20 +28,16 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.common.resources.MediaLibraryState
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.common.widgets.BlurredImageView
-import com.practicum.playlistmaker.common.widgets.recycler.ParticleView
 import com.practicum.playlistmaker.main.ui.Routes
 import com.practicum.playlistmaker.medialibrary.ui.view_model.FavoriteTracksViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.recycler.ItemTrack
+import com.practicum.playlistmaker.theme.LocalImages
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,19 +62,6 @@ fun FavoriteTracksScreen(viewModel: FavoriteTracksViewModel = koinViewModel(), n
             Progress(modifier = null, visible = state is MediaLibraryState.Loading)
             NothingToShow(modifier = null, visible = state is MediaLibraryState.Empty, stringResource(R.string.empty_medialibrary))
         }
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { context  ->
-                ParticleView(context)
-            }
-        )
-        AndroidView(
-            modifier = Modifier.fillMaxWidth()
-                .height(dimensionResource(R.dimen.toolbar_height)),
-            factory = { context  ->
-                BlurredImageView(context)
-            }
-        )
     }
 }
 
@@ -139,14 +123,13 @@ fun NothingToShow(modifier: Modifier?, visible: Boolean, message: String) {
     ) {
         Image(
             alignment = Alignment.Center,
-            painter = painterResource(id = R.drawable.nothing_found),
+            painter = painterResource(LocalImages.current.nothingFound),
             contentDescription = null,
         )
         Text(
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_small_6x)),
-            style = TextStyle(
-                fontSize = dimensionResource(id = R.dimen.text_big).value.sp,
-                color = colorResource(R.color.textButton_TextColor),
+            style = MaterialTheme.typography.headlineMedium.copy(
+                color = MaterialTheme.colorScheme.onBackground
             ),
             text = message
         )

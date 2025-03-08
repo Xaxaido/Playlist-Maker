@@ -1,7 +1,6 @@
 [versions]
 accompanistDrawablepainterVersion = "0.32.0"
 accompanistSystemuicontrollerVersion = "0.27.0"
-adapterdelegates4KotlinDsl = "4.3.2"
 coilCompose = "2.7.0"
 constraintlayoutCompose = "1.1.1"
 haze = "1.3.1"
@@ -25,10 +24,8 @@ navigationUiKtx = "2.8.8"
 retrofit2 = "2.11.0"
 glide = "4.16.0"
 paging = "3.3.6"
-fragmentKtx = "1.8.6"
 activityKtx = "1.10.1"
 kotlinxCoroutinesCore = "1.10.1"
-viewpager2 = "1.1.0"
 roomRuntime = "2.6.1"
 material3Android = "1.3.1"
 jsoup = "1.13.1"
@@ -44,10 +41,8 @@ androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constr
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "materialVersion" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "materialVersion" }
-adapterdelegates4-kotlin-dsl = { module = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl", version.ref = "adapterdelegates4KotlinDsl" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 google-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontrollerVersion" }
-hannesdorfmann-adapterdelegates4-kotlin-dsl-viewbinding = { module = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding", version.ref = "adapterdelegates4KotlinDsl" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 insert-koin-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroid" }
 koinAndroid= { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
@@ -58,14 +53,11 @@ androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx",
 androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "androidxPaletteKtx" }
 facebook-shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "facebookShimmer" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationUiKtx" }
 roomCompiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 roomKtx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 roomRuntime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 activityKtx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 retrofit2 = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit2" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit2" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }

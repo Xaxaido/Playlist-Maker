@@ -9,7 +9,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,6 +48,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.google.gson.Gson
@@ -117,7 +118,7 @@ fun CreatePlaylist(
     LaunchedEffect(Unit) {
         viewModel.isEditMode()
         onBackClick.value = {
-            if (title.isEmpty() && description.isEmpty()) {
+            if (title.isEmpty() && description.isEmpty() || playlist != null) {
                 navigateBack(navController = navController, onBackClick = onBackClick)
             } else {
                 showDialog = true
@@ -146,16 +147,27 @@ fun CreatePlaylist(
         )
     }
 
-    Column(
+    ConstraintLayout(
         modifier = Modifier.fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
+        val (
+            playlistTitle, playlistDescription, button, cover,
+        ) = createRefs()
+        val guidelineLeft = createGuidelineFromStart(dimensionResource(R.dimen.padding_small_8x))
+        val guidelineRight = createGuidelineFromEnd(dimensionResource(R.dimen.padding_small_8x))
+
         Card(
             modifier = Modifier.fillMaxWidth()
                 .aspectRatio(1f)
-                .padding(horizontal = dimensionResource(id = R.dimen.padding_small_12x))
                 .padding(top = dimensionResource(id = R.dimen.padding_small_13x))
-                .padding(bottom = dimensionResource(id = R.dimen.padding_small_8x)),
+                .padding(bottom = dimensionResource(id = R.dimen.padding_small_8x))
+                .constrainAs(cover) {
+                    top.linkTo(parent.top)
+                    start.linkTo(guidelineLeft)
+                    end.linkTo(guidelineRight)
+                    width = Dimension.fillToConstraints
+                },
             colors = CardDefaults.cardColors(
                 containerColor = Color.Transparent
             ),
@@ -196,25 +208,43 @@ fun CreatePlaylist(
                     }
             )
         }
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            PlaylistTitleInput(
-                text = title,
-                label = stringResource(R.string.playlist_name),
-            ) { newValue ->
-                title = newValue
-            }
-            PlaylistTitleInput(
-                text = description,
-                label = stringResource(R.string.playlist_description),
-            ) { newValue ->
-                description = newValue
-            }
+
+        PlaylistTitleInput(
+            modifier = Modifier.constrainAs(playlistTitle) {
+                top.linkTo(cover.bottom)
+                start.linkTo(guidelineLeft)
+                end.linkTo(guidelineRight)
+                width = Dimension.fillToConstraints
+            },
+            text = title,
+            label = stringResource(R.string.playlist_name),
+        ) { newValue ->
+            title = newValue
         }
+        PlaylistTitleInput(
+            modifier = Modifier.constrainAs(playlistDescription) {
+                top.linkTo(playlistTitle.bottom)
+                start.linkTo(guidelineLeft)
+                end.linkTo(guidelineRight)
+                width = Dimension.fillToConstraints
+            },
+            text = description,
+            label = stringResource(R.string.playlist_description),
+        ) { newValue ->
+            description = newValue
+        }
+
         BlueButton(
             enabled = title.isNotEmpty(),
-            isInEditMode = playlist != null
+            isInEditMode = playlist != null,
+            modifier = Modifier.constrainAs(button) {
+                top.linkTo(playlistDescription.bottom)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(guidelineLeft)
+                end.linkTo(guidelineRight)
+                width = Dimension.fillToConstraints
+                verticalBias = 1f
+            }
         ) {
             viewModel.createPlaylist(
                 playlist?.id,
@@ -228,7 +258,7 @@ fun CreatePlaylist(
 }
 
 @Composable
-fun PlaylistTitleInput(text: String, label: String, onValueChange: (String) -> Unit) {
+fun PlaylistTitleInput(modifier: Modifier, text: String, label: String, onValueChange: (String) -> Unit) {
     val textSelectionColors = TextSelectionColors(
         handleColor = colorResource(R.color.blue),
         backgroundColor = colorResource(R.color.blue).copy(alpha = 0.4f)
@@ -238,10 +268,9 @@ fun PlaylistTitleInput(text: String, label: String, onValueChange: (String) -> U
         OutlinedTextField(
             value = text,
             onValueChange = onValueChange,
-            label = { Text(label) },
+            label = { Text(text = label, color = MaterialTheme.colorScheme.onBackground) },
             maxLines = 1,
-            modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_8x))
-                .padding(horizontal = dimensionResource(R.dimen.padding_small_8x))
+            modifier = modifier.padding(top = dimensionResource(R.dimen.padding_small_8x))
                 .fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
@@ -258,6 +287,7 @@ fun PlaylistTitleInput(text: String, label: String, onValueChange: (String) -> U
 
 @Composable
 fun BlueButton(
+    modifier: Modifier,
     enabled : Boolean,
     isInEditMode: Boolean,
     onClick: () -> Unit
@@ -265,7 +295,7 @@ fun BlueButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_small_8x))
+        modifier = modifier.padding(vertical = dimensionResource(R.dimen.padding_small_8x))
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
@@ -274,7 +304,7 @@ fun BlueButton(
         ),
     ) {
         Text(
-            text = if (isInEditMode) stringResource(R.string.edit) else stringResource(R.string.btn_create),
+            text = if (isInEditMode) stringResource(R.string.save) else stringResource(R.string.btn_create),
             style = MaterialTheme.typography.titleMedium.copy(
                 color = colorResource(R.color.white)
             )
