@@ -1,55 +1,80 @@
+package com.practicum.playlistmaker.common.widgets.textview
+
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 @Composable
 fun AutoScrollText(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     text: String,
-    style: TextStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+    style: TextStyle,
     scrollDelay: Long = 2000L,
-    modifier: Modifier = Modifier.fillMaxWidth()
 ) {
-    var textWidth by remember { mutableStateOf(0f) }
-    val infiniteTransition = rememberInfiniteTransition()
-    val animatedOffset by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = -textWidth,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = ((textWidth + 100) / 100 * 1000).toInt(), easing = LinearEasing)
-        )
-    )
+    val density = LocalDensity.current
+    var textWidth by remember { mutableFloatStateOf(0f) }
+    var paint by remember { mutableStateOf(Paint()) }
+    val gap = with(density) { 100.dp.toPx() }
+    val animationState = remember { mutableStateOf(0f) }
 
     LaunchedEffect(text) {
-        delay(scrollDelay)
+        paint.asFrameworkPaint().apply {
+            color = style.color.toArgb()
+            textSize = with(density) { style.fontSize.toPx() }
+            isAntiAlias = true
+        }
+        textWidth = paint.asFrameworkPaint().measureText(text)
+    }
+
+    LaunchedEffect(Unit) {
+        paint.asFrameworkPaint().apply {
+            color = style.color.toArgb()
+            textSize = with(density) { style.fontSize.toPx() }
+            isAntiAlias = true
+        }
+        textWidth = paint.asFrameworkPaint().measureText(text)
+
+        while (true) {
+            delay(scrollDelay)
+
+            val target = -(textWidth + gap)
+            val duration = ((textWidth + gap) / 100 * 1000).toInt()
+
+            animate(
+                initialValue = 0f,
+                targetValue = target,
+                animationSpec = tween(
+                    durationMillis = duration,
+                    easing = LinearEasing,
+                ),
+            ) { value, _ ->
+                animationState.value = value
+            }
+
+            delay(scrollDelay)
+        }
     }
 
     Box(modifier = modifier) {
-        Canvas(modifier = Modifier.width(textWidth.dp).height(24.dp)) {
-            val paint = Paint().apply {
-                this.color = style.color ?: Color.Black
-                this.asFrameworkPaint().textSize = style.fontSize?.value ?: 16f
-                this.asFrameworkPaint().isAntiAlias = true
-                this.asFrameworkPaint().setShadowLayer(4f, 2f, 2f, android.graphics.Color.GRAY)
-            }
+        Canvas(modifier = Modifier.fillMaxWidth().height(24.dp)) {
+            val offsetX = animationState.value
+
             drawIntoCanvas {
-                it.nativeCanvas.drawText(text, animatedOffset, 20f, paint.asFrameworkPaint())
+                val nativeCanvas = it.nativeCanvas
+                nativeCanvas.drawText(text, offsetX, 0f, paint.asFrameworkPaint())
+                nativeCanvas.drawText(text, offsetX + textWidth + gap, 0f, paint.asFrameworkPaint())
             }
         }
     }

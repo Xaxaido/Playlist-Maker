@@ -61,6 +61,7 @@ import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.common.utils.Util.ARGS_TRACK
 import com.practicum.playlistmaker.common.widgets.PlayerButton
 import com.practicum.playlistmaker.common.widgets.SlidingTime
+import com.practicum.playlistmaker.common.widgets.textview.AutoScrollText
 import com.practicum.playlistmaker.main.ui.Routes
 import com.practicum.playlistmaker.medialibrary.ui.PlaylistsBottomSheet
 import com.practicum.playlistmaker.player.services.MusicService
@@ -229,6 +230,20 @@ fun PlayerScreen(navController: NavController, trackJson: String) {
                             width = Dimension.fillToConstraints
                         },
             )
+            /*AutoScrollText(
+                modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_12x))
+                    .constrainAs(trackTitle) {
+                        start.linkTo(guidelineLeft)
+                        end.linkTo(guidelineRight)
+                        top.linkTo(albumCover.bottom)
+                        bottom.linkTo(artistName.top)
+                        width = Dimension.fillToConstraints
+                    },
+                text = track?.trackName.toString(),
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ),
+            )*/
             TitleText(
                 modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small_12x))
                     .constrainAs(trackTitle) {
@@ -293,7 +308,7 @@ fun PlayerScreen(navController: NavController, trackJson: String) {
                 tint = MaterialTheme.colorScheme.onBackground,
                 state = isStopped?.let { !it },
                 enabled = trackLoaded.value
-            ) {  viewModel.playbackControl() }
+            ) { viewModel.playbackControl() }
             PlayerButton(
                 modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small_4x), top = dimensionResource(R.dimen.padding_small_15x))
                     .size(dimensionResource(R.dimen.play_btn_small))
