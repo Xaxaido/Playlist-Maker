@@ -7,21 +7,20 @@ import com.practicum.playlistmaker.common.resources.CreatePlaylistState
 import com.practicum.playlistmaker.medialibrary.data.db.entity.PlaylistEntity
 import com.practicum.playlistmaker.medialibrary.domain.db.PlaylistsInteractor
 import com.practicum.playlistmaker.medialibrary.domain.model.Playlist
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 class CreatePlaylistViewModel(
     private val playlistsInteractor: PlaylistsInteractor,
-    gson: Gson,
-    json: String?,
+    private val gson: Gson,
+    private val json: String?,
 ) : ViewModel() {
 
-    private val _stateFlow = MutableStateFlow<CreatePlaylistState>(CreatePlaylistState.Default)
-    val stateFlow: StateFlow<CreatePlaylistState> = _stateFlow.asStateFlow()
+    private val _sharedFlow = MutableSharedFlow<CreatePlaylistState>()
+    val sharedFlow: SharedFlow<CreatePlaylistState> = _sharedFlow
 
-    init {
+    fun isEditMode() {
         gson.fromJson(json, Playlist::class.java)?.let {
             setState(CreatePlaylistState.Edit(it))
         }
@@ -40,6 +39,8 @@ class CreatePlaylistViewModel(
     }
 
     private fun setState(state: CreatePlaylistState) {
-        _stateFlow.value = state
+        viewModelScope.launch {
+            _sharedFlow.emit(state)
+        }
     }
 }

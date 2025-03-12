@@ -1,6 +1,8 @@
 package com.practicum.playlistmaker.common.utils
 
+import android.app.UiModeManager
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.DashPathEffect
@@ -8,10 +10,9 @@ import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
 import android.util.TypedValue
-import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
 import com.google.gson.Gson
@@ -23,6 +24,7 @@ import kotlin.math.hypot
 
 object Util {
 
+    const val ARGS_TRACK = "ARGS_TRACK"
     const val COUNTRY_CSS_SELECTOR = "dd[data-testid=grouptext-section-content]"
     const val ANIMATION_SHORT= 250L
     const val UPDATE_PLAYBACK_PROGRESS_DELAY= 300L
@@ -44,14 +46,15 @@ object Util {
     fun jsonToTrack(json: String): Track = Gson().fromJson(json, Track::class.java)
     fun trackToJson(track: Track): String = Gson().toJson(track)
 
-    fun applyTheme(theme: String) {
-        AppCompatDelegate.setDefaultNightMode(
-            when (theme) {
-                AppTheme.LIGHT.value -> AppCompatDelegate.MODE_NIGHT_NO
-                AppTheme.DARK.value -> AppCompatDelegate.MODE_NIGHT_YES
-                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    fun getTheme(context: Context, theme: String): Boolean {
+        return when (theme) {
+            AppTheme.LIGHT.value -> false
+            AppTheme.DARK.value -> true
+            else -> {
+                val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+                uiModeManager.nightMode == UiModeManager.MODE_NIGHT_YES
             }
-        )
+        }
     }
 
     fun getColor(context: Context, attr: Int): Int {
@@ -69,6 +72,18 @@ object Util {
             false
         )
 
+    fun Drawable.toImageBitmap(): ImageBitmap {
+        val bitmap = Bitmap.createBitmap(
+            intrinsicWidth,
+            intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        setBounds(0, 0, canvas.width, canvas.height)
+        draw(canvas)
+        return bitmap.asImageBitmap()
+    }
+
     fun formatValue(value: Int, valueName: String): String {
         val valueNameToFormat = valueName.split(",")
         val preLastNumber = value % 100 / 10
@@ -85,13 +100,11 @@ object Util {
         }
     }
 
-    fun drawFrame(view: View, density: Float, borderColor: Int) {
+    fun drawFrame(density: Float, borderColor: Int): Drawable {
         val borderWidth = 1 * density
         val cornerRadius = 8 * density
         val dashLength = 32 * density
         val gapLength = 32 * density
-
-        val currentBackground = view.background
 
         val dashedBorder = object : Drawable() {
             private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -117,8 +130,7 @@ object Util {
             override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
         }
 
-        val combinedBackground = LayerDrawable(arrayOf(currentBackground, dashedBorder))
-        view.background = combinedBackground
+        return dashedBorder
     }
 
     fun drawDashedRoundedRect(
