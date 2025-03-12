@@ -6,7 +6,10 @@ import com.practicum.playlistmaker.settings.domain.api.SettingsInteractor
 import com.practicum.playlistmaker.sharing.domain.model.IntentAction
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
@@ -17,8 +20,14 @@ class SettingsViewModel(
     private val _sharedFlow = MutableSharedFlow<IntentAction>()
     val sharedFlow: SharedFlow<IntentAction> = _sharedFlow
 
+    private val _darkMode = MutableStateFlow<Boolean?>(null)
+    val darkMode: StateFlow<Boolean?> = _darkMode.asStateFlow()
+
+    fun switchTheme(isChecked: Boolean?) {
+        _darkMode.value =  isChecked
+    }
     fun saveTheme(isChecked: Boolean) { settingsIteractor.updateThemeSetting(isChecked) }
-    fun getCurrentTheme() = settingsIteractor.getThemeSettings().themeName
+    fun getThemeSettings() = settingsIteractor.getThemeSettings()
     fun getThemeSwitchState() = settingsIteractor.getThemeSwitchState()
     fun shareApp() { setShareAction(sharingInteractor.getShareApp()) }
     fun contactSupport() { setShareAction(sharingInteractor.getContactSupport()) }

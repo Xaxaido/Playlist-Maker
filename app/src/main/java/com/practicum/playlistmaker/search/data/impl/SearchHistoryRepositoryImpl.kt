@@ -40,7 +40,7 @@ class SearchHistoryRepositoryImpl(
         _history.apply {
             removeIf { it.id == track.id }
             add(0, track)
-            if (size > Util.HISTORY_MAX_COUNT) removeLast()
+            if (size > Util.HISTORY_MAX_COUNT) removeAt(lastIndex)
         }
         saveHistory()
     }

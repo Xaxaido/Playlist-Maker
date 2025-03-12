@@ -50,13 +50,21 @@ class SearchViewModel(
     }
 
     fun getHistory(isDatasetChanged: Boolean) {
+        isHistoryVisible = true
         currentList = searchHistoryInteractor.history
-        setState(SearchState.TrackSearchHistory(currentList, isDatasetChanged))
+        if (currentList.isNotEmpty()) {
+            setState(SearchState.TrackSearchHistory(currentList, isDatasetChanged))
+        }
+    }
+
+    fun clearSearchRequest() {
+        getHistory(true)
+        setState(SearchState.NoData)
     }
 
     fun clearHistory() {
         searchHistoryInteractor.clearHistory()
-        setState(SearchState.TrackSearchHistory(emptyList(), false))
+        setState(SearchState.NoData)
     }
 
     fun addToHistory(track: Track) { searchHistoryInteractor.addTrack(track) }

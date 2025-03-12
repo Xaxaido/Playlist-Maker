@@ -14,7 +14,6 @@ import com.practicum.playlistmaker.common.resources.PlayerState
 import com.practicum.playlistmaker.common.utils.Debounce
 import com.practicum.playlistmaker.common.utils.Extensions.millisToSeconds
 import com.practicum.playlistmaker.common.utils.Util
-import com.practicum.playlistmaker.player.ui.PlayerFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,7 +79,7 @@ class MusicService : Service(), AudioPlayerControl {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        val json = intent?.getStringExtra(PlayerFragment.ARGS_TRACK) ?: ""
+        val json = intent?.getStringExtra(Util.ARGS_TRACK) ?: ""
         val track = Util.jsonToTrack(json)
         initMediaPlayer(track.previewUrl)
         notification.setTrack(track)

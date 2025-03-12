@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKsp)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -42,8 +43,18 @@ android {
 }
 
 dependencies {
-    implementation(libs.adapterdelegates4.kotlin.dsl)
-    implementation (libs.hannesdorfmann.adapterdelegates4.kotlin.dsl.viewbinding)
+    implementation (libs.androidx.ui)
+    implementation (libs.androidx.material)
+    implementation (libs.androidx.activity.compose)
+    implementation (libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation (libs.insert.koin.koin.androidx.compose)
+    implementation(libs.coil.compose)
+    implementation (libs.google.accompanist.systemuicontroller)
+    implementation (libs.accompanist.drawablepainter)
+    implementation(libs.haze)
+    debugImplementation(libs.androidx.ui.tooling)
+
     implementation (libs.koinAndroid)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -61,15 +72,12 @@ dependencies {
     implementation(libs.paging)
     implementation(libs.activityKtx)
     implementation (libs.kotlinxCoroutinesCore)
-    implementation (libs.viewpager2)
     implementation (libs.roomRuntime)
     implementation (libs.roomKtx)
     ksp(libs.roomCompiler)
     implementation (libs.androidx.palette.ktx)
     implementation (libs.androidx.media)
     implementation (libs.facebook.shimmer)
-    implementation(libs.fragmentKtx)
-    implementation (libs.navigation.fragment.ktx)
     implementation (libs.androidx.navigation.ui.ktx)
     implementation (libs.jsoup)
 }
